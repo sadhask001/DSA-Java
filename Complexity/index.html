@@ -1,464 +1,1939 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Asymptotic Complexity Visualizer</title>
-    <!-- Tailwind CSS f-or styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js for rendering graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Time & Space Complexity | DSA Java</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+scroll-behavior:smooth;
+}
+
+body{
+
+background:#0f172a;
+
+color:#e2e8f0;
+
+line-height:1.8;
+
+}
+
+header{
+
+background:linear-gradient(135deg,#2563eb,#1d4ed8,#0f172a);
+
+padding:70px 30px;
+
+text-align:center;
+
+}
+
+header h1{
+
+font-size:50px;
+
+font-weight:700;
+
+margin-bottom:15px;
+
+}
+
+header p{
+
+font-size:18px;
+
+color:#cbd5e1;
+
+}
+
+nav{
+
+position:sticky;
+
+top:0;
+
+z-index:1000;
+
+background:#111827;
+
+padding:15px;
+
+border-bottom:1px solid #334155;
+
+display:flex;
+
+justify-content:center;
+
+gap:25px;
+
+}
+
+nav a{
+
+color:white;
+
+text-decoration:none;
+
+font-size:15px;
+
+transition:.3s;
+
+}
+
+nav a:hover{
+
+color:#38bdf8;
+
+}
+
+.container{
+
+max-width:1400px;
+
+margin:auto;
+
+display:grid;
+
+grid-template-columns:280px 1fr;
+
+gap:40px;
+
+padding:40px 20px;
+
+}
+
+aside{
+
+position:sticky;
+
+top:90px;
+
+height:fit-content;
+
+background:#1e293b;
+
+padding:25px;
+
+border-radius:12px;
+
+border:1px solid #334155;
+
+}
+
+aside h2{
+
+margin-bottom:20px;
+
+font-size:20px;
+
+}
+
+aside ul{
+
+list-style:none;
+
+}
+
+aside li{
+
+margin:14px 0;
+
+}
+
+aside a{
+
+color:#cbd5e1;
+
+text-decoration:none;
+
+transition:.3s;
+
+}
+
+aside a:hover{
+
+color:#38bdf8;
+
+padding-left:5px;
+
+}
+
+main{
+
+background:#1e293b;
+
+padding:40px;
+
+border-radius:12px;
+
+border:1px solid #334155;
+
+}
+
+section{
+
+margin-bottom:80px;
+
+}
+
+section h2{
+
+font-size:34px;
+
+margin-bottom:20px;
+
+color:#38bdf8;
+
+}
+
+section h3{
+
+margin:30px 0 15px;
+
+color:#60a5fa;
+
+}
+
+p{
+
+margin:15px 0;
+
+}
+
+pre{
+
+background:#020617;
+
+padding:20px;
+
+overflow:auto;
+
+border-radius:10px;
+
+margin:20px 0;
+
+border-left:5px solid #38bdf8;
+
+}
+
+code{
+
+color:#7dd3fc;
+
+font-size:15px;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin:25px 0;
+
+}
+
+table th{
+
+background:#2563eb;
+
+padding:15px;
+
+}
+
+table td{
+
+padding:15px;
+
+border:1px solid #334155;
+
+}
+
+tr:nth-child(even){
+
+background:#0f172a;
+
+}
+
+.note{
+
+background:#172554;
+
+padding:20px;
+
+border-left:5px solid #38bdf8;
+
+border-radius:10px;
+
+margin:20px 0;
+
+}
+
+.floating{
+
+position:fixed;
+
+bottom:30px;
+
+right:30px;
+
+background:#2563eb;
+
+color:white;
+
+padding:18px 25px;
+
+border-radius:50px;
+
+text-decoration:none;
+
+font-weight:bold;
+
+box-shadow:0 10px 30px rgba(0,0,0,.4);
+
+transition:.3s;
+
+}
+
+.floating:hover{
+
+transform:scale(1.08);
+
+background:#1d4ed8;
+
+}
+
+footer{
+
+text-align:center;
+
+padding:50px;
+
+color:#94a3b8;
+
+}
+
+@media(max-width:1000px){
+
+.container{
+
+grid-template-columns:1fr;
+
+}
+
+aside{
+
+position:relative;
+
+top:0;
+
+}
+
+header h1{
+
+font-size:34px;
+
+}
+
+}
+
+</style>
+
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen p-4 md:p-8">
 
-    <div class="max-w-6xl mx-auto space-y-6">
-        <!-- Header -->
-        <header class="border-b border-gray-800 pb-4">
-            <h1 class="text-3xl font-bold text-indigo-400">Asymptotic Complexity Visualizer</h1>
-            <p class="text-gray-400 mt-1">Analyze algorithm scalability parameters relative to notation boundaries and runtime scenarios.</p>
-        </header>
+<body>
 
-        <!-- Main Layout Split Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- Controls Sidebar (4 Cols) -->
-            <div class="lg:col-span-4 space-y-6 bg-gray-800 p-6 rounded-xl border border-gray-700">
-                <!-- Perspective Toggle -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-400 mb-2">Metric Type</label>
-                    <div class="flex rounded-md bg-gray-900 p-1">
-                        <button id="btnTime" class="flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" onclick="setMetric('time')">Time (Ops)</button>
-                        <button id="btnSpace" class="flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition" onclick="setMetric('space')">Space (Memory)</button>
-                    </div>
-                </div>
+<header>
 
-                <!-- Asymptotic Notation Type -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-400 mb-2">Asymptotic Notation Bound</label>
-                    <div class="flex rounded-md bg-gray-900 p-1">
-                        <button id="btnBigO" class="flex-1 py-1.5 text-xs font-mono font-bold rounded bg-indigo-600 text-white transition" onclick="setNotationType('O')">O (Upper)</button>
-                        <button id="btnTheta" class="flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition" onclick="setNotationType('Theta')">Θ (Tight)</button>
-                        <button id="btnOmega" class="flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition" onclick="setNotationType('Omega')">Ω (Lower)</button>
-                    </div>
-                </div>
+<h1>Time & Space Complexity</h1>
 
-                <!-- Scenario Case Scenario Selection -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-400 mb-2">Runtime Case Scenario</label>
-                    <div class="flex rounded-md bg-gray-900 p-1">
-                        <button id="btnBest" class="flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition" onclick="setCaseScenario('best')">Best</button>
-                        <button id="btnAverage" class="flex-1 py-1.5 text-xs font-semibold rounded bg-indigo-600 text-white transition" onclick="setCaseScenario('average')">Average</button>
-                        <button id="btnWorst" class="flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition" onclick="setCaseScenario('worst')">Worst</button>
-                    </div>
-                </div>
+<p>Complete Guide to Big O, Big Ω, Big Θ with Java Examples, Formulas and Explanations</p>
 
-                <!-- Notation Target Selection -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-400 mb-2">Select Target Algorithm Profile</label>
-                    <select id="notationSelect" class="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" onchange="handleNotationChange()">
-                        <option value="O(1)">Constant Baseline Structure</option>
-                        <option value="O(log n)">Logarithmic Tracking (e.g. Binary Search)</option>
-                        <option value="O(n)" selected>Linear Evaluation (e.g. Linear Search)</option>
-                        <option value="O(n log n)">Linearithmic Sorts (e.g. Merge Sort)</option>
-                        <option value="O(n^2)">Quadratic Sorts (e.g. Bubble Sort)</option>
-                        <option value="O(2^n)">Exponential Scaling (e.g. Fibonacci)</option>
-                    </select>
-                </div>
+</header>
 
-                <!-- Input Size Slider -->
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="text-sm font-semibold text-gray-400">Input Size (n)</label>
-                        <span id="nValue" class="text-indigo-400 font-mono text-lg font-bold">16</span>
-                    </div>
-                    <input id="nSlider" type="range" min="2" max="50" value="16" class="w-full accent-indigo-500" oninput="updateVisuals()">
-                </div>
+<nav>
 
-                <!-- Live Metrics Summary -->
-                <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Growth Impact at current n</h3>
-                    <p id="metricImpact" class="text-sm text-gray-300 font-mono">Operations required: ~16</p>
-                </div>
-            </div>
+<a href="#intro">Introduction</a>
 
-            <!-- Graph and Code Displays (8 Cols) -->
-            <div class="lg:col-span-8 space-y-6">
-                <!-- Graph Container -->
-                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                    <canvas id="growthChart" class="w-full h-64"></canvas>
-                </div>
+<a href="#bigo">Big O</a>
 
-                <!-- Context and Code Section -->
-                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 space-y-4">
-                    
-                    <!-- Code View Tab Controls -->
-                    <div class="flex border-b border-gray-700 pb-2 justify-between items-center">
-                        <div class="flex space-x-4">
-                            <button id="tabPresets" class="text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" onclick="switchTab('presets')">Preset Reference</button>
-                            <button id="tabSandbox" class="text-sm font-bold text-gray-400 hover:text-white pb-2" onclick="switchTab('sandbox')">Custom Code Sandbox 🧪</button>
-                        </div>
-                        <span id="analyzerBadge" class="hidden text-xs bg-indigo-950 border border-indigo-700 text-indigo-300 px-2 py-0.5 rounded font-mono">Analyzer Active</span>
-                    </div>
+<a href="#omega">Big Ω</a>
 
-                    <div>
-                        <h2 id="exampleTitle" class="text-xl font-bold text-white mb-1">Linear Evaluation Example</h2>
-                        <p id="exampleDesc" class="text-sm text-gray-400 font-mono"></p>
-                    </div>
+<a href="#theta">Big Θ</a>
 
-                    <!-- Code Snippet Display / Textarea -->
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">Implementation Structure</span>
-                        
-                        <!-- Reference Container -->
-                        <div id="presetContainer">
-                            <pre class="bg-gray-950 p-4 rounded-lg overflow-x-auto text-sm font-mono text-emerald-400 border border-gray-900"><code id="codeSnippet"></code></pre>
-                        </div>
+<a href="#growth">Growth</a>
 
-                        <!-- Sandbox Container -->
-                        <div id="sandboxContainer" class="hidden space-y-2">
-                            <textarea id="customCodeInput" class="w-full h-52 bg-gray-950 border border-gray-700 rounded-lg p-4 font-mono text-xs text-indigo-300 focus:outline-none focus:border-indigo-500" oninput="handleSandboxInput()"></textarea>
-                            <div class="bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs text-gray-400 font-mono space-y-1">
-                                <p class="text-indigo-400 font-semibold mb-1">✨ Interactive Comment Tags Available:</p>
-                                <p>You can force scenario-specific tracking using tags anywhere in your code lines:</p>
-                                <p>• <code>// @best O(1)</code> or <code>// @worst O(n^2)</code></p>
-                                <p>• <code>// @space O(n)</code></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<a href="#comparison">Comparison</a>
 
-        </div>
-    </div>
+<a href="#tips">Interview Tips</a>
 
-    <!-- App Engine Logic -->
-    <script>
-        let currentMetric = 'time';
-        let currentNotationType = 'O'; 
-        let currentCaseScenario = 'average'; 
-        let currentTab = 'presets'; 
-        let chartInstance = null;
+</nav>
 
-        const dataTemplates = {
-            "O(1)": {
-                time: {
-                    title: "Constant Time Baseline",
-                    desc: "Decoupled execution complexity. Operations are identical regardless of input scaling.",
-                    code: "int getElement(int arr[]) {\n    return arr[0]; \n}",
-                    best: (n) => 1, average: (n) => 1, worst: (n) => 1,
-                    notationMap: { best: "1", average: "1", worst: "1" }
-                },
-                space: {
-                    title: "Constant Space Profile",
-                    desc: "Memory stays local within static allocation bounds.",
-                    code: "void swap(int *x, int *y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}",
-                    best: (n) => 1, average: (n) => 1, worst: (n) => 1,
-                    notationMap: { best: "1", average: "1", worst: "1" }
-                }
-            },
-            "O(log n)": {
-                time: {
-                    title: "Logarithmic Search Profile",
-                    desc: "Divide and conquer structures reduce tracking ranges dynamically.",
-                    code: "int binarySearch(int arr[], int n, int target) {\n    int low = 0, high = n - 1;\n    while(low <= high) {\n        int mid = low + (high-low)/2;\n        if(arr[mid] == target) return mid;\n        if(arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}",
-                    best: (n) => 1, average: (n) => Math.log2(n) * 0.7, worst: (n) => Math.log2(n),
-                    notationMap: { best: "1", average: "log n", worst: "log n" }
-                },
-                space: {
-                    title: "Logarithmic Stack Boundaries",
-                    desc: "Tracks depth frames across execution layers.",
-                    code: "void recurse(int n) {\n    if (n <= 1) return;\n    recurse(n / 2);\n}",
-                    best: (n) => 1, average: (n) => Math.log2(n), worst: (n) => Math.log2(n),
-                    notationMap: { best: "1", average: "log n", worst: "log n" }
-                }
-            },
-            "O(n)": {
-                time: {
-                    title: "Linear Complexity Profiling",
-                    desc: "Scanning through dataset items sequentially.",
-                    code: "int linearSearch(int arr[], int n, int target) {\n    for(int i = 0; i < n; i++) {\n        if(arr[i] == target) return i; \n    }\n    return -1;\n}",
-                    best: (n) => 1, average: (n) => n / 2, worst: (n) => n,
-                    notationMap: { best: "1", average: "n", worst: "n" }
-                },
-                space: {
-                    title: "Linear Array Allocations",
-                    desc: "Dynamic layout bounds mapping items directly matching input parameters.",
-                    code: "int* buildArray(int n) {\n    return (int*)malloc(n * sizeof(int));\n}",
-                    best: (n) => n, average: (n) => n, worst: (n) => n,
-                    notationMap: { best: "n", average: "n", worst: "n" }
-                }
-            },
-            "O(n log n)": {
-                time: {
-                    title: "Linearithmic Sort Frameworks",
-                    desc: "Highly scalable sorting execution maps splitting loops against complete data frames.",
-                    code: "void mergeSort(int arr[], int l, int r) {\n    if (l < r) {\n        int m = l + (r-l)/2;\n        mergeSort(arr, l, m);\n        mergeSort(arr, m+1, r);\n        merge(arr, l, m, r);\n    }\n}",
-                    best: (n) => n * Math.log2(n) * 0.8, average: (n) => n * Math.log2(n), worst: (n) => n * Math.log2(n) * 1.2,
-                    notationMap: { best: "n log n", average: "n log n", worst: "n log n" }
-                },
-                space: {
-                    title: "Linearithmic Buffer Context",
-                    desc: "Dynamic workspace allocation layers.",
-                    code: "void contextAlloc(int n) {\n    for(int i = 1; i < n; i *= 2) {\n        int *b = malloc(n * sizeof(int)); free(b);\n    }\n}",
-                    best: (n) => n, average: (n) => n * Math.log2(n), worst: (n) => n * Math.log2(n),
-                    notationMap: { best: "n", average: "n log n", worst: "n log n" }
-                }
-            },
-            "O(n^2)": {
-                time: {
-                    title: "Quadratic Sort Implementations",
-                    desc: "Overlapping iteration matrices tracking array layers inside secondary array loops.",
-                    code: "void bubbleSort(int arr[], int n) {\n    for(int i=0; i<n; i++) {\n        for(int j=0; j<n-i-1; j++) {\n            if(arr[j] > arr[j+1]) swap(&arr[j], &arr[j+1]);\n        }\n    }\n}",
-                    best: (n) => n, average: (n) => (n * n) / 2, worst: (n) => n * n,
-                    notationMap: { best: "n", average: "n^2", worst: "n^2" }
-                },
-                space: {
-                    title: "Quadratic Matrix Allocation",
-                    desc: "Grid mapping layers utilizing full height matching widths completely.",
-                    code: "int** makeGrid(int n) {\n    int** g = malloc(n * sizeof(int*));\n    for(int i=0; i<n; i++) g[i] = malloc(n * sizeof(int));\n    return g;\n}",
-                    best: (n) => n * n, average: (n) => n * n, worst: (n) => n * n,
-                    notationMap: { best: "n^2", average: "n^2", worst: "n^2" }
-                }
-            },
-            "O(2^n)": {
-                time: {
-                    title: "Exponential Processing Cascades",
-                    desc: "Deep branching layers triggering multiplication steps at consecutive tiers.",
-                    code: "int fib(int n) {\n    if (n <= 1) return n;\n    return fib(n-1) + fib(n-2);\n}",
-                    best: (n) => 1, average: (n) => Math.pow(1.618, n), worst: (n) => Math.pow(2, n),
-                    notationMap: { best: "1", average: "1.618^n", worst: "2^n" }
-                },
-                space: {
-                    title: "Exponential Growth Buffers",
-                    desc: "Structural allocation parameters duplicating at every progression layer.",
-                    code: "void structuralExplosion(int n) {\n    int size = pow(2, n);\n    int* cache = malloc(size * sizeof(int));\n}",
-                    best: (n) => n, average: (n) => Math.pow(2, n) * 0.5, worst: (n) => Math.pow(2, n),
-                    notationMap: { best: "n", average: "2^n", worst: "2^n" }
-                }
-            }
-        };
+<div class="container">
 
-        // Shared baseline mathematical behaviors
-        const coreMathEngines = {
-            "1": (n) => 1,
-            "log n": (n) => Math.log2(n),
-            "n": (n) => n,
-            "n log n": (n) => n * Math.log2(n),
-            "n^2": (n) => n * n,
-            "2^n": (n) => Math.pow(2, n)
-        };
+<aside>
 
-        let sandboxProfile = {
-            time: { best: "1", average: "n", worst: "n" },
-            space: { best: "1", average: "1", worst: "1" }
-        };
+<h2>Contents</h2>
 
-        function setMetric(metric) {
-            currentMetric = metric;
-            const isTime = metric === 'time';
-            document.getElementById('btnTime').className = isTime ? "flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" : "flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition";
-            document.getElementById('btnSpace').className = !isTime ? "flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" : "flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition";
-            updateVisuals();
-        }
+<ul>
 
-        function setNotationType(type) {
-            currentNotationType = type;
-            ['O', 'Theta', 'Omega'].forEach(t => {
-                const btn = document.getElementById(`btn${t}`);
-                btn.className = (t === type) ? "flex-1 py-1.5 text-xs font-mono font-bold rounded bg-indigo-600 text-white transition" : "flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition";
-            });
-            updateVisuals();
-        }
+<li><a href="#intro">Introduction</a></li>
 
-        function setCaseScenario(csc) {
-            currentCaseScenario = csc;
-            ['best', 'average', 'worst'].forEach(c => {
-                const btn = document.getElementById(`btn${c.charAt(0).toUpperCase() + c.slice(1)}`);
-                btn.className = (c === csc) ? "flex-1 py-1.5 text-xs font-semibold rounded bg-indigo-600 text-white transition" : "flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition";
-            });
-            updateVisuals();
-        }
+<li><a href="#bigo">Big O Notation</a></li>
 
-        function switchTab(tab) {
-            currentTab = tab;
-            const isPresets = tab === 'presets';
+<li><a href="#omega">Big Omega</a></li>
 
-            document.getElementById('tabPresets').className = isPresets ? "text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" : "text-sm font-bold text-gray-400 hover:text-white pb-2";
-            document.getElementById('tabSandbox').className = !isPresets ? "text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" : "text-sm font-bold text-gray-400 hover:text-white pb-2";
+<li><a href="#theta">Big Theta</a></li>
 
-            if (isPresets) {
-                document.getElementById('presetContainer').classList.remove('hidden');
-                document.getElementById('sandboxContainer').classList.add('hidden');
-                document.getElementById('analyzerBadge').classList.add('hidden');
-                document.getElementById('notationSelect').disabled = false;
-            } else {
-                document.getElementById('presetContainer').classList.add('hidden');
-                document.getElementById('sandboxContainer').classList.remove('hidden');
-                document.getElementById('analyzerBadge').classList.remove('hidden');
-                document.getElementById('notationSelect').disabled = true;
-                if(!document.getElementById('customCodeInput').value) {
-                    document.getElementById('customCodeInput').value = "// Custom Implementation Sandbox\n// Try defining custom scenario profiles directly via tags below:\n// @best O(1)\n// @worst O(log n)\n\nint customSearch(int arr[], int n) {\n    while(n > 1) {\n        n /= 2; // Matches logarithmic scale structural parameters\n    }\n    return -1;\n}";
-                }
-                handleSandboxInput();
-            }
-            updateVisuals();
-        }
+<li><a href="#growth">Growth Types</a></li>
 
-        function handleNotationChange() {
-            if (currentTab === 'presets') updateVisuals();
-        }
+<li><a href="#comparison">Comparison</a></li>
 
-        function handleSandboxInput() {
-            const code = document.getElementById('customCodeInput').value;
-            parseAdvancedSandboxCode(code);
-            updateVisuals();
-        }
+<li><a href="#tips">Interview Tips</a></li>
 
-        // Deep Analytical Code Parser Engine
-        function parseAdvancedSandboxCode(code) {
-            // 1. Establish structurally derived defaults
-            const totalLoops = (code.match(/for\s*\(|while\s*\(/g) || []).length;
-            let dynamicBase = "1";
+<li><a href="#summary">Summary</a></li>
 
-            if (/(- 1).*( - 2)|(- 2).*( - 1)|pow\(2/i.test(code)) {
-                dynamicBase = "2^n";
-            } else if (totalLoops >= 2) {
-                dynamicBase = (/\/\s*=\s*2|>>\s*=\s*1|mid\s*=/.test(code)) ? "n log n" : "n^2";
-            } else if (totalLoops === 1) {
-                dynamicBase = (/\/\s*=\s*2|>>\s*=\s*1|mid\s*=/.test(code)) ? "log n" : "n";
-            }
+</ul>
 
-            // Fallback base configuration mapping
-            sandboxProfile.time.best = dynamicBase === "log n" || dynamicBase === "n" || dynamicBase === "n^2" ? "1" : dynamicBase;
-            sandboxProfile.time.average = dynamicBase;
-            sandboxProfile.time.worst = dynamicBase;
+</aside>
 
-            // Space baseline estimation
-            sandboxProfile.space.best = "1";
-            sandboxProfile.space.average = (code.includes("malloc") || code.includes("new int")) ? dynamicBase : "1";
-            sandboxProfile.space.worst = sandboxProfile.space.average;
+<main>
 
-            // 2. Scan and extract inline user directive tags overrides explicitly
-            const lines = code.split("\n");
-            lines.forEach(line => {
-                if (line.includes("@best")) sandboxProfile.time.best = extractNotationTarget(line);
-                if (line.includes("@worst")) sandboxProfile.time.worst = extractNotationTarget(line);
-                if (line.includes("@average")) sandboxProfile.time.average = extractNotationTarget(line);
-                if (line.includes("@space")) {
-                    const tag = extractNotationTarget(line);
-                    sandboxProfile.space.best = tag; sandboxProfile.space.average = tag; sandboxProfile.space.worst = tag;
-                }
-            });
-        }
+<!-- ================= INTRODUCTION ================= -->
 
-        function extractNotationTarget(line) {
-            if(line.includes("1")) return "1";
-            if(line.includes("log n")) return "log n";
-            if(line.includes("n log n")) return "n log n";
-            if(line.includes("n^2")) return "n^2";
-            if(line.includes("2^n")) return "2^n";
-            if(line.includes("n")) return "n";
-            return "1";
-        }
+<section id="intro">
 
-        function formatNotationSymbol(innerComplexity) {
-            let symbol = 'O';
-            if (currentNotationType === 'Theta') symbol = 'Θ';
-            if (currentNotationType === 'Omega') symbol = 'Ω';
-            return `${symbol}(${innerComplexity})`;
-        }
+<h2>📖 Introduction</h2>
 
-        function updateVisuals() {
-            const n = parseInt(document.getElementById('nSlider').value);
-            document.getElementById('nValue').innerText = n;
+<p>
+Asymptotic Notations are mathematical tools used to measure the
+efficiency of an algorithm as the input size (<strong>n</strong>)
+increases.
+</p>
 
-            let adaptiveInnerComplexity = "";
-            let mathFunc = null;
+<p>
+Instead of measuring execution time in seconds, they measure the
+<strong>growth rate</strong> of an algorithm.
+</p>
 
-            if (currentTab === 'presets') {
-                const baseNotation = document.getElementById('notationSelect').value;
-                const config = dataTemplates[baseNotation][currentMetric];
-                mathFunc = config[currentCaseScenario];
-                adaptiveInnerComplexity = config.notationMap[currentCaseScenario];
-                
-                document.getElementById('exampleTitle').innerText = `${config.title} [${formatNotationSymbol(adaptiveInnerComplexity)}]`;
-                document.getElementById('codeSnippet').innerText = config.code;
-            } else {
-                // Read adaptive components from customized sandbox tracker parameters
-                adaptiveInnerComplexity = sandboxProfile[currentMetric][currentCaseScenario];
-                const rawMath = coreMathEngines[adaptiveInnerComplexity];
-                
-                // Introduce natural operational curve modifiers for real-world simulation profiling
-                if (currentCaseScenario === 'best') mathFunc = (num) => Math.max(1, rawMath(num) * 0.5);
-                else if (currentCaseScenario === 'average') mathFunc = (num) => rawMath(num) * 0.9;
-                else mathFunc = (num) => rawMath(num) * 1.3;
+<div class="note">
 
-                document.getElementById('exampleTitle').innerText = `Sandbox Context [${formatNotationSymbol(adaptiveInnerComplexity)}]`;
-            }
+<h3>💡 Why don't we calculate execution time?</h3>
 
-            document.getElementById('exampleDesc').innerText = `Analyzing running characteristics across [${currentCaseScenario.toUpperCase()} CASE] parameters under ${currentNotationType === 'O' ? 'Upper Bound (O)' : currentNotationType === 'Theta' ? 'Tight Bound (Θ)' : 'Lower Bound (Ω)'} criteria definitions.`;
+<ul>
 
-            const impactVal = Math.round(mathFunc(n));
-            const limitLabel = (adaptiveInnerComplexity === "2^n" && n > 25) ? "Scale Bound Limit" : `~${impactVal.toLocaleString()}`;
-            document.getElementById('metricImpact').innerText = `${currentMetric === 'time' ? 'Operations' : 'Memory units'} encountered: ${limitLabel}`;
+<li>Different computers execute programs at different speeds.</li>
 
-            renderGraph(formatNotationSymbol(adaptiveInnerComplexity), n, mathFunc);
-        }
+<li>Programming languages have different performance.</li>
 
-        function renderGraph(activeLabel, activeN, mathFunc) {
-            const ctx = document.getElementById('growthChart').getContext('2d');
-            const labels = [];
-            const dataPoints = [];
+<li>Compilers optimize code differently.</li>
 
-            for (let i = 1; i <= activeN; i++) {
-                labels.push(i);
-                dataPoints.push(mathFunc(i));
-            }
+<li>Input size changes execution time.</li>
 
-            if (chartInstance) chartInstance.destroy();
+</ul>
 
-            let strokeColor = '#818cf8'; 
-            let fillColor = 'rgba(129, 140, 248, 0.1)';
-            if (currentCaseScenario === 'best') { strokeColor = '#34d399'; fillColor = 'rgba(52, 211, 153, 0.1)'; }
-            if (currentCaseScenario === 'worst') { strokeColor = '#f87171'; fillColor = 'rgba(248, 113, 113, 0.1)'; }
+<p>
 
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: `${activeLabel} [${currentCaseScenario.toUpperCase()} Case]`,
-                        data: dataPoints,
-                        borderColor: strokeColor,
-                        backgroundColor: fillColor,
-                        borderWidth: 2,
-                        fill: true,
-                        pointRadius: labels.length > 30 ? 1 : 3,
-                        tension: 0.15
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#9ca3af' } }
-                    },
-                    scales: {
-                        x: { 
-                            title: { display: true, text: 'Input Units (n)', color: '#6b7280' },
-                            grid: { color: '#374151' }, ticks: { color: '#9ca3af' }
-                        },
-                        y: { 
-                            title: { display: true, text: currentMetric === 'time' ? 'Total Steps Computed' : 'Memory Spaces Occupied', color: '#6b7280' },
-                            grid: { color: '#374151' }, ticks: { color: '#9ca3af' },
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
+Therefore, we use <strong>Asymptotic Analysis</strong> to compare
+algorithms independent of hardware.
 
-        window.onload = () => { updateVisuals(); };
-    </script>
+</p>
+
+</div>
+
+<h3>Asymptotic Analysis</h3>
+
+<p>
+
+Asymptotic Analysis studies how an algorithm behaves when the input
+size (<strong>n</strong>) becomes very large.
+
+</p>
+
+<p>
+
+It ignores constants and lower-order terms and focuses only on the
+dominant growth.
+
+</p>
+
+<pre><code>
+Example
+
+T(n)=5n²+4n+10
+
+For very large n
+
+T(n)=O(n²)
+</code></pre>
+
+</section>
+
+<!-- ================= BIG O ================= -->
+
+<section id="bigo">
+
+<h2>🔴 Big O Notation ( O )</h2>
+
+<p>
+
+<strong>Big O</strong> represents the
+<strong>Upper Bound</strong> of an algorithm.
+
+</p>
+
+<p>
+
+It tells the <strong>maximum amount of work</strong> an algorithm may
+perform.
+
+</p>
+
+<div class="note">
+
+<h3>Represents</h3>
+
+<h2 style="color:#38bdf8;">Worst Case</h2>
+
+</div>
+
+<h3>Mathematical Definition</h3>
+
+<pre><code>
+T(n) ≤ C × f(n)
+
+for n ≥ n₀
+
+where
+
+T(n) = Actual Running Time
+
+f(n) = Complexity Function
+
+C = Positive Constant
+
+n₀ = Starting Point
+</code></pre>
+
+<h3>Java Example 1</h3>
+
+<pre><code>
+for(int i=0;i&lt;n;i++){
+
+    System.out.println(i);
+
+}
+</code></pre>
+
+<h3>Step-by-Step Calculation</h3>
+
+<table>
+
+<tr>
+
+<th>Iteration</th>
+
+<th>Operations</th>
+
+</tr>
+
+<tr>
+
+<td>1</td>
+
+<td>1</td>
+
+</tr>
+
+<tr>
+
+<td>2</td>
+
+<td>1</td>
+
+</tr>
+
+<tr>
+
+<td>3</td>
+
+<td>1</td>
+
+</tr>
+
+<tr>
+
+<td>...</td>
+
+<td>...</td>
+
+</tr>
+
+<tr>
+
+<td>n</td>
+
+<td>1</td>
+
+</tr>
+
+</table>
+
+<p>
+
+Total Operations
+
+</p>
+
+<pre><code>
+1 + 1 + 1 + ...
+
+= n
+</code></pre>
+
+<div class="note">
+
+<strong>Time Complexity</strong>
+
+<pre><code>O(n)</code></pre>
+
+<strong>Space Complexity</strong>
+
+<pre><code>O(1)</code></pre>
+
+</div>
+
+<h3>Why is it O(n)?</h3>
+
+<p>
+
+The loop executes exactly <strong>n</strong> times.
+
+Each iteration performs one operation.
+
+</p>
+
+<p>
+
+Total Operations
+
+</p>
+
+<pre><code>
+n × 1
+
+= n
+</code></pre>
+
+<p>
+
+Therefore,
+
+</p>
+
+<pre><code>
+Time Complexity = O(n)
+</code></pre>
+
+<hr style="margin:40px 0;border-color:#334155;">
+
+<h3>Java Example 2</h3>
+
+<pre><code>
+for(int i=0;i&lt;n;i++){
+
+    for(int j=0;j&lt;n;j++){
+
+        System.out.println(i+j);
+
+    }
+
+}
+</code></pre>
+
+<h3>Calculation</h3>
+
+<p>
+
+Outer Loop executes
+
+</p>
+
+<pre><code>
+n times
+</code></pre>
+
+<p>
+
+For every outer iteration,
+
+Inner Loop executes
+
+</p>
+
+<pre><code>
+n times
+</code></pre>
+
+<p>
+
+Therefore
+
+</p>
+
+<pre><code>
+Total Operations
+
+n × n
+
+= n²
+</code></pre>
+
+<div class="note">
+
+<strong>Time Complexity</strong>
+
+<pre><code>O(n²)</code></pre>
+
+<strong>Space Complexity</strong>
+
+<pre><code>O(1)</code></pre>
+
+</div>
+
+<h3>Real-Life Example</h3>
+
+<p>
+
+Imagine searching for a student's name in an
+<strong>unsorted attendance register</strong>.
+
+</p>
+
+<ul>
+
+<li>If the name is on the last page → you check every page.</li>
+
+<li>If the name is not present → you still check every page.</li>
+
+</ul>
+
+<p>
+
+Maximum pages checked = <strong>n</strong>
+
+</p>
+
+<pre><code>
+Worst Case
+
+O(n)
+</code></pre>
+
+</section>
+
+<!-- ================= BIG OMEGA ================= -->
+
+<section id="omega">
+
+<h2>🟢 Big Omega Notation ( Ω )</h2>
+
+<p>
+
+<strong>Big Omega (Ω)</strong> represents the
+<strong>Lower Bound</strong> of an algorithm.
+
+</p>
+
+<p>
+
+It tells us the <strong>minimum amount of work</strong>
+an algorithm performs.
+
+</p>
+
+<div class="note">
+
+<h3>Represents</h3>
+
+<h2 style="color:#22c55e;">Best Case</h2>
+
+</div>
+
+<h3>Mathematical Definition</h3>
+
+<pre><code>
+T(n) ≥ C × f(n)
+
+for n ≥ n₀
+
+where
+
+T(n) = Actual Running Time
+
+f(n) = Complexity Function
+
+C = Positive Constant
+
+n₀ = Starting Point
+</code></pre>
+
+<h3>Java Example</h3>
+
+<pre><code>
+int linearSearch(int arr[], int key){
+
+    for(int i=0;i&lt;arr.length;i++){
+
+        if(arr[i]==key)
+            return i;
+
+    }
+
+    return -1;
+
+}
+</code></pre>
+
+<h3>Best Case Calculation</h3>
+
+<p>
+
+Suppose
+
+</p>
+
+<pre><code>
+Array
+
+10 20 30 40 50
+
+Key = 10
+</code></pre>
+
+<p>
+
+Iterations
+
+</p>
+
+<table>
+
+<tr>
+
+<th>Iteration</th>
+
+<th>Comparison</th>
+
+</tr>
+
+<tr>
+
+<td>1</td>
+
+<td>10 == 10 ✓</td>
+
+</tr>
+
+</table>
+
+<p>
+
+Operations
+
+</p>
+
+<pre><code>
+1
+
+Found immediately
+</code></pre>
+
+<div class="note">
+
+<strong>Time Complexity</strong>
+
+<pre><code>
+Ω(1)
+</code></pre>
+
+<strong>Space Complexity</strong>
+
+<pre><code>
+O(1)
+</code></pre>
+
+</div>
+
+<h3>Why is it Ω(1)?</h3>
+
+<p>
+
+The element is found during the
+<strong>first comparison</strong>.
+
+</p>
+
+<p>
+
+Only one comparison is required.
+
+</p>
+
+<p>
+
+Minimum operations remain constant.
+
+</p>
+
+<pre><code>
+Ω(1)
+</code></pre>
+
+<hr style="margin:40px 0;border-color:#334155;">
+
+<h3>Binary Search Example</h3>
+
+<pre><code>
+while(low&lt;=high){
+
+    int mid=(low+high)/2;
+
+    if(arr[mid]==key)
+
+        return mid;
+
+}
+</code></pre>
+
+<h3>Calculation</h3>
+
+<p>
+
+Suppose
+
+</p>
+
+<pre><code>
+Array
+
+10 20 30 40 50
+
+Target = 30
+</code></pre>
+
+<p>
+
+Middle Element
+
+</p>
+
+<pre><code>
+30
+</code></pre>
+
+<p>
+
+Found immediately.
+
+</p>
+
+<div class="note">
+
+<strong>Time Complexity</strong>
+
+<pre><code>
+Ω(1)
+</code></pre>
+
+</div>
+
+<h3>Real-Life Example</h3>
+
+<p>
+
+Imagine searching for a book that is already
+placed exactly in front of you.
+
+</p>
+
+<p>
+
+Only one check is needed.
+
+</p>
+
+<pre><code>
+Best Case
+
+Ω(1)
+</code></pre>
+
+</section>
+
+<!-- ================= BIG THETA ================= -->
+
+<section id="theta">
+
+<h2>🔵 Big Theta Notation ( Θ )</h2>
+
+<p>
+
+<strong>Big Theta (Θ)</strong>
+represents the
+<strong>Tight Bound</strong>.
+
+</p>
+
+<p>
+
+It tells us that the algorithm grows
+at approximately the same rate
+for both the upper and lower bounds.
+
+</p>
+
+<div class="note">
+
+<h3>Represents</h3>
+
+<h2 style="color:#3b82f6;">
+
+Exact Growth
+
+</h2>
+
+</div>
+
+<h3>Mathematical Definition</h3>
+
+<pre><code>
+
+C₁ × f(n)
+
+≤ T(n)
+
+≤ C₂ × f(n)
+
+for n ≥ n₀
+
+</code></pre>
+
+<h3>Java Example</h3>
+
+<pre><code>
+
+void mergeSort(int arr[],int l,int r){
+
+    if(l&lt;r){
+
+        int mid=(l+r)/2;
+
+        mergeSort(arr,l,mid);
+
+        mergeSort(arr,mid+1,r);
+
+        merge(arr,l,mid,r);
+
+    }
+
+}
+
+</code></pre>
+
+<h3>Step-by-Step Calculation</h3>
+
+<p>
+
+Merge Sort divides the array into
+two equal halves.
+
+</p>
+
+<p>
+
+Number of divisions
+
+</p>
+
+<pre><code>
+
+log₂ n
+
+</code></pre>
+
+<p>
+
+At every level,
+
+all elements are merged.
+
+</p>
+
+<pre><code>
+
+n
+
+</code></pre>
+
+<p>
+
+Total Work
+
+</p>
+
+<pre><code>
+
+n × log n
+
+</code></pre>
+
+<div class="note">
+
+<strong>Time Complexity</strong>
+
+<pre><code>
+
+Θ(n log n)
+
+</code></pre>
+
+<strong>Space Complexity</strong>
+
+<pre><code>
+
+O(n)
+
+</code></pre>
+
+</div>
+
+<h3>Why is it Θ(n log n)?</h3>
+
+<table>
+
+<tr>
+
+<th>Case</th>
+
+<th>Complexity</th>
+
+</tr>
+
+<tr>
+
+<td>Best</td>
+
+<td>Θ(n log n)</td>
+
+</tr>
+
+<tr>
+
+<td>Average</td>
+
+<td>Θ(n log n)</td>
+
+</tr>
+
+<tr>
+
+<td>Worst</td>
+
+<td>Θ(n log n)</td>
+
+</tr>
+
+</table>
+
+<p>
+
+Regardless of whether the array is
+
+</p>
+
+<ul>
+
+<li>Already Sorted</li>
+
+<li>Reverse Sorted</li>
+
+<li>Randomly Ordered</li>
+
+</ul>
+
+<p>
+
+Merge Sort always performs
+the same sequence of
+
+</p>
+
+<ul>
+
+<li>Divide</li>
+
+<li>Merge</li>
+
+</ul>
+
+<p>
+
+Hence,
+
+</p>
+
+<pre><code>
+
+Θ(n log n)
+
+</code></pre>
+
+<h3>Real-Life Example</h3>
+
+<p>
+
+Imagine searching through
+a telephone directory.
+
+</p>
+
+<p>
+
+You divide the directory into
+two halves repeatedly.
+
+</p>
+
+<p>
+
+Each level processes all names.
+
+</p>
+
+<pre><code>
+
+Θ(n log n)
+
+</code></pre>
+
+</section>
+
+<!-- ================= GROWTH TYPES ================= -->
+
+<section id="growth">
+
+<h2>📈 Common Growth Types</h2>
+
+<p>
+
+Below are the most common time complexities used in Data Structures and Algorithms.
+
+As we move downward, the algorithm becomes slower for large inputs.
+
+</p>
+
+<table>
+
+<tr>
+
+<th>Complexity</th>
+
+<th>Name</th>
+
+<th>Example</th>
+
+<th>Performance</th>
+
+</tr>
+
+<tr>
+
+<td><strong>O(1)</strong></td>
+
+<td>Constant</td>
+
+<td>Array Index Access</td>
+
+<td>⭐⭐⭐⭐⭐</td>
+
+</tr>
+
+<tr>
+
+<td><strong>O(log n)</strong></td>
+
+<td>Logarithmic</td>
+
+<td>Binary Search</td>
+
+<td>⭐⭐⭐⭐⭐</td>
+
+</tr>
+
+<tr>
+
+<td><strong>O(√n)</strong></td>
+
+<td>Square Root</td>
+
+<td>Prime Number Checking</td>
+
+<td>⭐⭐⭐⭐</td>
+
+</tr>
+
+<tr>
+
+<td><strong>O(n)</strong></td>
+
+<td>Linear</td>
+
+<td>Linear Search</td>
+
+<td>⭐⭐⭐⭐</td>
+
+</tr>
+
+<tr>
+
+<td><strong>O(n log n)</strong></td>
+
+<td>Linearithmic</td>
+
+<td>Merge Sort, Heap Sort</td>
+
+<td>⭐⭐⭐</td>
+
+</tr>
+
+<tr>
+
+<td><strong>O(n²)</strong></td>
+
+<td>Quadratic</td>
+
+<td>Bubble Sort</td>
+
+<td>⭐⭐</td>
+
+</tr>
+
+<tr>
+
+<td><strong>O(n³)</strong></td>
+
+<td>Cubic</td>
+
+<td>Matrix Multiplication</td>
+
+<td>⭐</td>
+
+</tr>
+
+<tr>
+
+<td><strong>O(2ⁿ)</strong></td>
+
+<td>Exponential</td>
+
+<td>Recursive Fibonacci</td>
+
+<td>❌</td>
+
+</tr>
+
+<tr>
+
+<td><strong>O(n!)</strong></td>
+
+<td>Factorial</td>
+
+<td>Permutations</td>
+
+<td>❌</td>
+
+</tr>
+
+</table>
+
+<div class="note">
+
+<h3>💡 Rule of Thumb</h3>
+
+<p>
+
+For large datasets,
+
+prefer algorithms having
+
+<strong>
+
+O(1),
+
+O(log n),
+
+O(n),
+
+or
+
+O(n log n)
+
+</strong>
+
+whenever possible.
+
+</p>
+
+</div>
+
+</section>
+
+<!-- ================= COMPARISON ================= -->
+
+<section id="comparison">
+
+<h2>📊 Comparison of Asymptotic Notations</h2>
+
+<table>
+
+<tr>
+
+<th>Notation</th>
+
+<th>Meaning</th>
+
+<th>Represents</th>
+
+<th>Example</th>
+
+</tr>
+
+<tr>
+
+<td>O(f(n))</td>
+
+<td>Upper Bound</td>
+
+<td>Worst Case</td>
+
+<td>Linear Search</td>
+
+</tr>
+
+<tr>
+
+<td>Ω(f(n))</td>
+
+<td>Lower Bound</td>
+
+<td>Best Case</td>
+
+<td>Linear Search</td>
+
+</tr>
+
+<tr>
+
+<td>Θ(f(n))</td>
+
+<td>Tight Bound</td>
+
+<td>Exact Growth</td>
+
+<td>Merge Sort</td>
+
+</tr>
+
+</table>
+
+<h3>Relationship</h3>
+
+<pre><code>
+
+            Worst Case
+
+                 ▲
+
+                 │
+
+              Big O
+
+                 │
+
+                 │
+
+              Big Θ
+
+                 │
+
+                 │
+
+              Big Ω
+
+                 │
+
+                 ▼
+
+             Best Case
+
+</code></pre>
+
+</section>
+
+<!-- ================= DIFFERENCE ================= -->
+
+<section>
+
+<h2>⚖️ Key Differences</h2>
+
+<table>
+
+<tr>
+
+<th>Feature</th>
+
+<th>Big O</th>
+
+<th>Big Ω</th>
+
+<th>Big Θ</th>
+
+</tr>
+
+<tr>
+
+<td>Meaning</td>
+
+<td>Upper Bound</td>
+
+<td>Lower Bound</td>
+
+<td>Tight Bound</td>
+
+</tr>
+
+<tr>
+
+<td>Represents</td>
+
+<td>Worst Case</td>
+
+<td>Best Case</td>
+
+<td>Exact Growth</td>
+
+</tr>
+
+<tr>
+
+<td>Symbol</td>
+
+<td>O</td>
+
+<td>Ω</td>
+
+<td>Θ</td>
+
+</tr>
+
+<tr>
+
+<td>Used For</td>
+
+<td>Maximum Operations</td>
+
+<td>Minimum Operations</td>
+
+<td>Overall Growth</td>
+
+</tr>
+
+</table>
+
+</section>
+
+<!-- ================= INTERVIEW ================= -->
+
+<section id="tips">
+
+<h2>🎯 Interview Tips</h2>
+
+<div class="note">
+
+<ul>
+
+<li>Always explain both <strong>Time Complexity</strong> and <strong>Space Complexity</strong>.</li>
+
+<li>Count the number of loops carefully.</li>
+
+<li>Nested loops generally result in O(n²).</li>
+
+<li>Halving the input usually results in O(log n).</li>
+
+<li>Ignore constants while calculating complexity.</li>
+
+<li>Focus on the highest-order term.</li>
+
+<li>Recursive algorithms should also consider recursion depth.</li>
+
+<li>Space Complexity includes recursion stack memory.</li>
+
+</ul>
+
+</div>
+
+<h3>Common Interview Questions</h3>
+
+<ul>
+
+<li>What is the difference between Big O and Big Θ?</li>
+
+<li>Why is Merge Sort Θ(n log n)?</li>
+
+<li>Why is Binary Search O(log n)?</li>
+
+<li>Why is Bubble Sort O(n²)?</li>
+
+<li>Can an algorithm have different Best and Worst Cases?</li>
+
+<li>Why do we ignore constants in Big O?</li>
+
+</ul>
+
+</section>
+
+<!-- ================= SUMMARY ================= -->
+
+<section id="summary">
+
+<h2>📚 Summary</h2>
+
+<div class="note">
+
+<ul>
+
+<li>Big O measures the <strong>Worst Case</strong>.</li>
+
+<li>Big Ω measures the <strong>Best Case</strong>.</li>
+
+<li>Big Θ measures the <strong>Exact Growth</strong>.</li>
+
+<li>Time Complexity measures execution growth.</li>
+
+<li>Space Complexity measures memory growth.</li>
+
+<li>Efficient algorithms help solve large problems faster.</li>
+
+<li>Always compare algorithms using asymptotic analysis instead of execution time.</li>
+
+</ul>
+
+</div>
+
+</section>
+
+<!-- ================= VISUALIZER ================= -->
+
+<section id="visualizer">
+
+<h2>🎬 Interactive Complexity Visualizer</h2>
+
+<p>
+
+Understanding complexity becomes much easier when you can
+see how an algorithm grows as the input size increases.
+
+</p>
+
+<div class="note">
+
+<h3>🚀 Launch Interactive Visualizer</h3>
+
+<p>
+
+Click the button below to open the interactive Time &
+Space Complexity Visualizer.
+
+</p>
+
+<p>
+
+Inside the visualizer you can explore
+
+</p>
+
+<ul>
+
+<li>Big O (Worst Case)</li>
+
+<li>Big Ω (Best Case)</li>
+
+<li>Big Θ (Exact Growth)</li>
+
+<li>Time Complexity</li>
+
+<li>Space Complexity</li>
+
+<li>Interactive Graphs</li>
+
+<li>Java Examples</li>
+
+<li>Growth Comparison</li>
+
+</ul>
+
+<br>
+
+<a href="visualizer.html"
+style="background:#2563eb;
+color:white;
+padding:15px 28px;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+display:inline-block;
+transition:.3s;">
+
+🚀 Launch Interactive Visualizer
+
+</a>
+
+</div>
+
+</section>
+
+<!-- ================= RELATED ================= -->
+
+<section>
+
+<h2>📚 Related Topics</h2>
+
+<div style="display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;">
+
+<div class="note">
+
+<h3>🔍 Searching Algorithms</h3>
+
+<p>
+
+Linear Search
+
+Binary Search
+
+Jump Search
+
+</p>
+
+</div>
+
+<div class="note">
+
+<h3>📊 Sorting Algorithms</h3>
+
+<p>
+
+Bubble Sort
+
+Merge Sort
+
+Quick Sort
+
+Heap Sort
+
+</p>
+
+</div>
+
+<div class="note">
+
+<h3>📚 Data Structures</h3>
+
+<p>
+
+Array
+
+Linked List
+
+Stack
+
+Queue
+
+Tree
+
+Graph
+
+</p>
+
+</div>
+
+<div class="note">
+
+<h3>💻 Java DSA</h3>
+
+<p>
+
+Collections
+
+Recursion
+
+Backtracking
+
+Dynamic Programming
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+<!-- Floating Visualizer Button -->
+
+<a href="visualizer.html"
+class="floating">
+
+🎬 Visualizer
+
+</a>
+
+<footer>
+
+<h3>
+
+DSA Java Learning Platform
+
+</h3>
+
+<br>
+
+<p>
+
+Made with ❤️ for Students
+
+</p>
+
+<br>
+
+<p>
+
+Learn • Visualize • Practice • Master
+
+</p>
+
+</footer>
+
+<script>
+
+// Highlight current section
+
+const sections=document.querySelectorAll("section");
+
+const navLinks=document.querySelectorAll("nav a");
+
+window.addEventListener("scroll",()=>{
+
+let current="";
+
+sections.forEach(section=>{
+
+const sectionTop=section.offsetTop-120;
+
+if(pageYOffset>=sectionTop){
+
+current=section.getAttribute("id");
+
+}
+
+});
+
+navLinks.forEach(link=>{
+
+link.style.color="#ffffff";
+
+if(link.getAttribute("href")==="#"+current){
+
+link.style.color="#38bdf8";
+
+}
+
+});
+
+});
+
+// Smooth fade animation
+
+const observer=new IntersectionObserver(entries=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.animate([
+
+{
+
+opacity:0,
+
+transform:"translateY(40px)"
+
+},
+
+{
+
+opacity:1,
+
+transform:"translateY(0px)"
+
+}
+
+],{
+
+duration:700,
+
+fill:"forwards"
+
+});
+
+}
+
+});
+
+});
+
+document.querySelectorAll("section").forEach(section=>{
+
+observer.observe(section);
+
+});
+
+</script>
+
 </body>
+
 </html>

@@ -1,431 +1,303 @@
-# ⏱️ Time & Space Complexity
+# Complete Guide to Asymptotic Notations
 
-> Understanding **Time Complexity** and **Space Complexity** is essential for analyzing the efficiency of algorithms. They help us compare different solutions and choose the most optimal one for a given problem.
+## Table of Contents
 
----
+1.  Introduction
+2.  Big O Notation
+3.  Big Omega Notation
+4.  Big Theta Notation
+5.  Growth Types
+6.  Comparison Table
+7.  Interview Tips
 
-# 📖 Table of Contents
+------------------------------------------------------------------------
 
-- What is Time Complexity?
-- What is Space Complexity?
-- Why Complexity Analysis?
-- Asymptotic Analysis
-- Big O Notation (O)
-- Big Omega Notation (Ω)
-- Big Theta Notation (Θ)
-- Comparison Table
-- Examples
-- Complexity Cheat Sheet
-- Interview Tips
+# Introduction
 
----
+Asymptotic notations describe how an algorithm behaves as the input size
+(**n**) becomes very large.
 
-# 📌 What is Time Complexity?
+They ignore: - Machine speed - Programming language - Compiler
+optimizations
 
-Time Complexity is the amount of **time** an algorithm takes to execute as the input size (**n**) increases.
+They focus only on **growth rate**.
 
-It does **not** measure actual execution time in seconds.
+------------------------------------------------------------------------
 
-Instead, it measures the **growth rate** of the algorithm.
-
-### Example
-
-```java
-for(int i=0;i<n;i++){
-    System.out.println(i);
-}
-```
-
-The loop executes **n** times.
-
-**Time Complexity = O(n)**
-
----
-
-# 📌 What is Space Complexity?
-
-Space Complexity is the amount of **extra memory** used by an algorithm during execution.
-
-It includes:
-
-- Variables
-- Temporary Arrays
-- Function Call Stack
-- Dynamic Memory Allocation
-
-### Example
-
-```java
-int sum = 0;
-```
-
-Only one variable is used.
-
-**Space Complexity = O(1)**
-
----
-
-# ❓ Why Complexity Analysis?
-
-Complexity analysis helps us
-
-- Compare algorithms
-- Select the most efficient solution
-- Predict performance for large inputs
-- Optimize programs
-
----
-
-# 📈 Asymptotic Analysis
-
-Asymptotic Analysis studies algorithm performance as the input size (**n**) becomes very large.
-
-Three important notations are:
-
-- Big O (O)
-- Big Omega (Ω)
-- Big Theta (Θ)
-
----
-
-# 🔴 Big O Notation (O)
+# 1. Big O Notation (O)
 
 ## Definition
 
 Big O represents the **Upper Bound** of an algorithm.
 
-It tells us the **maximum amount of time** an algorithm may take.
+It tells the **maximum time** an algorithm may require.
 
 ### Represents
 
-✅ Worst Case
+-   Worst Case
 
----
+## Mathematical Formula
 
-## Mathematical Definition
-
-```
 T(n) ≤ C × f(n)
 
 for n ≥ n₀
-```
 
-where
+Where
 
-- T(n) = Running Time
-- f(n) = Complexity Function
-- C = Constant
-- n₀ = Starting Point
-
----
+-   T(n) = Actual running time
+-   f(n) = Complexity function
+-   C = Positive constant
+-   n₀ = Starting input size
 
 ## Example
 
-Linear Search
-
-```java
-int linearSearch(int arr[], int key){
-
-    for(int i=0;i<arr.length;i++){
-
-        if(arr[i]==key)
-            return i;
-
-    }
-
-    return -1;
-
+``` java
+for(int i=0;i<n;i++){
+    System.out.println(i);
 }
 ```
 
-Worst Case
+### Calculation
 
-The element is not present.
+Loop runs n times.
 
-The loop runs **n** times.
+Operations
 
-### Time Complexity
+1 + 1 + 1 + ... + 1
 
-```
+= n
+
+Time Complexity
+
 O(n)
+
+Space Complexity
+
+O(1)
+
+## Another Example
+
+``` java
+for(int i=0;i<n;i++){
+    for(int j=0;j<n;j++){
+        System.out.println(i+j);
+    }
+}
 ```
 
----
+Outer loop = n
+
+Inner loop = n
+
+Total Operations
+
+n × n
+
+= n²
+
+Time Complexity
+
+O(n²)
+
+Space Complexity
+
+O(1)
 
 ## Real-Life Example
 
-Searching a name in an unsorted notebook.
+Searching every page of an unsorted notebook.
 
-You may need to check every page.
+Worst case = every page checked.
 
-Worst Case
+------------------------------------------------------------------------
 
-```
-O(n)
-```
-
----
-
-# 🟢 Big Omega Notation (Ω)
+# 2. Big Omega Notation (Ω)
 
 ## Definition
 
-Big Omega represents the **Lower Bound** of an algorithm.
+Big Omega represents the **Lower Bound**.
 
-It tells us the **minimum amount of time** required.
+It tells the **minimum amount of work** required.
 
 ### Represents
 
-✅ Best Case
+-   Best Case
 
----
+## Mathematical Formula
 
-## Mathematical Definition
-
-```
 T(n) ≥ C × f(n)
 
 for n ≥ n₀
-```
-
----
 
 ## Example
 
-Binary Search
-
-```java
-int binarySearch(int arr[], int key){
-
-    int left=0;
-    int right=arr.length-1;
-
-    while(left<=right){
-
-        int mid=(left+right)/2;
-
-        if(arr[mid]==key)
-            return mid;
-
-        if(arr[mid]<key)
-            left=mid+1;
-        else
-            right=mid-1;
-
+``` java
+int linearSearch(int arr[],int key){
+    for(int i=0;i<arr.length;i++){
+        if(arr[i]==key)
+            return i;
     }
-
     return -1;
-
 }
 ```
 
-Best Case
+### Best Case
 
-Target found at first middle element.
+Element found at first position.
 
-```
+Operations
+
+1
+
+Time Complexity
+
 Ω(1)
+
+Space Complexity
+
+O(1)
+
+## Another Example
+
+Binary Search
+
+``` java
+while(low<=high){
+    int mid=(low+high)/2;
+    if(arr[mid]==key)
+        return mid;
+}
 ```
 
----
+If first middle element is the answer,
 
-## Real-Life Example
+Operations = 1
 
-Finding a book placed exactly in front of you.
-
-Only one check is required.
-
-```
 Ω(1)
-```
 
----
+------------------------------------------------------------------------
 
-# 🔵 Big Theta Notation (Θ)
+# 3. Big Theta Notation (Θ)
 
 ## Definition
 
 Big Theta represents the **Tight Bound**.
 
-It gives both the
-
-- Upper Bound
-- Lower Bound
-
-The algorithm always grows at the same rate.
+It gives both upper and lower bounds.
 
 ### Represents
 
-✅ Average / Exact Growth
+-   Exact Growth
+-   Average Growth (commonly used)
 
----
+## Mathematical Formula
 
-## Mathematical Definition
+C₁ × f(n) ≤ T(n) ≤ C₂ × f(n)
 
-```
-C₁ × f(n)
-
-≤ T(n)
-
-≤ C₂ × f(n)
-```
-
-for
-
-```
-n ≥ n₀
-```
-
----
+for n ≥ n₀
 
 ## Example
 
 Merge Sort
 
-Merge Sort always divides the array into two halves.
+``` java
+void mergeSort(int arr[],int l,int r){
+    if(l<r){
+        int mid=(l+r)/2;
 
+        mergeSort(arr,l,mid);
+        mergeSort(arr,mid+1,r);
+
+        merge(arr,l,mid,r);
+    }
+}
 ```
+
+### Calculation
+
+Levels of recursion
+
+log n
+
+Each level processes
+
+n elements
+
+Total
+
+n × log n
+
 Θ(n log n)
-```
 
-Best Case
+Best
 
-```
 Θ(n log n)
-```
 
-Worst Case
+Average
 
-```
 Θ(n log n)
-```
 
-Average Case
+Worst
 
-```
 Θ(n log n)
-```
 
----
+Space
 
-## Real-Life Example
-
-Dividing a phone directory into halves repeatedly.
-
-The work grows consistently.
-
-```
-Θ(n log n)
-```
-
----
-
-# 📊 Comparison Table
-
-| Notation | Represents | Case | Example |
-|----------|------------|------|----------|
-| **O(f(n))** | Upper Bound | Worst Case | Linear Search → O(n) |
-| **Ω(f(n))** | Lower Bound | Best Case | Binary Search → Ω(1) |
-| **Θ(f(n))** | Tight Bound | Average/Exact | Merge Sort → Θ(n log n) |
-
----
-
-# 📈 Relationship
-
-```
-           Worst Case
-                ▲
-                │
-             Big O
-                │
-                │
-             Big Θ
-                │
-                │
-          Big Ω
-                │
-                ▼
-            Best Case
-```
-
----
-
-# 💡 Example Comparison
-
-Suppose we search an element in an array.
-
-### Linear Search
-
-Best Case
-
-```
-Ω(1)
-```
-
-Average Case
-
-```
-Θ(n)
-```
-
-Worst Case
-
-```
 O(n)
-```
 
----
+------------------------------------------------------------------------
 
-### Binary Search
+# Common Growth Types
 
-Best Case
+  Growth       Example
+  ------------ -----------------------
+  O(1)         Array Index
+  O(log n)     Binary Search
+  O(√n)        Prime Checking
+  O(n)         Linear Search
+  O(n log n)   Merge Sort
+  O(n²)        Bubble Sort
+  O(n³)        Matrix Multiplication
+  O(2ⁿ)        Subset Generation
+  O(n!)        Permutations
 
-```
-Ω(1)
-```
+------------------------------------------------------------------------
 
-Average Case
+# Comparison
 
-```
-Θ(log n)
-```
+  Notation   Meaning       Case    Example
+  ---------- ------------- ------- ---------------
+  O(f(n))    Upper Bound   Worst   Linear Search
+  Ω(f(n))    Lower Bound   Best    Linear Search
+  Θ(f(n))    Tight Bound   Exact   Merge Sort
 
-Worst Case
+------------------------------------------------------------------------
 
-```
-O(log n)
-```
+# Key Differences
 
----
+  Feature      Big O         Big Ω         Big Θ
+  ------------ ------------- ------------- --------------
+  Meaning      Upper Bound   Lower Bound   Tight Bound
+  Represents   Worst Case    Best Case     Exact Growth
+  Symbol       O             Ω             Θ
 
-# 📌 Complexity Cheat Sheet
+------------------------------------------------------------------------
 
-| Operation | Best | Average | Worst |
-|-----------|------|---------|-------|
-| Linear Search | Ω(1) | Θ(n) | O(n) |
-| Binary Search | Ω(1) | Θ(log n) | O(log n) |
-| Bubble Sort | Ω(n) | Θ(n²) | O(n²) |
-| Merge Sort | Θ(n log n) | Θ(n log n) | O(n log n) |
+# Interview Tips
 
----
+-   Big O → Maximum operations.
+-   Big Ω → Minimum operations.
+-   Big Θ → Same growth in upper and lower bounds.
+-   Always mention both **Time Complexity** and **Space Complexity**.
+-   Explain **why** a complexity occurs by counting loops, recursive
+    levels, or memory usage.
 
-# 🎯 Interview Tips
+------------------------------------------------------------------------
 
-✅ Big O → Worst Case
+# Summary
 
-✅ Big Omega → Best Case
-
-✅ Big Theta → Tight Bound (Average/Exact Growth)
-
-Always mention **both Time Complexity and Space Complexity** when explaining an algorithm.
-
----
-
-# 📚 Summary
-
-- **Time Complexity** measures execution time growth.
-- **Space Complexity** measures extra memory usage.
-- **Big O (O)** describes the worst-case upper bound.
-- **Big Omega (Ω)** describes the best-case lower bound.
-- **Big Theta (Θ)** describes the exact or tight bound.
-- These notations help compare algorithms and select efficient solutions.
+-   Big O measures the worst-case growth.
+-   Big Ω measures the best-case growth.
+-   Big Θ measures the exact growth when upper and lower bounds match.
+-   These notations are essential for comparing algorithms and choosing
+    efficient solutions.
