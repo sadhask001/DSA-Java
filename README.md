@@ -1,210 +1,236 @@
+# 🚀 Data Structures & Algorithms using Java & Python
 
-# 🚀 Data Structures & Algorithms in Java
+> **Complete 180 Hours Master Course**
 
-> A complete repository to learn **Data Structures and Algorithms (DSA)** from beginner to advanced using **Java**.
+This README is structured according to the uploaded daily course plan.
 
 ---
 
-# 📚 Course Roadmap
+# 📚 Course Flow
 
-## 1. Algorithm Analysis
+## Phase 1 – Revision & Foundation
+- Revision (Core Java up to Multithreading)
+- Introduction to Data Structures
 - Introduction to Algorithms
+- Types of Algorithms
+- Performance Analysis
 - Time Complexity
 - Space Complexity
-- Asymptotic Notations
-  - Big O (O)
-  - Big Omega (Ω)
-  - Big Theta (Θ)
-  - little o (o)
-  - little omega (ω)
+- Big O, Big Omega, Big Theta
+- Counting Sort
+- Practice Questions
 
 ---
 
-## 2. Arrays
-- 1D Arrays
-- 2D Arrays
-- Dynamic Arrays
-- Prefix Sum
-- Sliding Window
-- Two Pointer Technique
-
----
-
-## 3. Searching
-- Linear Search
-- Binary Search
-- Jump Search
-- Interpolation Search
-- Exponential Search
-
----
-
-## 4. Sorting
+## Phase 2 – Sorting
 - Bubble Sort
 - Selection Sort
 - Insertion Sort
-- Merge Sort
-- Quick Sort
-- Heap Sort
-- Counting Sort
-- Radix Sort
-- Bucket Sort
-
----
-
-## 5. Strings
-- String Basics
-- StringBuilder
-- Pattern Matching
-- Palindrome
-- Anagrams
-- KMP
-- Rabin-Karp
-
----
-
-## 6. Recursion & Backtracking
-- Basic Recursion
-- Tail Recursion
-- Backtracking
-- N Queens
-- Sudoku
-- Rat in a Maze
-
----
-
-## 7. Linked List
-- Singly Linked List
-- Doubly Linked List
-- Circular Linked List
-- Operations
-- Problems
-
----
-
-## 8. Stack
-- Array Implementation
-- Linked List Implementation
-- Applications
-- Expression Conversion
-- Expression Evaluation
-
----
-
-## 9. Queue
-- Simple Queue
-- Circular Queue
-- Deque
-- Priority Queue
-
----
-
-## 10. Hashing
-- HashMap
-- HashSet
-- Collision Handling
-- Frequency Counting
-
----
-
-## 11. Trees
-- Binary Tree
-- Binary Search Tree
-- AVL Tree
-- Red Black Tree
-- Segment Tree
-- Fenwick Tree
-- Trie
-
----
-
-## 12. Heap
-- Min Heap
-- Max Heap
-- Heap Operations
-- Heap Sort
-
----
-
-## 13. Graphs
-- Representation
-- BFS
-- DFS
-- Topological Sort
-- Shortest Path
-- MST
-- Union Find
-
----
-
-## 14. Dynamic Programming
-- Memoization
-- Tabulation
-- Knapsack
-- LIS
-- LCS
-- Matrix Chain Multiplication
-
----
-
-## 15. Greedy Algorithms
-- Activity Selection
-- Huffman Coding
-- Fractional Knapsack
-- Job Sequencing
-
----
-
-## 16. Advanced Topics
-- Bit Manipulation
-- Divide & Conquer
-- Disjoint Set Union
-- Sliding Window
-- Monotonic Stack
-- Binary Lifting
-- Sparse Table
-
----
-
-# 📂 Suggested Repository Structure
-
-```text
-DSA/
-├── README.md
-├── Complexity/
-├── Arrays/
-├── Searching/
-├── Sorting/
-├── Strings/
-├── Recursion/
-├── LinkedList/
-├── Stack/
-├── Queue/
-├── Hashing/
-├── Trees/
-├── Heap/
-├── Graph/
-├── DynamicProgramming/
-├── Greedy/
-├── Advanced/
-├── Practice/
-└── Resources/
-```
-
-# 🛠️ Language
-- Java (Primary)
-
-# 🎯 Features
-- Theory Notes
-- Java Programs
-- Dry Run Examples
 - Time & Space Complexity
 - Interview Questions
 - Practice Problems
-- Visual Diagrams
 
-# 🤝 Contributions
-Contributions are welcome! Fork the repository, create a new branch, commit your changes, and submit a pull request.
+---
+
+## Phase 3 – Searching
+- Linear Search
+- Binary Search
+- Jump Search
+- Binary Search Applications
+- Complexity Comparison
+- Practice Problems
+
+---
+
+## Phase 4 – Java Collections Framework
+### Collection Hierarchy
+- Collection
+- List
+- Set
+- Queue
+- Map
+
+### ArrayList
+- Introduction
+- Internal Working
+- Runtime Input
+- CRUD Operations
+- Functions
+- 2D ArrayList
+- Practice Questions
+
+---
+
+## Phase 5 – Linked List
+
+### Singly Linked List
+- Insert Beginning
+- Insert End
+- Insert Position
+- Delete Beginning
+- Delete End
+- Delete Position
+- Search
+- Count
+- Reverse
+- Merge
+- Merge Two Sorted Lists
+- Rotate
+- Sort
+- Remove Duplicates
+
+### Doubly Linked List
+- Insert
+- Delete
+- Display Forward
+- Display Backward
+
+### Circular Linked List
+- Insert
+- Delete
+- Traversal
+
+### Circular Doubly Linked List
+- Insert
+- Delete
+- Traversal
+
+---
+
+## Phase 6 – Stack
+
+### Array Implementation
+- Push
+- Pop
+- Peek
+- IsEmpty
+- IsFull
+- Size
+- Display
+
+### ArrayList Implementation
+
+### Linked List Implementation
+
+### Applications
+- Decimal to Binary
+- Balanced Parentheses
+- String Reverse
+- Number Reverse
+- Palindrome
+- Tower of Hanoi
+
+### Expression Conversion
+- Infix → Postfix
+- Infix → Prefix
+- Prefix → Infix
+- Prefix → Postfix
+- Postfix → Infix
+- Postfix → Prefix
+
+---
+
+## Phase 7 – Queue
+
+### Array
+- Simple Queue
+- Circular Queue
+- Priority Queue
+- Deque
+
+### Linked List
+- Simple Queue
+- Circular Queue
+- Priority Queue
+- Deque
+
+### Java Collections
+- ArrayDeque
+- Queue Interface
+
+---
+
+## Phase 8 – Trees
+
+### Binary Tree
+- Terminology
+- Applications
+- Representation
+- Preorder
+- Inorder
+- Postorder
+- Level Order (BFS)
+- Expression Tree
+
+### Binary Search Tree
+- Introduction
+- Properties
+- Insertion
+- Traversal
+- Searching
+- Deletion
+
+---
+
+## Phase 9 – Future Modules (180 Hours)
+
+- Graphs
+- AVL Tree
+- Red Black Tree
+- Hashing
+- Heap
+- Dynamic Programming
+- Greedy Algorithms
+- Backtracking
+- Trie
+- Segment Tree
+- Fenwick Tree
+- Disjoint Set Union
+- Projects
+- Mock Interviews
+
+---
+
+# 📂 Repository Structure
+
+```text
+DSA/
+├── 01-Revision/
+├── 02-Complexity/
+├── 03-Sorting/
+├── 04-Searching/
+├── 05-Collections/
+├── 06-ArrayList/
+├── 07-LinkedList/
+├── 08-Stack/
+├── 09-Queue/
+├── 10-Trees/
+├── 11-BST/
+├── 12-Graphs/
+├── 13-AVL/
+├── 14-RedBlackTree/
+├── 15-Hashing/
+├── 16-Heap/
+├── 17-DynamicProgramming/
+├── 18-Projects/
+└── README.md
+```
+
+---
+
+# 🎯 Learning Outcomes
+
+- Strong DSA fundamentals
+- Efficient problem solving
+- Placement preparation
+- Competitive programming readiness
+- Java & Python implementations
+- Interview-focused practice
+
+---
 
 # ⭐ Support
-If this repository helps you, consider giving it a **Star ⭐** on GitHub.
+
+If this repository helps you, please ⭐ Star the repository.
+
+Happy Coding 🚀
