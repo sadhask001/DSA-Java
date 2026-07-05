@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Asymptotic Complexity Visualizer</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for rendering graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="border-b border-gray-800 pb-4">
+            <h1 class="text-3xl font-bold text-indigo-400">Asymptotic Complexity Visualizer</h1>
+            <p class="text-gray-400 mt-1">Analyze algorithm scalability parameters relative to notation boundaries and runtime scenarios.</p>
+        </header>
+
+        <!-- Main Layout Split Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Controls Sidebar (4 Cols) -->
+            <div class="lg:col-span-4 space-y-6 bg-gray-800 p-6 rounded-xl border border-gray-700">
+                <!-- Perspective Toggle -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-2">Metric Type</label>
+                    <div class="flex rounded-md bg-gray-900 p-1">
+                        <button id="btnTime" class="flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" onclick="setMetric('time')">Time (Ops)</button>
+                        <button id="btnSpace" class="flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition" onclick="setMetric('space')">Space (Memory)</button>
+                    </div>
+                </div>
+
+                <!-- Asymptotic Notation Type -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-2">Asymptotic Notation Bound</label>
+                    <div class="flex rounded-md bg-gray-900 p-1">
+                        <button id="btnBigO" class="flex-1 py-1.5 text-xs font-mono font-bold rounded bg-indigo-600 text-white transition" onclick="setNotationType('O')">O (Upper)</button>
+                        <button id="btnTheta" class="flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition" onclick="setNotationType('Theta')">Θ (Tight)</button>
+                        <button id="btnOmega" class="flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition" onclick="setNotationType('Omega')">Ω (Lower)</button>
+                    </div>
+                </div>
+
+                <!-- Scenario Case Scenario Selection -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-2">Runtime Case Scenario</label>
+                    <div class="flex rounded-md bg-gray-900 p-1">
+                        <button id="btnBest" class="flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition" onclick="setCaseScenario('best')">Best</button>
+                        <button id="btnAverage" class="flex-1 py-1.5 text-xs font-semibold rounded bg-indigo-600 text-white transition" onclick="setCaseScenario('average')">Average</button>
+                        <button id="btnWorst" class="flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition" onclick="setCaseScenario('worst')">Worst</button>
+                    </div>
+                </div>
+
+                <!-- Notation Target Selection -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-2">Select Target Algorithm Profile</label>
+                    <select id="notationSelect" class="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" onchange="handleNotationChange()">
+                        <option value="O(1)">Constant Baseline Structure</option>
+                        <option value="O(log n)">Logarithmic Tracking (e.g. Binary Search)</option>
+                        <option value="O(n)" selected>Linear Evaluation (e.g. Linear Search)</option>
+                        <option value="O(n log n)">Linearithmic Sorts (e.g. Merge Sort)</option>
+                        <option value="O(n^2)">Quadratic Sorts (e.g. Bubble Sort)</option>
+                        <option value="O(2^n)">Exponential Scaling (e.g. Fibonacci)</option>
+                    </select>
+                </div>
+
+                <!-- Input Size Slider -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-semibold text-gray-400">Input Size (n)</label>
+                        <span id="nValue" class="text-indigo-400 font-mono text-lg font-bold">16</span>
+                    </div>
+                    <input id="nSlider" type="range" min="2" max="50" value="16" class="w-full accent-indigo-500" oninput="updateVisuals()">
+                </div>
+
+                <!-- Live Metrics Summary -->
+                <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Growth Impact at current n</h3>
+                    <p id="metricImpact" class="text-sm text-gray-300 font-mono">Operations required: ~16</p>
+                </div>
+            </div>
+
+            <!-- Graph and Code Displays (8 Cols) -->
+            <div class="lg:col-span-8 space-y-6">
+                <!-- Graph Container -->
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <canvas id="growthChart" class="w-full h-64"></canvas>
+                </div>
+
+                <!-- Context and Code Section -->
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 space-y-4">
+                    
+                    <!-- Code View Tab Controls -->
+                    <div class="flex border-b border-gray-700 pb-2 justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button id="tabPresets" class="text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" onclick="switchTab('presets')">Preset Reference</button>
+                            <button id="tabSandbox" class="text-sm font-bold text-gray-400 hover:text-white pb-2" onclick="switchTab('sandbox')">Custom Code Sandbox 🧪</button>
+                        </div>
+                        <span id="analyzerBadge" class="hidden text-xs bg-indigo-950 border border-indigo-700 text-indigo-300 px-2 py-0.5 rounded font-mono">Analyzer Active</span>
+                    </div>
+
+                    <div>
+                        <h2 id="exampleTitle" class="text-xl font-bold text-white mb-1">Linear Evaluation Example</h2>
+                        <p id="exampleDesc" class="text-sm text-gray-400 font-mono"></p>
+                    </div>
+
+                    <!-- Code Snippet Display / Textarea -->
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">Implementation Structure</span>
+                        
+                        <!-- Reference Container -->
+                        <div id="presetContainer">
+                            <pre class="bg-gray-950 p-4 rounded-lg overflow-x-auto text-sm font-mono text-emerald-400 border border-gray-900"><code id="codeSnippet"></code></pre>
+                        </div>
+
+                        <!-- Sandbox Container -->
+                        <div id="sandboxContainer" class="hidden space-y-2">
+                            <textarea id="customCodeInput" class="w-full h-52 bg-gray-950 border border-gray-700 rounded-lg p-4 font-mono text-xs text-indigo-300 focus:outline-none focus:border-indigo-500" oninput="handleSandboxInput()"></textarea>
+                            <div class="bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs text-gray-400 font-mono space-y-1">
+                                <p class="text-indigo-400 font-semibold mb-1">✨ Interactive Comment Tags Available:</p>
+                                <p>You can force scenario-specific tracking using tags anywhere in your code lines:</p>
+                                <p>• <code>// @best O(1)</code> or <code>// @worst O(n^2)</code></p>
+                                <p>• <code>// @space O(n)</code></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- App Engine Logic -->
+    <script>
+        let currentMetric = 'time';
+        let currentNotationType = 'O'; 
+        let currentCaseScenario = 'average'; 
+        let currentTab = 'presets'; 
+        let chartInstance = null;
+
+        const dataTemplates = {
+            "O(1)": {
+                time: {
+                    title: "Constant Time Baseline",
+                    desc: "Decoupled execution complexity. Operations are identical regardless of input scaling.",
+                    code: "int getElement(int arr[]) {\n    return arr[0]; \n}",
+                    best: (n) => 1, average: (n) => 1, worst: (n) => 1,
+                    notationMap: { best: "1", average: "1", worst: "1" }
+                },
+                space: {
+                    title: "Constant Space Profile",
+                    desc: "Memory stays local within static allocation bounds.",
+                    code: "void swap(int *x, int *y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}",
+                    best: (n) => 1, average: (n) => 1, worst: (n) => 1,
+                    notationMap: { best: "1", average: "1", worst: "1" }
+                }
+            },
+            "O(log n)": {
+                time: {
+                    title: "Logarithmic Search Profile",
+                    desc: "Divide and conquer structures reduce tracking ranges dynamically.",
+                    code: "int binarySearch(int arr[], int n, int target) {\n    int low = 0, high = n - 1;\n    while(low <= high) {\n        int mid = low + (high-low)/2;\n        if(arr[mid] == target) return mid;\n        if(arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}",
+                    best: (n) => 1, average: (n) => Math.log2(n) * 0.7, worst: (n) => Math.log2(n),
+                    notationMap: { best: "1", average: "log n", worst: "log n" }
+                },
+                space: {
+                    title: "Logarithmic Stack Boundaries",
+                    desc: "Tracks depth frames across execution layers.",
+                    code: "void recurse(int n) {\n    if (n <= 1) return;\n    recurse(n / 2);\n}",
+                    best: (n) => 1, average: (n) => Math.log2(n), worst: (n) => Math.log2(n),
+                    notationMap: { best: "1", average: "log n", worst: "log n" }
+                }
+            },
+            "O(n)": {
+                time: {
+                    title: "Linear Complexity Profiling",
+                    desc: "Scanning through dataset items sequentially.",
+                    code: "int linearSearch(int arr[], int n, int target) {\n    for(int i = 0; i < n; i++) {\n        if(arr[i] == target) return i; \n    }\n    return -1;\n}",
+                    best: (n) => 1, average: (n) => n / 2, worst: (n) => n,
+                    notationMap: { best: "1", average: "n", worst: "n" }
+                },
+                space: {
+                    title: "Linear Array Allocations",
+                    desc: "Dynamic layout bounds mapping items directly matching input parameters.",
+                    code: "int* buildArray(int n) {\n    return (int*)malloc(n * sizeof(int));\n}",
+                    best: (n) => n, average: (n) => n, worst: (n) => n,
+                    notationMap: { best: "n", average: "n", worst: "n" }
+                }
+            },
+            "O(n log n)": {
+                time: {
+                    title: "Linearithmic Sort Frameworks",
+                    desc: "Highly scalable sorting execution maps splitting loops against complete data frames.",
+                    code: "void mergeSort(int arr[], int l, int r) {\n    if (l < r) {\n        int m = l + (r-l)/2;\n        mergeSort(arr, l, m);\n        mergeSort(arr, m+1, r);\n        merge(arr, l, m, r);\n    }\n}",
+                    best: (n) => n * Math.log2(n) * 0.8, average: (n) => n * Math.log2(n), worst: (n) => n * Math.log2(n) * 1.2,
+                    notationMap: { best: "n log n", average: "n log n", worst: "n log n" }
+                },
+                space: {
+                    title: "Linearithmic Buffer Context",
+                    desc: "Dynamic workspace allocation layers.",
+                    code: "void contextAlloc(int n) {\n    for(int i = 1; i < n; i *= 2) {\n        int *b = malloc(n * sizeof(int)); free(b);\n    }\n}",
+                    best: (n) => n, average: (n) => n * Math.log2(n), worst: (n) => n * Math.log2(n),
+                    notationMap: { best: "n", average: "n log n", worst: "n log n" }
+                }
+            },
+            "O(n^2)": {
+                time: {
+                    title: "Quadratic Sort Implementations",
+                    desc: "Overlapping iteration matrices tracking array layers inside secondary array loops.",
+                    code: "void bubbleSort(int arr[], int n) {\n    for(int i=0; i<n; i++) {\n        for(int j=0; j<n-i-1; j++) {\n            if(arr[j] > arr[j+1]) swap(&arr[j], &arr[j+1]);\n        }\n    }\n}",
+                    best: (n) => n, average: (n) => (n * n) / 2, worst: (n) => n * n,
+                    notationMap: { best: "n", average: "n^2", worst: "n^2" }
+                },
+                space: {
+                    title: "Quadratic Matrix Allocation",
+                    desc: "Grid mapping layers utilizing full height matching widths completely.",
+                    code: "int** makeGrid(int n) {\n    int** g = malloc(n * sizeof(int*));\n    for(int i=0; i<n; i++) g[i] = malloc(n * sizeof(int));\n    return g;\n}",
+                    best: (n) => n * n, average: (n) => n * n, worst: (n) => n * n,
+                    notationMap: { best: "n^2", average: "n^2", worst: "n^2" }
+                }
+            },
+            "O(2^n)": {
+                time: {
+                    title: "Exponential Processing Cascades",
+                    desc: "Deep branching layers triggering multiplication steps at consecutive tiers.",
+                    code: "int fib(int n) {\n    if (n <= 1) return n;\n    return fib(n-1) + fib(n-2);\n}",
+                    best: (n) => 1, average: (n) => Math.pow(1.618, n), worst: (n) => Math.pow(2, n),
+                    notationMap: { best: "1", average: "1.618^n", worst: "2^n" }
+                },
+                space: {
+                    title: "Exponential Growth Buffers",
+                    desc: "Structural allocation parameters duplicating at every progression layer.",
+                    code: "void structuralExplosion(int n) {\n    int size = pow(2, n);\n    int* cache = malloc(size * sizeof(int));\n}",
+                    best: (n) => n, average: (n) => Math.pow(2, n) * 0.5, worst: (n) => Math.pow(2, n),
+                    notationMap: { best: "n", average: "2^n", worst: "2^n" }
+                }
+            }
+        };
+
+        // Shared baseline mathematical behaviors
+        const coreMathEngines = {
+            "1": (n) => 1,
+            "log n": (n) => Math.log2(n),
+            "n": (n) => n,
+            "n log n": (n) => n * Math.log2(n),
+            "n^2": (n) => n * n,
+            "2^n": (n) => Math.pow(2, n)
+        };
+
+        let sandboxProfile = {
+            time: { best: "1", average: "n", worst: "n" },
+            space: { best: "1", average: "1", worst: "1" }
+        };
+
+        function setMetric(metric) {
+            currentMetric = metric;
+            const isTime = metric === 'time';
+            document.getElementById('btnTime').className = isTime ? "flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" : "flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition";
+            document.getElementById('btnSpace').className = !isTime ? "flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" : "flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition";
+            updateVisuals();
+        }
+
+        function setNotationType(type) {
+            currentNotationType = type;
+            ['O', 'Theta', 'Omega'].forEach(t => {
+                const btn = document.getElementById(`btn${t}`);
+                btn.className = (t === type) ? "flex-1 py-1.5 text-xs font-mono font-bold rounded bg-indigo-600 text-white transition" : "flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition";
+            });
+            updateVisuals();
+        }
+
+        function setCaseScenario(csc) {
+            currentCaseScenario = csc;
+            ['best', 'average', 'worst'].forEach(c => {
+                const btn = document.getElementById(`btn${c.charAt(0).toUpperCase() + c.slice(1)}`);
+                btn.className = (c === csc) ? "flex-1 py-1.5 text-xs font-semibold rounded bg-indigo-600 text-white transition" : "flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition";
+            });
+            updateVisuals();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const isPresets = tab === 'presets';
+
+            document.getElementById('tabPresets').className = isPresets ? "text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" : "text-sm font-bold text-gray-400 hover:text-white pb-2";
+            document.getElementById('tabSandbox').className = !isPresets ? "text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" : "text-sm font-bold text-gray-400 hover:text-white pb-2";
+
+            if (isPresets) {
+                document.getElementById('presetContainer').classList.remove('hidden');
+                document.getElementById('sandboxContainer').classList.add('hidden');
+                document.getElementById('analyzerBadge').classList.add('hidden');
+                document.getElementById('notationSelect').disabled = false;
+            } else {
+                document.getElementById('presetContainer').classList.add('hidden');
+                document.getElementById('sandboxContainer').classList.remove('hidden');
+                document.getElementById('analyzerBadge').classList.remove('hidden');
+                document.getElementById('notationSelect').disabled = true;
+                if(!document.getElementById('customCodeInput').value) {
+                    document.getElementById('customCodeInput').value = "// Custom Implementation Sandbox\n// Try defining custom scenario profiles directly via tags below:\n// @best O(1)\n// @worst O(log n)\n\nint customSearch(int arr[], int n) {\n    while(n > 1) {\n        n /= 2; // Matches logarithmic scale structural parameters\n    }\n    return -1;\n}";
+                }
+                handleSandboxInput();
+            }
+            updateVisuals();
+        }
+
+        function handleNotationChange() {
+            if (currentTab === 'presets') updateVisuals();
+        }
+
+        function handleSandboxInput() {
+            const code = document.getElementById('customCodeInput').value;
+            parseAdvancedSandboxCode(code);
+            updateVisuals();
+        }
+
+        // Deep Analytical Code Parser Engine
+        function parseAdvancedSandboxCode(code) {
+            // 1. Establish structurally derived defaults
+            const totalLoops = (code.match(/for\s*\(|while\s*\(/g) || []).length;
+            let dynamicBase = "1";
+
+            if (/(- 1).*( - 2)|(- 2).*( - 1)|pow\(2/i.test(code)) {
+                dynamicBase = "2^n";
+            } else if (totalLoops >= 2) {
+                dynamicBase = (/\/\s*=\s*2|>>\s*=\s*1|mid\s*=/.test(code)) ? "n log n" : "n^2";
+            } else if (totalLoops === 1) {
+                dynamicBase = (/\/\s*=\s*2|>>\s*=\s*1|mid\s*=/.test(code)) ? "log n" : "n";
+            }
+
+            // Fallback base configuration mapping
+            sandboxProfile.time.best = dynamicBase === "log n" || dynamicBase === "n" || dynamicBase === "n^2" ? "1" : dynamicBase;
+            sandboxProfile.time.average = dynamicBase;
+            sandboxProfile.time.worst = dynamicBase;
+
+            // Space baseline estimation
+            sandboxProfile.space.best = "1";
+            sandboxProfile.space.average = (code.includes("malloc") || code.includes("new int")) ? dynamicBase : "1";
+            sandboxProfile.space.worst = sandboxProfile.space.average;
+
+            // 2. Scan and extract inline user directive tags overrides explicitly
+            const lines = code.split("\n");
+            lines.forEach(line => {
+                if (line.includes("@best")) sandboxProfile.time.best = extractNotationTarget(line);
+                if (line.includes("@worst")) sandboxProfile.time.worst = extractNotationTarget(line);
+                if (line.includes("@average")) sandboxProfile.time.average = extractNotationTarget(line);
+                if (line.includes("@space")) {
+                    const tag = extractNotationTarget(line);
+                    sandboxProfile.space.best = tag; sandboxProfile.space.average = tag; sandboxProfile.space.worst = tag;
+                }
+            });
+        }
+
+        function extractNotationTarget(line) {
+            if(line.includes("1")) return "1";
+            if(line.includes("log n")) return "log n";
+            if(line.includes("n log n")) return "n log n";
+            if(line.includes("n^2")) return "n^2";
+            if(line.includes("2^n")) return "2^n";
+            if(line.includes("n")) return "n";
+            return "1";
+        }
+
+        function formatNotationSymbol(innerComplexity) {
+            let symbol = 'O';
+            if (currentNotationType === 'Theta') symbol = 'Θ';
+            if (currentNotationType === 'Omega') symbol = 'Ω';
+            return `${symbol}(${innerComplexity})`;
+        }
+
+        function updateVisuals() {
+            const n = parseInt(document.getElementById('nSlider').value);
+            document.getElementById('nValue').innerText = n;
+
+            let adaptiveInnerComplexity = "";
+            let mathFunc = null;
+
+            if (currentTab === 'presets') {
+                const baseNotation = document.getElementById('notationSelect').value;
+                const config = dataTemplates[baseNotation][currentMetric];
+                mathFunc = config[currentCaseScenario];
+                adaptiveInnerComplexity = config.notationMap[currentCaseScenario];
+                
+                document.getElementById('exampleTitle').innerText = `${config.title} [${formatNotationSymbol(adaptiveInnerComplexity)}]`;
+                document.getElementById('codeSnippet').innerText = config.code;
+            } else {
+                // Read adaptive components from customized sandbox tracker parameters
+                adaptiveInnerComplexity = sandboxProfile[currentMetric][currentCaseScenario];
+                const rawMath = coreMathEngines[adaptiveInnerComplexity];
+                
+                // Introduce natural operational curve modifiers for real-world simulation profiling
+                if (currentCaseScenario === 'best') mathFunc = (num) => Math.max(1, rawMath(num) * 0.5);
+                else if (currentCaseScenario === 'average') mathFunc = (num) => rawMath(num) * 0.9;
+                else mathFunc = (num) => rawMath(num) * 1.3;
+
+                document.getElementById('exampleTitle').innerText = `Sandbox Context [${formatNotationSymbol(adaptiveInnerComplexity)}]`;
+            }
+
+            document.getElementById('exampleDesc').innerText = `Analyzing running characteristics across [${currentCaseScenario.toUpperCase()} CASE] parameters under ${currentNotationType === 'O' ? 'Upper Bound (O)' : currentNotationType === 'Theta' ? 'Tight Bound (Θ)' : 'Lower Bound (Ω)'} criteria definitions.`;
+
+            const impactVal = Math.round(mathFunc(n));
+            const limitLabel = (adaptiveInnerComplexity === "2^n" && n > 25) ? "Scale Bound Limit" : `~${impactVal.toLocaleString()}`;
+            document.getElementById('metricImpact').innerText = `${currentMetric === 'time' ? 'Operations' : 'Memory units'} encountered: ${limitLabel}`;
+
+            renderGraph(formatNotationSymbol(adaptiveInnerComplexity), n, mathFunc);
+        }
+
+        function renderGraph(activeLabel, activeN, mathFunc) {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            const labels = [];
+            const dataPoints = [];
+
+            for (let i = 1; i <= activeN; i++) {
+                labels.push(i);
+                dataPoints.push(mathFunc(i));
+            }
+
+            if (chartInstance) chartInstance.destroy();
+
+            let strokeColor = '#818cf8'; 
+            let fillColor = 'rgba(129, 140, 248, 0.1)';
+            if (currentCaseScenario === 'best') { strokeColor = '#34d399'; fillColor = 'rgba(52, 211, 153, 0.1)'; }
+            if (currentCaseScenario === 'worst') { strokeColor = '#f87171'; fillColor = 'rgba(248, 113, 113, 0.1)'; }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${activeLabel} [${currentCaseScenario.toUpperCase()} Case]`,
+                        data: dataPoints,
+                        borderColor: strokeColor,
+                        backgroundColor: fillColor,
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: labels.length > 30 ? 1 : 3,
+                        tension: 0.15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#9ca3af' } }
+                    },
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Input Units (n)', color: '#6b7280' },
+                            grid: { color: '#374151' }, ticks: { color: '#9ca3af' }
+                        },
+                        y: { 
+                            title: { display: true, text: currentMetric === 'time' ? 'Total Steps Computed' : 'Memory Spaces Occupied', color: '#6b7280' },
+                            grid: { color: '#374151' }, ticks: { color: '#9ca3af' },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = () => { updateVisuals(); };
+    </script>
+</body>
+</html>
