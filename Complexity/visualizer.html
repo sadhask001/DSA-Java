@@ -3,55 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive DSA Complexity Visualizer</title>
+    <title>Interactive Asymptotic Complexity Visualizer</title>
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js for rendering graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-body{
-background:linear-gradient(135deg,#0b0718,#16102d,#22164a)!important;
-color:#f8fafc;
-}
-.glass{
-background:rgba(255,255,255,.06);
-backdrop-filter:blur(14px);
-border:1px solid rgba(196,181,253,.18);
-box-shadow:0 15px 40px rgba(0,0,0,.35);
-}
-.purple-title{
-background:linear-gradient(90deg,#f5d0fe,#c4b5fd,#8b5cf6);
--webkit-background-clip:text;
-color:transparent;
-}
-select,input,textarea{
-background:#100d20!important;
-border-color:#4c1d95!important;
-color:#fff!important;
-}
-button{
-transition:.25s!important;
-}
-button:hover{
-transform:translateY(-2px);
-}
-</style>
-</head>
-<body class="min-h-screen p-4 md:p-8">
+:root{--bg:#0b0718;--bg2:#16102d;--card:rgba(255,255,255,.06);--border:rgba(196,181,253,.18)}
+body{background:linear-gradient(135deg,var(--bg),var(--bg2),#23174a)!important}
+.max-w-6xl>header{background:rgba(255,255,255,.04);backdrop-filter:blur(10px);border:1px solid var(--border)!important;border-radius:20px;padding:24px!important}
+.max-w-6xl>header h1{background:linear-gradient(90deg,#f5d0fe,#c4b5fd,#8b5cf6);-webkit-background-clip:text;color:transparent!important}
+.max-w-6xl>header p{color:#cbd5e1!important}
+.bg-gray-800{background:var(--card)!important;backdrop-filter:blur(14px);border:1px solid var(--border)!important}
+.bg-gray-900,.bg-gray-950{background:#0d0a1d!important}
+.border-gray-700,.border-gray-800,.border-gray-900{border-color:var(--border)!important}
+.text-indigo-400,.text-indigo-300{color:#d8b4fe!important}
+.bg-indigo-600{background:#8b5cf6!important}
+button{transition:.25s}button:hover{transform:translateY(-2px)}
+select,input,textarea{background:#100d20!important;border-color:#5b21b6!important;color:#fff!important}
+</style></head>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4 md:p-8">
 
     <div class="max-w-6xl mx-auto space-y-6">
         <!-- Header -->
         <header class="border-b border-gray-800 pb-4">
-            <h1 class="text-4xl font-bold purple-title">DSA Complexity Visualizer</h1>
-            <p class="text-gray-400 mt-1">Visualize Time Complexity, Space Complexity and Asymptotic Notations.</p>
+            <h1 class="text-3xl font-bold text-indigo-400">Asymptotic Complexity Visualizer</h1>
+            <p class="text-gray-400 mt-1">Analyze algorithm scalability parameters relative to notation boundaries and runtime scenarios.</p>
         </header>
 
         <!-- Main Layout Split Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Controls Sidebar (4 Cols) -->
-            <div class="lg:col-span-4 space-y-6 glass p-6 rounded-2xl">
+            <div class="lg:col-span-4 space-y-6 bg-gray-800 p-6 rounded-xl border border-gray-700">
                 <!-- Perspective Toggle -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-400 mb-2">Metric Type</label>
@@ -104,7 +88,7 @@ transform:translateY(-2px);
                 </div>
 
                 <!-- Live Metrics Summary -->
-                <div class="glass p-6 rounded-2xl">
+                <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Growth Impact at current n</h3>
                     <p id="metricImpact" class="text-sm text-gray-300 font-mono">Operations required: ~16</p>
                 </div>
@@ -113,12 +97,12 @@ transform:translateY(-2px);
             <!-- Graph and Code Displays (8 Cols) -->
             <div class="lg:col-span-8 space-y-6">
                 <!-- Graph Container -->
-                <div class="glass p-6 rounded-2xl">
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
                     <canvas id="growthChart" class="w-full h-64"></canvas>
                 </div>
 
                 <!-- Context and Code Section -->
-                <div class="glass p-6 rounded-2xl space-y-4">
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 space-y-4">
                     
                     <!-- Code View Tab Controls -->
                     <div class="flex border-b border-gray-700 pb-2 justify-between items-center">
@@ -140,7 +124,7 @@ transform:translateY(-2px);
                         
                         <!-- Reference Container -->
                         <div id="presetContainer">
-                            <pre class="bg-[#090614] p-4 rounded-xl overflow-x-auto text-sm font-mono text-green-300 border border-violet-900"><code id="codeSnippet"></code></pre>
+                            <pre class="bg-gray-950 p-4 rounded-lg overflow-x-auto text-sm font-mono text-emerald-400 border border-gray-900"><code id="codeSnippet"></code></pre>
                         </div>
 
                         <!-- Sandbox Container -->
