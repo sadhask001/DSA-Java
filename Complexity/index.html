@@ -1693,15 +1693,23 @@ background:#0B1120;
 padding:25px;
 border-radius:18px;
 overflow:auto;
+font-size:17px;
+line-height:1.8;
 color:#A5F3FC;
-font-size:17px;">
+font-family:Consolas,monospace;
+white-space:pre-wrap;">
+
+<code>
 
 int linearSearch(int arr[], int key){
 
-    for(int i=0;i<arr.length;i++){
+    for(int i=0;i&lt;arr.length;i++){
 
-        if(arr[i]==key)
+        if(arr[i] == key){
+
             return i;
+
+        }
 
     }
 
@@ -1709,20 +1717,13 @@ int linearSearch(int arr[], int key){
 
 }
 
+</code>
+
 </pre>
 
 </div>
 
 </section>
-
-
-<!-- Best Case -->
-
-<section style="margin-top:70px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
 
 🧠 Step-by-Step Calculation
 
