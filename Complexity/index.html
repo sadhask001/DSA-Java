@@ -2,3720 +2,1083 @@
 <html lang="en">
 
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Time & Space Complexity | DSA Learning Platform</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-scroll-behavior:smooth;
-}
-
-body{
-
-background:#090814;
-
-color:white;
-
-overflow-x:hidden;
-
-}
-
-/* Animated Background */
-
-body::before{
-
-content:"";
-
-position:fixed;
-
-width:700px;
-
-height:700px;
-
-left:-250px;
-
-top:-250px;
-
-background:#A78BFA;
-
-opacity:.18;
-
-filter:blur(150px);
-
-animation:move1 10s infinite alternate;
-
-z-index:-2;
-
-}
-
-body::after{
-
-content:"";
-
-position:fixed;
-
-width:700px;
-
-height:700px;
-
-right:-250px;
-
-bottom:-250px;
-
-background:#7C3AED;
-
-opacity:.18;
-
-filter:blur(150px);
-
-animation:move2 12s infinite alternate;
-
-z-index:-2;
-
-}
-
-@keyframes move1{
-
-from{
-
-transform:translate(0,0);
-
-}
-
-to{
-
-transform:translate(120px,80px);
-
-}
-
-}
-
-@keyframes move2{
-
-from{
-
-transform:translate(0,0);
-
-}
-
-to{
-
-transform:translate(-120px,-100px);
-
-}
-
-}
-
-/* Navbar */
-
-header{
-
-position:fixed;
-
-top:0;
-
-left:0;
-
-width:100%;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:22px 8%;
-
-background:rgba(10,8,25,.65);
-
-backdrop-filter:blur(18px);
-
-border-bottom:1px solid rgba(255,255,255,.08);
-
-z-index:999;
-
-}
-
-.logo{
-
-font-size:30px;
-
-font-weight:700;
-
-background:linear-gradient(90deg,#E9D5FF,#A78BFA);
-
--webkit-background-clip:text;
-
-color:transparent;
-
-}
-
-nav{
-
-display:flex;
-
-gap:35px;
-
-}
-
-nav a{
-
-color:#D6D3F5;
-
-text-decoration:none;
-
-font-weight:500;
-
-transition:.3s;
-
-}
-
-nav a:hover{
-
-color:#C4B5FD;
-
-}
-
-/* Hero */
-
-.hero{
-
-padding:160px 8% 100px;
-
-display:grid;
-
-grid-template-columns:1.1fr .9fr;
-
-gap:70px;
-
-align-items:center;
-
-min-height:100vh;
-
-}
-
-.hero h1{
-
-font-size:70px;
-
-line-height:1.1;
-
-margin-bottom:25px;
-
-}
-
-.hero h1 span{
-
-background:linear-gradient(90deg,#E9D5FF,#A78BFA,#7C3AED);
-
--webkit-background-clip:text;
-
-color:transparent;
-
-}
-
-.hero p{
-
-font-size:20px;
-
-line-height:1.9;
-
-color:#CBD5E1;
-
-max-width:700px;
-
-margin-bottom:40px;
-
-}
-
-.start-btn{
-
-display:inline-block;
-
-padding:18px 34px;
-
-border-radius:14px;
-
-background:linear-gradient(135deg,#C4B5FD,#8B5CF6);
-
-color:white;
-
-text-decoration:none;
-
-font-weight:600;
-
-transition:.35s;
-
-box-shadow:0 20px 40px rgba(167,139,250,.35);
-
-}
-
-.start-btn:hover{
-
-transform:translateY(-5px);
-
-}
-
-/* Hero Card */
-
-.preview{
-
-background:rgba(20,18,40,.75);
-
-border:1px solid rgba(255,255,255,.08);
-
-border-radius:28px;
-
-padding:30px;
-
-backdrop-filter:blur(25px);
-
-box-shadow:0 30px 60px rgba(0,0,0,.35);
-
-}
-
-.preview h3{
-
-margin-bottom:25px;
-
-font-size:22px;
-
-color:#D8B4FE;
-
-}
-
-.graph{
-
-height:280px;
-
-border-radius:18px;
-
-background:#131022;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-overflow:hidden;
-
-}
-
-.graph svg{
-
-width:100%;
-
-height:100%;
-
-}
-
-.graph polyline{
-
-stroke:#C4B5FD;
-
-stroke-width:4;
-
-fill:none;
-
-stroke-linecap:round;
-
-stroke-linejoin:round;
-
-animation:draw 4s infinite;
-
-}
-
-@keyframes draw{
-
-0%{
-
-stroke-dasharray:900;
-
-stroke-dashoffset:900;
-
-}
-
-100%{
-
-stroke-dashoffset:0;
-
-}
-
-}
-
-/* Floating Hub */
-
-.learning-hub{
-
-position:fixed;
-
-right:30px;
-
-bottom:30px;
-
-z-index:9999;
-
-}
-
-.hub-btn{
-
-width:72px;
-
-height:72px;
-
-border:none;
-
-border-radius:50%;
-
-background:linear-gradient(135deg,#C4B5FD,#8B5CF6);
-
-color:white;
-
-font-size:28px;
-
-cursor:pointer;
-
-box-shadow:0 20px 40px rgba(167,139,250,.45);
-
-transition:.35s;
-
-}
-
-.hub-btn:hover{
-
-transform:scale(1.08);
-
-}
-
-.hub-menu{
-
-position:absolute;
-
-bottom:90px;
-
-right:0;
-
-width:260px;
-
-background:#17142B;
-
-border-radius:20px;
-
-padding:20px;
-
-display:none;
-
-border:1px solid rgba(255,255,255,.08);
-
-}
-
-.learning-hub:hover .hub-menu{
-
-display:block;
-
-}
-
-.hub-menu h3{
-
-margin-bottom:18px;
-
-color:#C4B5FD;
-
-}
-
-.hub-menu a{
-
-display:block;
-
-padding:12px;
-
-text-decoration:none;
-
-color:#E5E7EB;
-
-border-radius:10px;
-
-transition:.3s;
-
-}
-
-.hub-menu a:hover{
-
-background:#2B214E;
-
-}
-
-/* Scroll */
-
-.scroll{
-
-position:absolute;
-
-left:50%;
-
-bottom:25px;
-
-transform:translateX(-50%);
-
-font-size:14px;
-
-color:#C4B5FD;
-
-animation:updown 2s infinite;
-
-}
-
-@keyframes updown{
-
-0%{transform:translate(-50%,0);}
-
-50%{transform:translate(-50%,12px);}
-
-100%{transform:translate(-50%,0);}
-
-}
-
-/* Responsive */
-
-@media(max-width:1000px){
-
-.hero{
-
-grid-template-columns:1fr;
-
-text-align:center;
-
-}
-
-.hero h1{
-
-font-size:50px;
-
-}
-
-.hero p{
-
-margin:auto auto 35px;
-
-}
-
-}
-
-
-.visualizer-float{
-position:fixed;
-right:30px;
-bottom:30px;
-z-index:9999;
-padding:16px 24px;
-border-radius:50px;
-background:linear-gradient(135deg,#C4B5FD,#8B5CF6);
-color:#fff;
-text-decoration:none;
-font-weight:600;
-box-shadow:0 20px 40px rgba(167,139,250,.4);
-transition:.3s;
-}
-.visualizer-float:hover{
-transform:translateY(-4px) scale(1.03);
-}
-.end-signature{
-padding:120px 20px 90px;
-text-align:center;
-}
-.end-signature .star{
-font-size:34px;
-color:#D8B4FE;
-margin:15px 0;
-}
-.end-signature h2{
-font-family:'Great Vibes',cursive;
-font-size:110px;
-font-weight:400;
-color:#D8B4FE;
-text-shadow:0 0 25px rgba(216,180,254,.35);
-margin:10px 0;
-}
-.end-signature .line{
-width:320px;
-height:2px;
-margin:18px auto;
-background:linear-gradient(90deg,transparent,#C4B5FD,transparent);
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-
-<div class="logo">
-
-DSA Learning Platform
-
-</div>
-
-<nav>
-
-<a href="#">Home</a>
-
-<a href="#">Learning</a>
-
-<a href="#">Practice</a>
-
-<a href="#">Visualizers</a>
-
-<a href="#">About</a>
-
-</nav>
-
-</header>
-
-<section class="hero">
-
-<div>
-
-<h1>
-
-Master
-
-<span>
-
-Time & Space
-
-Complexity
-
-</span>
-
-</h1>
-
-<p>
-
-Understand Big O, Big Ω and Big Θ with Java examples,
-mathematical analysis, interview-oriented explanations,
-and beautifully structured learning modules.
-
-</p>
-
-<a href="#overview" class="start-btn">
-
-Start Learning
-
-</a>
-
-</div>
-
-<div class="preview">
-
-<h3>
-
-📈 Complexity Overview
-
-</h3>
-
-<div class="graph">
-
-<svg viewBox="0 0 500 280">
-
-<polyline
-
-points="0,250
-60,245
-120,232
-180,210
-240,175
-300,140
-360,95
-420,50
-480,20"/>
-
-</svg>
-
-</div>
-
-</div>
-
-<div class="scroll">
-
-▼ Scroll Down
-
-</div>
-
-</section>
-
-<!-- Floating Visualizer Button -->
-<a href="visualizer.html" class="visualizer-float">
-🎬 Visualizer
-</a>
-
-<!-- PART 2 STARTS FROM HERE -->
-
-<!-- ========================= -->
-<!-- PART 2 : OVERVIEW SECTION -->
-<!-- ========================= -->
-
-<section id="overview" style="padding:100px 8%;">
-
-    <div style="text-align:center;margin-bottom:70px;">
-
-        <h2 style="
-        font-size:52px;
-        margin-bottom:20px;
-        background:linear-gradient(90deg,#E9D5FF,#A78BFA,#7C3AED);
-        -webkit-background-clip:text;
-        color:transparent;">
-
-            Complete Roadmap
-
-        </h2>
-
-        <p style="
-        color:#CBD5E1;
-        font-size:18px;
-        max-width:750px;
-        margin:auto;
-        line-height:1.8;">
-
-            Learn Time & Space Complexity from the basics to interview level.
-            Every concept is explained using formulas, Java examples,
-            calculations and real-world scenarios.
-
-        </p>
-
-    </div>
-
-    <!-- Table of Contents -->
-
-    <div style="
-    display:grid;
-    grid-template-columns:280px 1fr;
-    gap:35px;">
-
-        <!-- Sidebar -->
-
-        <div style="
-        background:rgba(20,18,40,.75);
-        border:1px solid rgba(255,255,255,.08);
-        border-radius:24px;
-        padding:30px;
-        height:max-content;
-        position:sticky;
-        top:120px;">
-
-            <h3 style="
-            color:#C4B5FD;
-            margin-bottom:25px;">
-
-                📑 Contents
-
-            </h3>
-
-            <ul style="
-            list-style:none;
-            line-height:2.4;">
-
-                <li><a href="#intro" style="color:white;text-decoration:none;">Introduction</a></li>
-
-                <li><a href="#why" style="color:white;text-decoration:none;">Why Complexity?</a></li>
-
-                <li><a href="#time-space" style="color:white;text-decoration:none;">Time vs Space</a></li>
-
-                <li><a href="#bigo" style="color:white;text-decoration:none;">Big O</a></li>
-
-                <li><a href="#omega" style="color:white;text-decoration:none;">Big Ω</a></li>
-
-                <li><a href="#theta" style="color:white;text-decoration:none;">Big Θ</a></li>
-
-                <li><a href="#growth" style="color:white;text-decoration:none;">Growth Types</a></li>
-
-                <li><a href="#examples" style="color:white;text-decoration:none;">Examples</a></li>
-
-                <li><a href="#summary" style="color:white;text-decoration:none;">Summary</a></li>
-
-            </ul>
-
-        </div>
-
-        <!-- Right Side -->
-
-        <div>
-
-            <!-- Overview Cards -->
-
-            <div class="cards">
-
-                <div class="card">
-
-                    <h2 style="color:#FF6B81;">
-                        🔴 Big O
-                    </h2>
-
-                    <p>
-
-                        Represents the
-                        <b>Worst Case</b>.
-
-                    </p>
-
-                    <hr style="margin:15px 0;border-color:#2B214E;">
-
-                    <p>
-
-                        ✔ Upper Bound
-
-                    </p>
-
-                    <p>
-
-                        ✔ Maximum Running Time
-
-                    </p>
-
-                </div>
-
-                <div class="card">
-
-                    <h2 style="color:#4ADE80;">
-
-                        🟢 Big Ω
-
-                    </h2>
-
-                    <p>
-
-                        Represents the
-                        <b>Best Case</b>.
-
-                    </p>
-
-                    <hr style="margin:15px 0;border-color:#2B214E;">
-
-                    <p>
-
-                        ✔ Lower Bound
-
-                    </p>
-
-                    <p>
-
-                        ✔ Minimum Running Time
-
-                    </p>
-
-                </div>
-
-                <div class="card">
-
-                    <h2 style="color:#60A5FA;">
-
-                        🔵 Big Θ
-
-                    </h2>
-
-                    <p>
-
-                        Represents the
-                        <b>Exact Growth</b>.
-
-                    </p>
-
-                    <hr style="margin:15px 0;border-color:#2B214E;">
-
-                    <p>
-
-                        ✔ Tight Bound
-
-                    </p>
-
-                    <p>
-
-                        ✔ Average Growth
-
-                    </p>
-
-                </div>
-
-            </div>
-
-            <!-- Introduction -->
-
-            <section id="intro" style="margin-top:70px;">
-
-                <h2 style="
-                font-size:38px;
-                margin-bottom:20px;">
-
-                    📖 Introduction
-
-                </h2>
-
-                <p style="
-                color:#CBD5E1;
-                line-height:2;">
-
-                    Asymptotic Notation helps us measure the efficiency
-                    of an algorithm as the input size (<b>n</b>) increases.
-
-                    Instead of measuring the execution time in seconds,
-                    it focuses on the <b>growth rate</b> of an algorithm.
-
-                    This makes it easier to compare two algorithms,
-                    regardless of the computer or programming language used.
-
-                </p>
-
-            </section>
-
-            <!-- Why Complexity -->
-
-            <section id="why" style="margin-top:70px;">
-
-                <h2 style="
-                font-size:38px;
-                margin-bottom:30px;">
-
-                    🎯 Why Complexity Analysis?
-
-                </h2>
-
-                <div class="cards">
-
-                    <div class="card">
-
-                        <h3>
-
-                            ⚡ Compare Algorithms
-
-                        </h3>
-
-                        <p>
-
-                            Choose the faster algorithm
-                            for large inputs.
-
-                        </p>
-
-                    </div>
-
-                    <div class="card">
-
-                        <h3>
-
-                            🚀 Improve Performance
-
-                        </h3>
-
-                        <p>
-
-                            Reduce execution time
-                            and memory usage.
-
-                        </p>
-
-                    </div>
-
-                    <div class="card">
-
-                        <h3>
-
-                            💼 Interview Ready
-
-                        </h3>
-
-                        <p>
-
-                            Almost every coding interview
-                            asks complexity questions.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            <!-- Time vs Space -->
-
-            <section id="time-space" style="margin-top:70px;">
-
-                <h2 style="
-                font-size:38px;
-                margin-bottom:30px;">
-
-                    ⚖ Time vs Space Complexity
-
-                </h2>
-
-                <div class="cards">
-
-                    <div class="card">
-
-                        <h2>
-
-                            ⏱ Time Complexity
-
-                        </h2>
-
-                        <hr style="margin:18px 0;border-color:#2B214E;">
-
-                        <p>
-
-                            Measures how execution time
-                            grows with input size.
-
-                        </p>
-
-                        <br>
-
-                        <h3>
-
-                            Example
-
-                        </h3>
-
-                        <p>
-
-                            Linear Search → O(n)
-
-                        </p>
-
-                    </div>
-
-                    <div class="card">
-
-                        <h2>
-
-                            💾 Space Complexity
-
-                        </h2>
-
-                        <hr style="margin:18px 0;border-color:#2B214E;">
-
-                        <p>
-
-                            Measures the extra memory
-                            required during execution.
-
-                        </p>
-
-                        <br>
-
-                        <h3>
-
-                            Example
-
-                        </h3>
-
-                        <p>
-
-                            Merge Sort → O(n)
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ========================= -->
-<!-- END OF PART 2            -->
-<!-- PART 3 STARTS NEXT       -->
-<!-- ========================= -->
-
-<!-- ===================================== -->
-<!-- PART 3 : BIG O NOTATION               -->
-<!-- ===================================== -->
-
-<section id="bigo" style="padding:100px 8%;">
-
-<div style="text-align:center;margin-bottom:70px;">
-
-<h2 style="
-font-size:52px;
-background:linear-gradient(90deg,#FF8FA3,#FF5C8A);
--webkit-background-clip:text;
-color:transparent;
-margin-bottom:15px;">
-
-🔴 Big O Notation
-
-</h2>
-
-<p style="
-color:#CBD5E1;
-font-size:18px;
-max-width:800px;
-margin:auto;
-line-height:2;">
-
-Big O Notation describes the
-<b>Upper Bound</b>
-of an algorithm.
-
-It tells the
-<b>maximum amount of work</b>
-an algorithm may perform
-for a given input size.
-
-</p>
-
-</div>
-
-
-<!-- Definition + Formula -->
-
-<div class="cards">
-
-<div class="card">
-
-<h2>
-
-📖 Definition
-
-</h2>
-
-<p>
-
-Big O represents the
-
-<b>Worst Case</b>
-
-of an algorithm.
-
-It gives an upper limit
-on execution time.
-
-</p>
-
-<br>
-
-<h3 style="color:#A78BFA;">
-
-Represents
-
-</h3>
-
-<ul style="padding-left:20px;line-height:2;">
-
-<li>Worst Case</li>
-
-<li>Upper Bound</li>
-
-<li>Maximum Running Time</li>
-
-</ul>
-
-</div>
-
-
-<div class="card">
-
-<h2>
-
-🧮 Mathematical Formula
-
-</h2>
-
-<div style="
-margin-top:25px;
-background:#0F172A;
-padding:25px;
-border-radius:15px;
-text-align:center;
-font-size:30px;
-font-weight:bold;
-color:#D8B4FE;">
-
-T(n) ≤ C × f(n)
-
-</div>
-
-<p style="
-margin-top:25px;
-line-height:2;">
-
-Where,
-
-</p>
-
-<ul style="
-padding-left:20px;
-line-height:2;">
-
-<li>T(n) → Running Time</li>
-
-<li>f(n) → Growth Function</li>
-
-<li>C → Constant</li>
-
-<li>n₀ → Starting Point</li>
-
-</ul>
-
-</div>
-
-</div>
-
-
-<!-- Java Example -->
-
-<section style="margin-top:80px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
-
-💻 Java Example
-
-</h2>
-
-<div class="card">
-
-<pre style="
-background:#0B1120;
-padding:25px;
-border-radius:18px;
-overflow:auto;
-color:#A5F3FC;
-font-size:17px;">
-
-for(int i=0;i&lt;n;i++){
-
-    System.out.println(i);
-
-}
-
-</pre>
-
-</div>
-
-</section>
-
-
-<!-- Calculation -->
-
-<section style="margin-top:70px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
-
-🧠 Step-by-Step Calculation
-
-</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>
-
-Step 1
-
-</h3>
-
-<p>
-
-The loop starts from
-
-<b>0</b>
-
-and ends at
-
-<b>n-1</b>
-
-</p>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-
-Step 2
-
-</h3>
-
-<p>
-
-The statement executes
-
-once
-
-for every iteration.
-
-</p>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-
-Step 3
-
-</h3>
-
-<p>
-
-Total Operations
-
-</p>
-
-<div style="
-margin-top:15px;
-font-size:28px;
-font-weight:bold;
-color:#D8B4FE;">
-
-n
-
-</div>
-
-</div>
-
-</div>
-
-<div class="card"
-style="margin-top:30px;">
-
-<h2>
-
-Final Complexity
-
-</h2>
-
-<hr style="
-margin:20px 0;
-border-color:#2B214E;">
-
-<p>
-
-Time Complexity
-
-</p>
-
-<h1 style="
-margin:20px 0;
-font-size:55px;
-color:#FF6B81;">
-
-O(n)
-
-</h1>
-
-<p>
-
-Space Complexity
-
-</p>
-
-<h2 style="
-margin-top:20px;
-color:#4ADE80;">
-
-O(1)
-
-</h2>
-
-</div>
-
-</section>
-
-
-<!-- Real Life -->
-
-<section style="margin-top:70px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
-
-🌍 Real-Life Example
-
-</h2>
-
-<div class="card">
-
-<h3>
-
-Searching a Name in a Notebook
-
-</h3>
-
-<p style="
-margin-top:20px;
-line-height:2;">
-
-Suppose you have an
-unsorted notebook
-containing
-
-<b>n pages.</b>
-
-To find a person's name,
-you may have to check
-
-every page one by one.
-
-Worst Case
-
-↓
-
-You search
-
-all n pages.
-
-Therefore,
-
-</p>
-
-<div style="
-margin-top:30px;
-padding:20px;
-background:#111827;
-border-radius:15px;
-text-align:center;
-font-size:34px;
-font-weight:bold;
-color:#FF6B81;">
-
-O(n)
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- Quick Summary -->
-
-<section style="margin-top:70px;">
-
-<div class="card">
-
-<h2>
-
-📌 Big O Summary
-
-</h2>
-
-<table style="
-width:100%;
-margin-top:25px;
-border-collapse:collapse;">
-
-<tr>
-
-<th style="padding:15px;background:#8B5CF6;">
-
-Feature
-
-</th>
-
-<th style="padding:15px;background:#8B5CF6;">
-
-Value
-
-</th>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Meaning
-
-</td>
-
-<td style="padding:15px;">
-
-Upper Bound
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Represents
-
-</td>
-
-<td style="padding:15px;">
-
-Worst Case
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Formula
-
-</td>
-
-<td style="padding:15px;">
-
-T(n) ≤ C × f(n)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Example
-
-</td>
-
-<td style="padding:15px;">
-
-Linear Search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Complexity
-
-</td>
-
-<td style="padding:15px;">
-
-O(n)
-
-</td>
-
-</tr>
-
-</table>
-
-</div>
-
-</section>
-
-</section>
-
-<!-- ===================================== -->
-<!-- END OF PART 3                         -->
-<!-- PART 4 : BIG Ω NOTATION NEXT          -->
-<!-- ===================================== -->
-<!-- ===================================== -->
-<!-- PART 4 : BIG OMEGA (Ω)                -->
-<!-- ===================================== -->
-
-<section id="omega" style="padding:100px 8%;">
-
-<div style="text-align:center;margin-bottom:70px;">
-
-<h2 style="
-font-size:52px;
-background:linear-gradient(90deg,#22C55E,#4ADE80);
--webkit-background-clip:text;
-color:transparent;
-margin-bottom:15px;">
-
-🟢 Big Ω (Big Omega)
-
-</h2>
-
-<p style="
-color:#CBD5E1;
-font-size:18px;
-max-width:850px;
-margin:auto;
-line-height:2;">
-
-Big Omega represents the
-<b>Lower Bound</b>
-of an algorithm.
-
-It tells the
-<b>minimum amount of work</b>
-an algorithm must perform.
-
-</p>
-
-</div>
-
-
-<!-- Definition + Formula -->
-
-<div class="cards">
-
-<div class="card">
-
-<h2>
-
-📖 Definition
-
-</h2>
-
-<p>
-
-Big Omega represents the
-
-<b>Best Case</b>
-
-of an algorithm.
-
-It defines the minimum running time required.
-
-</p>
-
-<br>
-
-<h3 style="color:#4ADE80;">
-
-Represents
-
-</h3>
-
-<ul style="padding-left:20px;line-height:2;">
-
-<li>Best Case</li>
-
-<li>Lower Bound</li>
-
-<li>Minimum Running Time</li>
-
-</ul>
-
-</div>
-
-<div class="card">
-
-<h2>
-
-🧮 Mathematical Formula
-
-</h2>
-
-<div style="
-margin-top:25px;
-background:#0F172A;
-padding:25px;
-border-radius:15px;
-text-align:center;
-font-size:30px;
-font-weight:bold;
-color:#4ADE80;">
-
-T(n) ≥ C × f(n)
-
-</div>
-
-<p style="
-margin-top:25px;
-line-height:2;">
-
-Where,
-
-</p>
-
-<ul style="
-padding-left:20px;
-line-height:2;">
-
-<li>T(n) → Running Time</li>
-
-<li>f(n) → Growth Function</li>
-
-<li>C → Positive Constant</li>
-
-<li>n₀ → Starting Input Size</li>
-
-</ul>
-
-</div>
-
-</div>
-
-
-<!-- Java Example -->
-
-<section style="margin-top:80px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
-
-💻 Java Example
-
-</h2>
-
-<div class="card">
-
-<pre style="
-background:#0B1120;
-padding:25px;
-border-radius:18px;
-overflow:auto;
-font-size:17px;
-line-height:1.8;
-color:#A5F3FC;
-font-family:Consolas,monospace;
-white-space:pre-wrap;">
-
-<code>
-
-int linearSearch(int arr[], int key){
-
-    for(int i=0;i&lt;arr.length;i++){
-
-        if(arr[i] == key){
-
-            return i;
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time & Space Complexity | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
         }
 
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .18;
+            filter: blur(150px);
+            animation: move1 10s infinite alternate;
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .18;
+            filter: blur(150px);
+            animation: move2 12s infinite alternate;
+            z-index: -2;
+        }
+
+        @keyframes move1 {
+            from { transform: translate(0, 0); }
+            to { transform: translate(120px, 80px); }
+        }
+
+        @keyframes move2 {
+            from { transform: translate(0, 0); }
+            to { transform: translate(-120px, -100px); }
+        }
+
+        /* Navbar */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .65);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        nav {
+            display: flex;
+            gap: 35px;
+        }
+
+        nav a {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+        }
+
+        nav a:hover {
+            color: #C4B5FD;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 160px 8% 100px;
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 70px;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .hero h1 {
+            font-size: 70px;
+            line-height: 1.1;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA, #7C3AED);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 20px;
+            line-height: 1.9;
+            color: #CBD5E1;
+            max-width: 700px;
+            margin-bottom: 40px;
+        }
+
+        .start-btn {
+            display: inline-block;
+            padding: 18px 34px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: .35s;
+            box-shadow: 0 20px 40px rgba(167, 139, 250, .35);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Hero Card */
+        .preview {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 28px;
+            padding: 30px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, .35);
+        }
+
+        .preview h3 {
+            margin-bottom: 25px;
+            font-size: 22px;
+            color: #D8B4FE;
+        }
+
+        .graph {
+            height: 280px;
+            border-radius: 18px;
+            background: #131022;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .graph svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .graph polyline {
+            stroke: #C4B5FD;
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            animation: draw 4s infinite;
+        }
+
+        @keyframes draw {
+            0% { stroke-dasharray: 900; stroke-dashoffset: 900; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        /* Cards Layout System */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .25);
+        }
+
+        details.card p {
+            padding-bottom: 10px;
+        }
+
+        /* Floating Hub & Buttons */
+        .visualizer-float {
+            position: fixed;
+            right: 30px;
+            bottom: 110px;
+            z-index: 9999;
+            padding: 16px 24px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 20px 40px rgba(167, 139, 250, .4);
+            transition: .3s;
+        }
+
+        .visualizer-float:hover {
+            transform: translateY(-4px) scale(1.03);
+        }
+
+        /* Scroll Arrow */
+        .scroll {
+            position: absolute;
+            left: 50%;
+            bottom: 25px;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #C4B5FD;
+            animation: updown 2s infinite;
+        }
+
+        @keyframes updown {
+            0% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, 12px); }
+            100% { transform: translate(-50%, 0); }
+        }
+
+        /* End Signature */
+        .end-signature {
+            padding: 120px 20px 90px;
+            text-align: center;
+        }
+
+        .end-signature .star {
+            font-size: 34px;
+            color: #D8B4FE;
+            margin: 15px 0;
+        }
+
+        .end-signature h2 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 110px;
+            font-weight: 400;
+            color: #D8B4FE;
+            text-shadow: 0 0 25px rgba(216, 180, 254, .35);
+            margin: 10px 0;
+        }
+
+        .end-signature .line {
+            width: 320px;
+            height: 2px;
+            margin: 18px auto;
+            background: linear-gradient(90deg, transparent, #C4B5FD, transparent);
+        }
+
+        footer {
+            padding: 40px 8%;
+            background: rgba(10, 8, 25, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, .05);
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media(max-width: 1000px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding-top: 120px;
+            }
+
+            .hero h1 { font-size: 50px; }
+            .hero p { margin: auto auto 35px; }
+
+            section[style*="display:grid"], 
+            div[style*="display:grid"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+
+<body id="top">
+
+    <header>
+        <div class="logo">DSA Learning Platform</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Learning</a>
+            <a href="#">Practice</a>
+            <a href="#">Visualizers</a>
+            <a href="#">About</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1>Master <span>Time & Space Complexity</span></h1>
+            <p>
+                Understand Big O, Big Ω and Big Θ with Java examples,
+                mathematical analysis, interview-oriented explanations,
+                and beautifully structured learning modules.
+            </p>
+            <a href="#overview" class="start-btn">Start Learning</a>
+        </div>
+
+        <div class="preview">
+            <h3>📈 Complexity Overview</h3>
+            <div class="graph">
+                <svg viewBox="0 0 500 280">
+                    <polyline points="0,250 60,245 120,232 180,210 240,175 300,140 360,95 420,50 480,20"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="scroll">▼ Scroll Down</div>
+    </section>
+
+    <a href="visualizer.html" class="visualizer-float">🎬 Visualizer</a>
+
+    <section id="overview" style="padding:100px 8%;">
+        <div style="text-align:center; margin-bottom:70px;">
+            <h2 style="font-size:52px; margin-bottom:20px; background:linear-gradient(90deg,#E9D5FF,#A78BFA,#7C3AED); -webkit-background-clip:text; color:transparent;">
+                Complete Roadmap
+            </h2>
+            <p style="color:#CBD5E1; font-size:18px; max-width:750px; margin:auto; line-height:1.8;">
+                Learn Time & Space Complexity from the basics to interview level.
+                Every concept is explained using formulas, Java examples,
+                calculations and real-world scenarios.
+            </p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:280px 1fr; gap:35px;">
+            <div style="background:rgba(20,18,40,.75); border:1px solid rgba(255,255,255,.08); border-radius:24px; padding:30px; height:max-content; position:sticky; top:120px;">
+                <h3 style="color:#C4B5FD; margin-bottom:25px;">📑 Contents</h3>
+                <ul style="list-style:none; line-height:2.4;">
+                    <li><a href="#intro" style="color:white;text-decoration:none;">Introduction</a></li>
+                    <li><a href="#why" style="color:white;text-decoration:none;">Why Complexity?</a></li>
+                    <li><a href="#time-space" style="color:white;text-decoration:none;">Time vs Space</a></li>
+                    <li><a href="#bigo" style="color:white;text-decoration:none;">Big O</a></li>
+                    <li><a href="#omega" style="color:white;text-decoration:none;">Big Ω</a></li>
+                    <li><a href="#theta" style="color:white;text-decoration:none;">Big Θ</a></li>
+                    <li><a href="#growth" style="color:white;text-decoration:none;">Growth Types</a></li>
+                    <li><a href="#summary" style="color:white;text-decoration:none;">Summary</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="cards">
+                    <div class="card">
+                        <h2 style="color:#FF6B81;">🔴 Big O</h2>
+                        <p>Represents the <b>Worst Case</b>.</p>
+                        <hr style="margin:15px 0;border-color:#2B214E;">
+                        <p>✔ Upper Bound</p>
+                        <p>✔ Maximum Running Time</p>
+                    </div>
+
+                    <div class="card">
+                        <h2 style="color:#4ADE80;">🟢 Big Ω</h2>
+                        <p>Represents the <b>Best Case</b>.</p>
+                        <hr style="margin:15px 0;border-color:#2B214E;">
+                        <p>✔ Lower Bound</p>
+                        <p>✔ Minimum Running Time</p>
+                    </div>
+
+                    <div class="card">
+                        <h2 style="color:#60A5FA;">🔵 Big Θ</h2>
+                        <p>Represents the <b>Exact Growth</b>.</p>
+                        <hr style="margin:15px 0;border-color:#2B214E;">
+                        <p>✔ Tight Bound</p>
+                        <p>✔ Average Growth</p>
+                    </div>
+                </div>
+
+                <section id="intro" style="margin-top:70px;">
+                    <h2 style="font-size:38px; margin-bottom:20px;">📖 Introduction</h2>
+                    <p style="color:#CBD5E1; line-height:2;">
+                        Asymptotic Notation helps us measure the efficiency
+                        of an algorithm as the input size (<b>n</b>) increases.
+                        Instead of measuring the execution time in seconds,
+                        it focuses on the <b>growth rate</b> of an algorithm.
+                        This makes it easier to compare two algorithms,
+                        regardless of the computer or programming language used.
+                    </p>
+                </section>
+
+                <section id="why" style="margin-top:70px;">
+                    <h2 style="font-size:38px; margin-bottom:30px;">🎯 Why Complexity Analysis?</h2>
+                    <div class="cards">
+                        <div class="card">
+                            <h3>⚡ Compare Algorithms</h3>
+                            <p>Choose the faster algorithm for large inputs.</p>
+                        </div>
+                        <div class="card">
+                            <h3>🚀 Improve Performance</h3>
+                            <p>Reduce execution time and memory usage.</p>
+                        </div>
+                        <div class="card">
+                            <h3>💼 Interview Ready</h3>
+                            <p>Almost every coding interview asks complexity questions.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="time-space" style="margin-top:70px;">
+                    <h2 style="font-size:38px; margin-bottom:30px;">⚖ Time vs Space Complexity</h2>
+                    <div class="cards">
+                        <div class="card">
+                            <h2>⏱ Time Complexity</h2>
+                            <hr style="margin:18px 0;border-color:#2B214E;">
+                            <p>Measures how execution time grows with input size.</p>
+                            <br>
+                            <h3>Example</h3>
+                            <p>Linear Search → O(n)</p>
+                        </div>
+                        <div class="card">
+                            <h2>💾 Space Complexity</h2>
+                            <hr style="margin:18px 0;border-color:#2B214E;">
+                            <p>Measures the extra memory required during execution.</p>
+                            <br>
+                            <h3>Example</h3>
+                            <p>Merge Sort → O(n)</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <section id="bigo" style="padding:100px 8%;">
+        <div style="text-align:center;margin-bottom:70px;">
+            <h2 style="font-size:52px; background:linear-gradient(90deg,#FF8FA3,#FF5C8A); -webkit-background-clip:text; color:transparent; margin-bottom:15px;">
+                🔴 Big O Notation
+            </h2>
+            <p style="color:#CBD5E1; font-size:18px; max-width:800px; margin:auto; line-height:2;">
+                Big O Notation describes the <b>Upper Bound</b> of an algorithm.
+                It tells the <b>maximum amount of work</b> an algorithm may perform for a given input size.
+            </p>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h2>📖 Definition</h2>
+                <p>Big O represents the <b>Worst Case</b> of an algorithm. It gives an upper limit on execution time.</p>
+                <br>
+                <h3 style="color:#A78BFA;">Represents</h3>
+                <ul style="padding-left:20px;line-height:2;">
+                    <li>Worst Case</li>
+                    <li>Upper Bound</li>
+                    <li>Maximum Running Time</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🧮 Mathematical Formula</h2>
+                <div style="margin-top:25px; background:#0F172A; padding:25px; border-radius:15px; text-align:center; font-size:30px; font-weight:bold; color:#D8B4FE;">
+                    T(n) ≤ C × f(n)
+                </div>
+                <p style="margin-top:25px; line-height:2;">Where,</p>
+                <ul style="padding-left:20px; line-height:2;">
+                    <li>T(n) → Running Time</li>
+                    <li>f(n) → Growth Function</li>
+                    <li>C → Constant</li>
+                    <li>n₀ → Starting Point</li>
+                </ul>
+            </div>
+        </div>
+
+        <section style="margin-top:80px;">
+            <h2 style="font-size:40px; margin-bottom:35px;">💻 Java Example</h2>
+            <div class="card">
+                <pre style="background:#0B1120; padding:25px; border-radius:18px; overflow:auto; color:#A5F3FC; font-size:17px;">
+for(int i=0;i&lt;n;i++){
+    System.out.println(i);
+}</pre>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <h2 style="font-size:40px; margin-bottom:35px;">🧠 Step-by-Step Calculation</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Step 1</h3>
+                    <p>The loop starts from <b>0</b> and ends at <b>n-1</b></p>
+                </div>
+                <div class="card">
+                    <h3>Step 2</h3>
+                    <p>The statement executes once for every iteration.</p>
+                </div>
+                <div class="card">
+                    <h3>Step 3</h3>
+                    <p>Total Operations</p>
+                    <div style="margin-top:15px; font-size:28px; font-weight:bold; color:#D8B4FE;">n</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:30px;">
+                <h2>Final Complexity</h2>
+                <hr style="margin:20px 0; border-color:#2B214E;">
+                <p>Time Complexity</p>
+                <h1 style="margin:20px 0; font-size:55px; color:#FF6B81;">O(n)</h1>
+                <p>Space Complexity</p>
+                <h2 style="margin-top:20px; color:#4ADE80;">O(1)</h2>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <h2 style="font-size:40px; margin-bottom:35px;">🌍 Real-Life Example</h2>
+            <div class="card">
+                <h3>Searching a Name in a Notebook</h3>
+                <p style="margin-top:20px; line-height:2;">
+                    Suppose you have an unsorted notebook containing <b>n pages.</b>
+                    To find a person's name, you may have to check every page one by one.
+                    Worst Case &rarr; You search all n pages. Therefore,
+                </p>
+                <div style="margin-top:30px; padding:20px; background:#111827; border-radius:15px; text-align:center; font-size:34px; font-weight:bold; color:#FF6B81;">
+                    O(n)
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <div class="card">
+                <h2>📌 Big O Summary</h2>
+                <table style="width:100%; margin-top:25px; border-collapse:collapse; text-align: left;">
+                    <tr>
+                        <th style="padding:15px;background:#8B5CF6;">Feature</th>
+                        <th style="padding:15px;background:#8B5CF6;">Value</th>
+                    </tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Meaning</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Upper Bound</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Represents</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Worst Case</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Formula</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">T(n) ≤ C × f(n)</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Example</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Linear Search</td></tr>
+                    <tr><td style="padding:15px;">Complexity</td><td style="padding:15px;">O(n)</td></tr>
+                </table>
+            </div>
+        </section>
+    </section>
+
+    <section id="omega" style="padding:100px 8%;">
+        <div style="text-align:center;margin-bottom:70px;">
+            <h2 style="font-size:52px; background:linear-gradient(90deg,#22C55E,#4ADE80); -webkit-background-clip:text; color:transparent; margin-bottom:15px;">
+                🟢 Big Ω (Big Omega)
+            </h2>
+            <p style="color:#CBD5E1; font-size:18px; max-width:850px; margin:auto; line-height:2;">
+                Big Omega represents the <b>Lower Bound</b> of an algorithm.
+                It tells the <b>minimum amount of work</b> an algorithm must perform.
+            </p>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h2>📖 Definition</h2>
+                <p>Big Omega represents the <b>Best Case</b> of an algorithm. It defines the minimum running time required.</p>
+                <br>
+                <h3 style="color:#4ADE80;">Represents</h3>
+                <ul style="padding-left:20px;line-height:2;">
+                    <li>Best Case</li>
+                    <li>Lower Bound</li>
+                    <li>Minimum Running Time</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🧮 Mathematical Formula</h2>
+                <div style="margin-top:25px; background:#0F172A; padding:25px; border-radius:15px; text-align:center; font-size:30px; font-weight:bold; color:#4ADE80;">
+                    T(n) ≥ C × f(n)
+                </div>
+                <p style="margin-top:25px; line-height:2;">Where,</p>
+                <ul style="padding-left:20px; line-height:2;">
+                    <li>T(n) → Running Time</li>
+                    <li>f(n) → Growth Function</li>
+                    <li>C → Positive Constant</li>
+                    <li>n₀ → Starting Input Size</li>
+                </ul>
+            </div>
+        </div>
+
+        <section style="margin-top:80px;">
+            <h2 style="font-size:40px; margin-bottom:35px;">💻 Java Example</h2>
+            <div class="card">
+                <pre style="background:#0B1120; padding:25px; border-radius:18px; overflow:auto; font-size:17px; line-height:1.8; color:#A5F3FC; font-family:Consolas,monospace; white-space:pre-wrap;">
+<code>int linearSearch(int arr[], int key){
+    for(int i=0;i&lt;arr.length;i++){
+        if(arr[i] == key){
+            return i;
+        }
     }
-
     return -1;
-
-}
-
-</code>
-
-</pre>
-
-</div>
-
-</section>
-
-🧠 Step-by-Step Calculation
-
-</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>
-
-Step 1
-
-</h3>
-
-<p>
-
-Suppose the element is located at
-
-<b>index 0</b>
-
-(the first position).
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>
-
-Step 2
-
-</h3>
-
-<p>
-
-The first comparison becomes
-
-true immediately.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>
-
-Step 3
-
-</h3>
-
-<p>
-
-Only
-
-<b>1 comparison</b>
-
-is performed.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="card"
-style="margin-top:30px;">
-
-<h2>
-
-Final Complexity
-
-</h2>
-
-<hr style="
-margin:20px 0;
-border-color:#2B214E;">
-
-<p>
-
-Time Complexity
-
-</p>
-
-<h1 style="
-margin:20px 0;
-font-size:55px;
-color:#4ADE80;">
-
-Ω(1)
-
-</h1>
-
-<p>
-
-Space Complexity
-
-</p>
-
-<h2 style="
-margin-top:20px;
-color:#60A5FA;">
-
-O(1)
-
-</h2>
-
-</div>
-
-</section>
-
-
-<!-- Binary Search Example -->
-
-<section style="margin-top:70px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
-
-📘 Another Example
-
-</h2>
-
-<div class="card">
-
-<pre style="
-background:#0B1120;
-padding:25px;
-border-radius:18px;
-overflow:auto;
-color:#A5F3FC;
-font-size:17px;">
-
+}</code></pre>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <h2 style="font-size:40px; margin-bottom:35px;">🧠 Step-by-Step Calculation</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Step 1</h3>
+                    <p>Suppose the element is located at <b>index 0</b> (the first position).</p>
+                </div>
+                <div class="card">
+                    <h3>Step 2</h3>
+                    <p>The first comparison becomes true immediately.</p>
+                </div>
+                <div class="card">
+                    <h3>Step 3</h3>
+                    <p>Only <b>1 comparison</b> is performed.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:30px;">
+                <h2>Final Complexity</h2>
+                <hr style="margin:20px 0; border-color:#2B214E;">
+                <p>Time Complexity</p>
+                <h1 style="margin:20px 0; font-size:55px; color:#4ADE80;">Ω(1)</h1>
+                <p>Space Complexity</p>
+                <h2 style="margin-top:20px; color:#60A5FA;">O(1)</h2>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <h2 style="font-size:40px; margin-bottom:35px;">📘 Another Example</h2>
+            <div class="card">
+                <pre style="background:#0B1120; padding:25px; border-radius:18px; overflow:auto; color:#A5F3FC; font-size:17px;">
 while(low <= high){
-
     int mid = (low + high) / 2;
-
     if(arr[mid] == key)
         return mid;
-
-}
-
-</pre>
-
-<hr style="
-margin:25px 0;
-border-color:#2B214E;">
-
-<p>
-
-If the required element is found
-
-at the very first middle position,
-
-only one comparison is required.
-
-</p>
-
-<div style="
-margin-top:25px;
-padding:20px;
-background:#111827;
-border-radius:15px;
-text-align:center;
-font-size:34px;
-font-weight:bold;
-color:#4ADE80;">
-
-Ω(1)
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- Real Life -->
-
-<section style="margin-top:70px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
-
-🌍 Real-Life Example
-
-</h2>
-
-<div class="card">
-
-<h3>
-
-Finding a Book
-
-</h3>
-
-<p style="
-margin-top:20px;
-line-height:2;">
-
-Imagine your favorite book is placed
-
-exactly in front of you.
-
-You immediately pick it without searching.
-
-Only one operation is needed.
-
-</p>
-
-<div style="
-margin-top:30px;
-padding:20px;
-background:#111827;
-border-radius:15px;
-text-align:center;
-font-size:34px;
-font-weight:bold;
-color:#4ADE80;">
-
-Ω(1)
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- Summary -->
-
-<section style="margin-top:70px;">
-
-<div class="card">
-
-<h2>
-
-📌 Big Ω Summary
-
-</h2>
-
-<table style="
-width:100%;
-margin-top:25px;
-border-collapse:collapse;">
-
-<tr>
-
-<th style="padding:15px;background:#22C55E;">
-
-Feature
-
-</th>
-
-<th style="padding:15px;background:#22C55E;">
-
-Value
-
-</th>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Meaning
-
-</td>
-
-<td style="padding:15px;">
-
-Lower Bound
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Represents
-
-</td>
-
-<td style="padding:15px;">
-
-Best Case
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Formula
-
-</td>
-
-<td style="padding:15px;">
-
-T(n) ≥ C × f(n)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Example
-
-</td>
-
-<td style="padding:15px;">
-
-Linear Search / Binary Search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">
-
-Complexity
-
-</td>
-
-<td style="padding:15px;">
-
-Ω(1)
-
-</td>
-
-</tr>
-
-</table>
-
-</div>
-
-</section>
-
-</section>
-
-<!-- ===================================== -->
-<!-- END OF PART 4                         -->
-<!-- PART 5 : BIG THETA + COMPARISON NEXT  -->
-<!-- ===================================== -->
-<!-- ===================================== -->
-<!-- PART 5 : BIG THETA (Θ)                -->
-<!-- ===================================== -->
-
-<section id="theta" style="padding:100px 8%;">
-
-<div style="text-align:center;margin-bottom:70px;">
-
-<h2 style="
-font-size:52px;
-background:linear-gradient(90deg,#60A5FA,#3B82F6);
--webkit-background-clip:text;
-color:transparent;
-margin-bottom:15px;">
-
-🔵 Big Θ (Big Theta)
-
-</h2>
-
-<p style="
-color:#CBD5E1;
-font-size:18px;
-max-width:850px;
-margin:auto;
-line-height:2;">
-
-Big Theta represents the
-<b>Tight Bound</b>
-of an algorithm.
-
-It provides both the
-<b>Upper Bound</b>
-and
-<b>Lower Bound</b>,
-meaning the algorithm grows at the same rate.
-
-</p>
-
-</div>
-
-
-<!-- Definition -->
-
-<div class="cards">
-
-<div class="card">
-
-<h2>
-
-📖 Definition
-
-</h2>
-
-<p>
-
-Big Theta represents the
-
-<b>Exact Growth Rate</b>
-
-of an algorithm.
-
-If an algorithm has the same
-
-Upper Bound
-
-and
-
-Lower Bound,
-
-then it belongs to
-
-Θ(f(n))
-
-</p>
-
-<br>
-
-<h3 style="color:#60A5FA;">
-
-Represents
-
-</h3>
-
-<ul style="padding-left:20px;line-height:2;">
-
-<li>Tight Bound</li>
-
-<li>Exact Growth</li>
-
-<li>Average Case (Generally)</li>
-
-</ul>
-
-</div>
-
-<div class="card">
-
-<h2>
-
-🧮 Mathematical Formula
-
-</h2>
-
-<div style="
-margin-top:25px;
-background:#0F172A;
-padding:25px;
-border-radius:15px;
-text-align:center;
-font-size:28px;
-font-weight:bold;
-color:#60A5FA;">
-
-C₁ × f(n)
-
-≤
-
-T(n)
-
-≤
-
-C₂ × f(n)
-
-</div>
-
-<p style="margin-top:20px;">
-
-for
-
-<b>n ≥ n₀</b>
-
-</p>
-
-</div>
-
-</div>
-
-<!-- Java Example -->
-
-<section style="margin-top:80px;">
-
-<h2 style="font-size:40px;margin-bottom:35px;">
-
-💻 Java Example
-
-</h2>
-
-<div class="card">
-
-<pre style="
-background:#0B1120;
-padding:25px;
-border-radius:18px;
-overflow:auto;
-color:#A5F3FC;
-font-size:17px;">
-
+}</pre>
+                <hr style="margin:25px 0; border-color:#2B214E;">
+                <p>If the required element is found at the very first middle position, only one comparison is required.</p>
+                <div style="margin-top:25px; padding:20px; background:#111827; border-radius:15px; text-align:center; font-size:34px; font-weight:bold; color:#4ADE80;">
+                    Ω(1)
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <h2 style="font-size:40px; margin-bottom:35px;">🌍 Real-Life Example</h2>
+            <div class="card">
+                <h3>Finding a Book</h3>
+                <p style="margin-top:20px; line-height:2;">
+                    Imagine your favorite book is placed exactly in front of you.
+                    You immediately pick it without searching. Only one operation is needed.
+                </p>
+                <div style="margin-top:30px; padding:20px; background:#111827; border-radius:15px; text-align:center; font-size:34px; font-weight:bold; color:#4ADE80;">
+                    Ω(1)
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <div class="card">
+                <h2>📌 Big Ω Summary</h2>
+                <table style="width:100%; margin-top:25px; border-collapse:collapse; text-align: left;">
+                    <tr>
+                        <th style="padding:15px;background:#22C55E;">Feature</th>
+                        <th style="padding:15px;background:#22C55E;">Value</th>
+                    </tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Meaning</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Lower Bound</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Represents</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Best Case</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Formula</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">T(n) ≥ C × f(n)</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Example</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Linear Search / Binary Search</td></tr>
+                    <tr><td style="padding:15px;">Complexity</td><td style="padding:15px;">Ω(1)</td></tr>
+                </table>
+            </div>
+        </section>
+    </section>
+
+    <section id="theta" style="padding:100px 8%;">
+        <div style="text-align:center;margin-bottom:70px;">
+            <h2 style="font-size:52px; background:linear-gradient(90deg,#60A5FA,#3B82F6); -webkit-background-clip:text; color:transparent; margin-bottom:15px;">
+                🔵 Big Θ (Big Theta)
+            </h2>
+            <p style="color:#CBD5E1; font-size:18px; max-width:850px; margin:auto; line-height:2;">
+                Big Theta represents the <b>Tight Bound</b> of an algorithm.
+                It provides both the <b>Upper Bound</b> and <b>Lower Bound</b>, meaning the algorithm grows at the same rate.
+            </p>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h2>📖 Definition</h2>
+                <p>Big Theta represents the <b>Exact Growth Rate</b> of an algorithm. If an algorithm has the same Upper Bound and Lower Bound, then it belongs to Θ(f(n))</p>
+                <br>
+                <h3 style="color:#60A5FA;">Represents</h3>
+                <ul style="padding-left:20px;line-height:2;">
+                    <li>Tight Bound</li>
+                    <li>Exact Growth</li>
+                    <li>Average Case (Generally)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🧮 Mathematical Formula</h2>
+                <div style="margin-top:25px; background:#0F172A; padding:25px; border-radius:15px; text-align:center; font-size:28px; font-weight:bold; color:#60A5FA;">
+                    C₁ × f(n) ≤ T(n) ≤ C₂ × f(n)
+                </div>
+                <p style="margin-top:20px; text-align: center;">for <b>n ≥ n₀</b></p>
+            </div>
+        </div>
+
+        <section style="margin-top:80px;">
+            <h2 style="font-size:40px;margin-bottom:35px;">💻 Java Example</h2>
+            <div class="card">
+                <pre style="background:#0B1120; padding:25px; border-radius:18px; overflow:auto; color:#A5F3FC; font-size:17px;">
 void mergeSort(int arr[], int l, int r){
-
     if(l < r){
-
         int mid=(l+r)/2;
-
         mergeSort(arr,l,mid);
-
         mergeSort(arr,mid+1,r);
-
         merge(arr,l,mid,r);
-
     }
-
-}
-
-</pre>
-
-</div>
-
-</section>
-
-<!-- Calculation -->
-
-<section style="margin-top:70px;">
-
-<h2 style="font-size:40px;margin-bottom:35px;">
-
-🧠 Step-by-Step Calculation
-
-</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>Step 1</h3>
-
-<p>
-
-Array is divided into
-
-two halves repeatedly.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>Step 2</h3>
-
-<p>
-
-Number of levels
-
-=
-
-log n
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>Step 3</h3>
-
-<p>
-
-Every level processes
-
-n elements.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="card"
-style="margin-top:30px;">
-
-<h2>
-
-Final Calculation
-
-</h2>
-
-<hr style="margin:20px 0;border-color:#2B214E;">
-
-<div style="
-text-align:center;
-line-height:2;
-font-size:28px;">
-
-n × log n
-
-</div>
-
-<h1 style="
-margin-top:25px;
-font-size:55px;
-color:#60A5FA;
-text-align:center;">
-
-Θ(n log n)
-
-</h1>
-
-<p style="
-text-align:center;
-margin-top:20px;">
-
-Space Complexity → O(n)
-
-</p>
-
-</div>
-
-</section>
-
-<!-- Real Life -->
-
-<section style="margin-top:70px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
-
-🌍 Real-Life Example
-
-</h2>
-
-<div class="card">
-
-<h3>
-
-Phone Directory
-
-</h3>
-
-<p style="
-margin-top:20px;
-line-height:2;">
-
-Imagine finding a name
-
-by repeatedly dividing
-
-the directory into halves.
-
-Every level performs
-
-the same amount of work.
-
-Therefore,
-
-Merge Sort grows
-
-consistently.
-
-</p>
-
-<div style="
-margin-top:30px;
-padding:20px;
-background:#111827;
-border-radius:15px;
-text-align:center;
-font-size:34px;
-font-weight:bold;
-color:#60A5FA;">
-
-Θ(n log n)
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ============================= -->
-<!-- Comparison Section -->
-<!-- ============================= -->
-
-<section style="margin-top:100px;">
-
-<div style="text-align:center;margin-bottom:60px;">
-
-<h2 style="
-font-size:48px;
-background:linear-gradient(90deg,#C4B5FD,#60A5FA);
--webkit-background-clip:text;
-color:transparent;">
-
-⚖ Big O vs Big Ω vs Big Θ
-
-</h2>
-
-</div>
-
-<div class="cards">
-
-<div class="card">
-
-<h2 style="color:#FF6B81;">
-
-🔴 Big O
-
-</h2>
-
-<p>
-
-Upper Bound
-
-</p>
-
-<p>
-
-Worst Case
-
-</p>
-
-<h3 style="margin-top:20px;">
-
-Example
-
-</h3>
-
-<p>
-
-Linear Search
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2 style="color:#4ADE80;">
-
-🟢 Big Ω
-
-</h2>
-
-<p>
-
-Lower Bound
-
-</p>
-
-<p>
-
-Best Case
-
-</p>
-
-<h3 style="margin-top:20px;">
-
-Example
-
-</h3>
-
-<p>
-
-Binary Search
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2 style="color:#60A5FA;">
-
-🔵 Big Θ
-
-</h2>
-
-<p>
-
-Tight Bound
-
-</p>
-
-<p>
-
-Exact Growth
-
-</p>
-
-<h3 style="margin-top:20px;">
-
-Example
-
-</h3>
-
-<p>
-
-Merge Sort
-
-</p>
-
-</div>
-
-</div>
-
-<br><br>
-
-<div class="card">
-
-<table style="width:100%;border-collapse:collapse;">
-
-<tr>
-
-<th style="padding:16px;background:#8B5CF6;">Feature</th>
-
-<th style="padding:16px;background:#8B5CF6;">Big O</th>
-
-<th style="padding:16px;background:#8B5CF6;">Big Ω</th>
-
-<th style="padding:16px;background:#8B5CF6;">Big Θ</th>
-
-</tr>
-
-<tr>
-
-<td style="padding:14px;">Meaning</td>
-
-<td>Upper Bound</td>
-
-<td>Lower Bound</td>
-
-<td>Tight Bound</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:14px;">Represents</td>
-
-<td>Worst Case</td>
-
-<td>Best Case</td>
-
-<td>Exact Growth</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:14px;">Formula</td>
-
-<td>T(n) ≤ C f(n)</td>
-
-<td>T(n) ≥ C f(n)</td>
-
-<td>C₁f(n) ≤ T(n) ≤ C₂f(n)</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:14px;">Example</td>
-
-<td>Linear Search</td>
-
-<td>Binary Search</td>
-
-<td>Merge Sort</td>
-
-</tr>
-
-</table>
-
-</div>
-
-</section>
-
-</section>
-
-<!-- ===================================== -->
-<!-- END OF PART 5                         -->
-<!-- PART 6 : Growth Types + Space Complexity -->
-<!-- ===================================== -->
-
-<!-- ===================================== -->
-<!-- PART 6 : GROWTH TYPES + SPACE         -->
-<!-- ===================================== -->
-
-<section id="growth" style="padding:100px 8%;">
-
-<div style="text-align:center;margin-bottom:70px;">
-
-<h2 style="
-font-size:52px;
-background:linear-gradient(90deg,#C4B5FD,#A78BFA,#7C3AED);
--webkit-background-clip:text;
-color:transparent;">
-
-📈 Complexity Growth Chart
-
-</h2>
-
-<p style="
-margin-top:20px;
-color:#CBD5E1;
-font-size:18px;
-max-width:800px;
-margin-inline:auto;
-line-height:2;">
-
-The following chart shows how algorithms grow
-as the input size increases.
-Smaller growth means a faster algorithm.
-
-</p>
-
-</div>
-
-
-<!-- Growth Timeline -->
-
-<div class="card">
-
-<div style="display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:20px;
-text-align:center;">
-
-<div>
-
-<div style="
-background:#22C55E;
-padding:18px;
-border-radius:15px;
-font-weight:bold;">
-
-O(1)
-
-</div>
-
-<p style="margin-top:10px;">
-
-Constant
-
-</p>
-
-</div>
-
-↓
-
-<div>
-
-<div style="
-background:#3B82F6;
-padding:18px;
-border-radius:15px;
-font-weight:bold;">
-
-O(log n)
-
-</div>
-
-<p>
-
-Logarithmic
-
-</p>
-
-</div>
-
-↓
-
-<div>
-
-<div style="
-background:#8B5CF6;
-padding:18px;
-border-radius:15px;
-font-weight:bold;">
-
-O(√n)
-
-</div>
-
-<p>
-
-Square Root
-
-</p>
-
-</div>
-
-↓
-
-<div>
-
-<div style="
-background:#F59E0B;
-padding:18px;
-border-radius:15px;
-font-weight:bold;">
-
-O(n)
-
-</div>
-
-<p>
-
-Linear
-
-</p>
-
-</div>
-
-↓
-
-<div>
-
-<div style="
-background:#EC4899;
-padding:18px;
-border-radius:15px;
-font-weight:bold;">
-
-O(n log n)
-
-</div>
-
-<p>
-
-Linearithmic
-
-</p>
-
-</div>
-
-↓
-
-<div>
-
-<div style="
-background:#EF4444;
-padding:18px;
-border-radius:15px;
-font-weight:bold;">
-
-O(n²)
-
-</div>
-
-<p>
-
-Quadratic
-
-</p>
-
-</div>
-
-↓
-
-<div>
-
-<div style="
-background:#991B1B;
-padding:18px;
-border-radius:15px;
-font-weight:bold;">
-
-O(2ⁿ)
-
-</div>
-
-<p>
-
-Exponential
-
-</p>
-
-</div>
-
-↓
-
-<div>
-
-<div style="
-background:black;
-padding:18px;
-border-radius:15px;
-font-weight:bold;">
-
-O(n!)
-
-</div>
-
-<p>
-
-Factorial
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- Complexity Table -->
-
-<section style="margin-top:80px;">
-
-<h2 style="
-font-size:42px;
-margin-bottom:35px;">
-
-📊 Common Growth Types
-
-</h2>
-
-<div class="card">
-
-<table style="
-width:100%;
-border-collapse:collapse;">
-
-<tr>
-
-<th style="background:#8B5CF6;padding:15px;">
-
-Complexity
-
-</th>
-
-<th style="background:#8B5CF6;">
-
-Name
-
-</th>
-
-<th style="background:#8B5CF6;">
-
-Example
-
-</th>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(1)</td>
-
-<td>Constant</td>
-
-<td>Array Index</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(log n)</td>
-
-<td>Logarithmic</td>
-
-<td>Binary Search</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(√n)</td>
-
-<td>Square Root</td>
-
-<td>Prime Checking</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(n)</td>
-
-<td>Linear</td>
-
-<td>Linear Search</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(n log n)</td>
-
-<td>Linearithmic</td>
-
-<td>Merge Sort</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(n²)</td>
-
-<td>Quadratic</td>
-
-<td>Bubble Sort</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(n³)</td>
-
-<td>Cubic</td>
-
-<td>Matrix Multiplication</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(2ⁿ)</td>
-
-<td>Exponential</td>
-
-<td>Recursive Fibonacci</td>
-
-</tr>
-
-<tr>
-
-<td style="padding:15px;">O(n!)</td>
-
-<td>Factorial</td>
-
-<td>Permutations</td>
-
-</tr>
-
-</table>
-
-</div>
-
-</section>
-
-
-<!-- Space Complexity -->
-
-<section id="space" style="margin-top:90px;">
-
-<div style="text-align:center;">
-
-<h2 style="
-font-size:50px;
-background:linear-gradient(90deg,#22D3EE,#60A5FA);
--webkit-background-clip:text;
-color:transparent;">
-
-💾 Space Complexity
-
-</h2>
-
-</div>
-
-<div class="cards" style="margin-top:50px;">
-
-<div class="card">
-
-<h2>
-
-Definition
-
-</h2>
-
-<p>
-
-Space Complexity measures
-
-the amount of memory
-
-required by an algorithm.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>
-
-Formula
-
-</h2>
-
-<div style="
-margin-top:25px;
-background:#111827;
-padding:25px;
-border-radius:15px;
-text-align:center;
-font-size:26px;
-font-weight:bold;
-color:#60A5FA;">
-
-Total Space
-
-=
-
-Fixed Space
-
-+
-
-Variable Space
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- Memory Cards -->
-
-<section style="margin-top:70px;">
-
-<h2 style="
-font-size:40px;
-margin-bottom:35px;">
-
-🧠 Memory Usage
-
-</h2>
-
-<div class="cards">
-
-<div class="card">
-
-<h3>
-
-Variables
-
-</h3>
-
-<h1 style="margin-top:20px;color:#22C55E;">
-
-O(1)
-
-</h1>
-
-<p>
-
-Single variables
-
-occupy constant memory.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>
-
-Array
-
-</h3>
-
-<h1 style="margin-top:20px;color:#F59E0B;">
-
-O(n)
-
-</h1>
-
-<p>
-
-Memory grows
-
-with input size.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>
-
-2D Matrix
-
-</h3>
-
-<h1 style="margin-top:20px;color:#EF4444;">
-
-O(n²)
-
-</h1>
-
-<p>
-
-Rows × Columns
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>
-
-Recursion
-
-</h3>
-
-<h1 style="margin-top:20px;color:#60A5FA;">
-
-O(depth)
-
-</h1>
-
-<p>
-
-Depends on
-
-call stack depth.
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- Cheat Sheet -->
-
-<section style="margin-top:90px;">
-
-<div style="text-align:center;">
-
-<h2 style="
-font-size:48px;
-background:linear-gradient(90deg,#FDE68A,#F59E0B);
--webkit-background-clip:text;
-color:transparent;">
-
-📋 Complexity Cheat Sheet
-
-</h2>
-
-</div>
-
-<div class="cards" style="margin-top:45px;">
-
-<div class="card">
-
-<h2>
-
-Searching
-
-</h2>
-
-<hr style="margin:15px 0;">
-
-<p>Linear Search → O(n)</p>
-
-<p>Binary Search → O(log n)</p>
-
-</div>
-
-<div class="card">
-
-<h2>
-
-Sorting
-
-</h2>
-
-<hr style="margin:15px 0;">
-
-<p>Bubble Sort → O(n²)</p>
-
-<p>Merge Sort → O(n log n)</p>
-
-<p>Quick Sort → O(n log n)</p>
-
-</div>
-
-<div class="card">
-
-<h2>
-
-Memory
-
-</h2>
-
-<hr style="margin:15px 0;">
-
-<p>Variable → O(1)</p>
-
-<p>Array → O(n)</p>
-
-<p>Matrix → O(n²)</p>
-
-</div>
-
-</div>
-
-</section>
-
-</section>
-
-<!-- ===================================== -->
-<!-- END OF PART 6                         -->
-<!-- PART 7 : INTERVIEW QUESTIONS          -->
-<!-- ===================================== -->
-
-<!-- ===================================== -->
-<!-- PART 7 : FINAL SECTION                -->
-<!-- ===================================== -->
-
-<section id="interview" style="padding:100px 8%;">
-
-<div style="text-align:center;margin-bottom:60px;">
-
-<h2 style="
-font-size:52px;
-background:linear-gradient(90deg,#FDE68A,#F59E0B);
--webkit-background-clip:text;
-color:transparent;">
-
-🎯 Interview Questions
-
-</h2>
-
-<p style="
-color:#CBD5E1;
-font-size:18px;
-max-width:750px;
-margin:auto;">
-
-Frequently asked Time & Space Complexity interview questions.
-
-</p>
-
-</div>
-
-<!-- Accordion -->
-
-<details class="card" style="margin-bottom:20px;">
-<summary style="cursor:pointer;font-size:20px;font-weight:600;">
-Difference between Big O and Big Θ?
-</summary>
-
-<p style="margin-top:20px;line-height:2;">
-
-<b>Big O</b> represents the maximum growth (Worst Case).
-
-<br><br>
-
-<b>Big Θ</b> represents the exact growth when both upper and lower bounds are the same.
-
-</p>
-
-</details>
-
-<details class="card" style="margin-bottom:20px;">
-<summary style="cursor:pointer;font-size:20px;font-weight:600;">
-Why Binary Search is O(log n)?
-</summary>
-
-<p style="margin-top:20px;line-height:2;">
-
-Binary Search divides the search space into half every iteration.
-
-Total levels
-
-↓
-
-log₂ n
-
-</p>
-
-</details>
-
-<details class="card" style="margin-bottom:20px;">
-<summary style="cursor:pointer;font-size:20px;font-weight:600;">
-Why Merge Sort is O(n log n)?
-</summary>
-
-<p style="margin-top:20px;line-height:2;">
-
-Every recursive level processes
-
-<b>n</b>
-
-elements.
-
-Number of levels
-
-=
-
-<b>log n</b>
-
-Total
-
-=
-
-<b>n log n</b>
-
-</p>
-
-</details>
-
-<details class="card" style="margin-bottom:20px;">
-<summary style="cursor:pointer;font-size:20px;font-weight:600;">
-Why do we ignore constants?
-</summary>
-
-<p style="margin-top:20px;line-height:2;">
-
-As input size becomes very large,
-
-constants become insignificant.
-
-Example
-
-O(5n)
-
-↓
-
-O(n)
-
-</p>
-
-</details>
-
-<details class="card">
-
-<summary style="cursor:pointer;font-size:20px;font-weight:600;">
-
-Difference between Time and Space Complexity?
-
-</summary>
-
-<p style="margin-top:20px;line-height:2;">
-
-Time Complexity
-
-↓
-
-Execution Time
-
-<br><br>
-
-Space Complexity
-
-↓
-
-Memory Usage
-
-</p>
-
-</details>
-
-</section>
-
-<!-- ================================= -->
-
-<section style="padding:40px 8%;">
-
-<div style="text-align:center;">
-
-<h2 style="
-font-size:50px;
-background:linear-gradient(90deg,#FB7185,#F97316);
--webkit-background-clip:text;
-color:transparent;">
-
-❌ Common Mistakes
-
-</h2>
-
-</div>
-
-<div class="cards" style="margin-top:50px;">
-
-<div class="card">
-
-<h2 style="color:#F87171;">
-
-Wrong
-
-</h2>
-
-<hr style="margin:15px 0;">
-
-<p>O(n+n)</p>
-
-<p>O(2n)</p>
-
-<p>O(n²+n)</p>
-
-<p>O(5)</p>
-
-</div>
-
-<div class="card">
-
-<h2 style="color:#4ADE80;">
-
-Correct
-
-</h2>
-
-<hr style="margin:15px 0;">
-
-<p>O(n)</p>
-
-<p>O(n)</p>
-
-<p>O(n²)</p>
-
-<p>O(1)</p>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================================= -->
-
-<section id="summary" style="padding:80px 8%;">
-
-<div class="card">
-
-<h2>
-
-📚 Summary
-
-</h2>
-
-<hr style="margin:25px 0;">
-
-<ul style="padding-left:25px;line-height:2.3;">
-
-<li>Time Complexity measures execution time.</li>
-
-<li>Space Complexity measures memory usage.</li>
-
-<li>Big O → Worst Case.</li>
-
-<li>Big Ω → Best Case.</li>
-
-<li>Big Θ → Exact Growth.</li>
-
-<li>Always explain both Time & Space Complexity.</li>
-
-<li>Ignore constants and lower-order terms.</li>
-
-</ul>
-
-</div>
-
-</section>
-
-<!-- ================================= -->
-
-<section style="padding:60px 8%;">
-
-<div style="text-align:center;">
-
-<h2 style="
-font-size:48px;
-background:linear-gradient(90deg,#C4B5FD,#A78BFA);
--webkit-background-clip:text;
-color:transparent;">
-
-📚 Continue Learning
-
-</h2>
-
-</div>
-
-<div class="cards" style="margin-top:45px;">
-
-<div class="card">
-
-<h2>📦 Arrays</h2>
-
-<p>
-
-Memory Representation
-
-Searching
-
-Traversal
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>🔗 Linked List</h2>
-
-<p>
-
-Insertion
-
-Deletion
-
-Traversal
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>📚 Stack</h2>
-
-<p>
-
-Push
-
-Pop
-
-Peek
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>🚶 Queue</h2>
-
-<p>
-
-Enqueue
-
-Dequeue
-
-Circular Queue
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>🌳 Trees</h2>
-
-<p>
-
-BST
-
-AVL
-
-Traversal
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>🕸 Graph</h2>
-
-<p>
-
-DFS
-
-BFS
-
-Shortest Path
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================================= -->
-
-<section class="end-signature">
-<div class="star">✦</div>
-<h2>That's it.</h2>
-<div class="line"></div>
-<div class="star">✦</div>
-</section>
-
-<!-- ================================= -->
-
-<footer>
-
-<div style="max-width:1200px;margin:auto;">
-
-<h2 style="
-font-size:28px;
-color:#C4B5FD;
-margin-bottom:15px;">
-
-DSA Learning Platform
-
-</h2>
-
-<p style="color:#94A3B8;">
-
-Master Data Structures & Algorithms with Java.
-
-</p>
-
-<hr style="
-margin:35px 0;
-border-color:#2B214E;">
-
-<p style="color:#64748B;">
-
-© 2026 DSA Learning Platform
-
-</p>
-
-</div>
-
-</footer>
-
-<!-- Back to Top -->
-
-<a href="#top"
-
-style="
-
-position:fixed;
-
-left:30px;
-
-bottom:30px;
-
-width:60px;
-
-height:60px;
-
-border-radius:50%;
-
-background:linear-gradient(135deg,#A78BFA,#7C3AED);
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-text-decoration:none;
-
-font-size:28px;
-
-color:white;
-
-box-shadow:0 20px 40px rgba(167,139,250,.35);
-
-z-index:9999;
-
-">
-
-↑
-
-</a>
+}</pre>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <h2 style="font-size:40px;margin-bottom:35px;">🧠 Step-by-Step Calculation</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Step 1</h3>
+                    <p>Array is divided into two halves repeatedly.</p>
+                </div>
+                <div class="card">
+                    <h3>Step 2</h3>
+                    <p>Number of levels = log n</p>
+                </div>
+                <div class="card">
+                    <h3>Step 3</h3>
+                    <p>Every level processes n elements.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:30px;">
+                <h2>Final Calculation</h2>
+                <hr style="margin:20px 0;border-color:#2B214E;">
+                <div style="text-align:center; line-height:2; font-size:28px;">n × log n</div>
+                <h1 style="margin-top:25px; font-size:55px; color:#60A5FA; text-align:center;">Θ(n log n)</h1>
+                <p style="text-align:center; margin-top:20px;">Space Complexity → O(n)</p>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <h2 style="font-size:40px;margin-bottom:35px;">🌍 Real-Life Example</h2>
+            <div class="card">
+                <h3>Phone Directory</h3>
+                <p style="margin-top:20px; line-height:2;">
+                    Imagine finding a name by repeatedly dividing the directory into halves.
+                    Every level performs the same amount of work. Therefore, Merge Sort grows consistently.
+                </p>
+                <div style="margin-top:30px; padding:20px; background:#111827; border-radius:15px; text-align:center; font-size:34px; font-weight:bold; color:#60A5FA;">
+                    Θ(n log n)
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top:100px;">
+            <div style="text-align:center;margin-bottom:60px;">
+                <h2 style="font-size:48px; background:linear-gradient(90deg,#C4B5FD,#60A5FA); -webkit-background-clip:text; color:transparent;">
+                    ⚖ Big O vs Big Ω vs Big Θ
+                </h2>
+            </div>
+
+            <div class="cards">
+                <div class="card">
+                    <h2 style="color:#FF6B81;">🔴 Big O</h2>
+                    <p>Upper Bound</p>
+                    <p>Worst Case</p>
+                    <h3 style="margin-top:20px;">Example</h3>
+                    <p>Linear Search</p>
+                </div>
+
+                <div class="card">
+                    <h2 style="color:#4ADE80;">🟢 Big Ω</h2>
+                    <p>Lower Bound</p>
+                    <p>Best Case</p>
+                    <h3 style="margin-top:20px;">Example</h3>
+                    <p>Binary Search</p>
+                </div>
+
+                <div class="card">
+                    <h2 style="color:#60A5FA;">🔵 Big Θ</h2>
+                    <p>Tight Bound</p>
+                    <p>Exact Growth</p>
+                    <h3 style="margin-top:20px;">Example</h3>
+                    <p>Merge Sort</p>
+                </div>
+            </div>
+
+            <br><br>
+
+            <div class="card">
+                <table style="width:100%;border-collapse:collapse; text-align: left;">
+                    <tr>
+                        <th style="padding:16px;background:#8B5CF6;">Feature</th>
+                        <th style="padding:16px;background:#8B5CF6;">Big O</th>
+                        <th style="padding:16px;background:#8B5CF6;">Big Ω</th>
+                        <th style="padding:16px;background:#8B5CF6;">Big Θ</th>
+                    </tr>
+                    <tr><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Meaning</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Upper Bound</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Lower Bound</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Tight Bound</td></tr>
+                    <tr><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Represents</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Worst Case</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Best Case</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Exact Growth</td></tr>
+                    <tr><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">Formula</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">T(n) ≤ C f(n)</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">T(n) ≥ C f(n)</td><td style="padding:14px; border-bottom: 1px solid rgba(255,255,255,0.05);">C₁f(n) ≤ T(n) ≤ C₂f(n)</td></tr>
+                    <tr><td style="padding:14px;">Example</td><td>Linear Search</td><td>Binary Search</td><td>Merge Sort</td></tr>
+                </table>
+            </div>
+        </section>
+    </section>
+
+    <section id="growth" style="padding:100px 8%;">
+        <div style="text-align:center;margin-bottom:70px;">
+            <h2 style="font-size:52px; background:linear-gradient(90deg,#C4B5FD,#A78BFA,#7C3AED); -webkit-background-clip:text; color:transparent;">
+                📈 Complexity Growth Chart
+            </h2>
+            <p style="margin-top:20px; color:#CBD5E1; font-size:18px; max-width:800px; margin-inline:auto; line-height:2;">
+                The following chart shows how algorithms grow as the input size increases. Smaller growth means a faster algorithm.
+            </p>
+        </div>
+
+        <div class="card">
+            <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items: center; gap:20px; text-align:center;">
+                <div><div style="background:#22C55E; padding:18px; border-radius:15px; font-weight:bold;">O(1)</div><p style="margin-top:10px;">Constant</p></div> &rarr;
+                <div><div style="background:#3B82F6; padding:18px; border-radius:15px; font-weight:bold;">O(log n)</div><p style="margin-top:10px;">Logarithmic</p></div> &rarr;
+                <div><div style="background:#8B5CF6; padding:18px; border-radius:15px; font-weight:bold;">O(√n)</div><p style="margin-top:10px;">Square Root</p></div> &rarr;
+                <div><div style="background:#F59E0B; padding:18px; border-radius:15px; font-weight:bold;">O(n)</div><p style="margin-top:10px;">Linear</p></div> &rarr;
+                <div><div style="background:#EC4899; padding:18px; border-radius:15px; font-weight:bold;">O(n log n)</div><p style="margin-top:10px;">Linearithmic</p></div> &rarr;
+                <div><div style="background:#EF4444; padding:18px; border-radius:15px; font-weight:bold;">O(n²)</div><p style="margin-top:10px;">Quadratic</p></div> &rarr;
+                <div><div style="background:#991B1B; padding:18px; border-radius:15px; font-weight:bold;">O(2ⁿ)</div><p style="margin-top:10px;">Exponential</p></div> &rarr;
+                <div><div style="background:black; padding:18px; border-radius:15px; font-weight:bold;">O(n!)</div><p style="margin-top:10px;">Factorial</p></div>
+            </div>
+        </div>
+
+        <section style="margin-top:80px;">
+            <h2 style="font-size:42px; margin-bottom:35px;">📊 Common Growth Types</h2>
+            <div class="card">
+                <table style="width:100%; border-collapse:collapse; text-align: left;">
+                    <tr>
+                        <th style="background:#8B5CF6;padding:15px;">Complexity</th>
+                        <th style="background:#8B5CF6;padding:15px;">Name</th>
+                        <th style="background:#8B5CF6;padding:15px;">Example</th>
+                    </tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">O(1)</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Constant</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Array Index</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">O(log n)</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Logarithmic</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Binary Search</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">O(√n)</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Square Root</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Prime Checking</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">O(n)</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Linear</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Linear Search</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">O(n log n)</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Linearithmic</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Merge Sort</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">O(n²)</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Quadratic</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Bubble Sort</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">O(n³)</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Cubic</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Matrix Multiplication</td></tr>
+                    <tr><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">O(2ⁿ)</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Exponential</td><td style="padding:15px; border-bottom: 1px solid rgba(255,255,255,0.05);">Recursive Fibonacci</td></tr>
+                    <tr><td style="padding:15px;">O(n!)</td><td>Factorial</td><td>Permutations</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <section id="space" style="margin-top:90px;">
+            <div style="text-align:center;">
+                <h2 style="font-size:50px; background:linear-gradient(90deg,#22D3EE,#60A5FA); -webkit-background-clip:text; color:transparent;">
+                    💾 Space Complexity
+                </h2>
+            </div>
+            <div class="cards" style="margin-top:50px;">
+                <div class="card">
+                    <h2>Definition</h2>
+                    <p>Space Complexity measures the amount of memory required by an algorithm.</p>
+                </div>
+                <div class="card">
+                    <h2>Formula</h2>
+                    <div style="margin-top:25px; background:#111827; padding:25px; border-radius:15px; text-align:center; font-size:26px; font-weight:bold; color:#60A5FA;">
+                        Total Space = Fixed Space + Variable Space
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top:70px;">
+            <h2 style="font-size:40px; margin-bottom:35px;">🧠 Memory Usage</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Variables</h3>
+                    <h1 style="margin-top:20px;color:#22C55E;">O(1)</h1>
+                    <p>Single variables occupy constant memory.</p>
+                </div>
+                <div class="card">
+                    <h3>Array</h3>
+                    <h1 style="margin-top:20px;color:#F59E0B;">O(n)</h1>
+                    <p>Memory grows with input size.</p>
+                </div>
+                <div class="card">
+                    <h3>2D Matrix</h3>
+                    <h1 style="margin-top:20px;color:#EF4444;">O(n²)</h1>
+                    <p>Rows × Columns</p>
+                </div>
+                <div class="card">
+                    <h3>Recursion</h3>
+                    <h1 style="margin-top:20px;color:#60A5FA;">O(depth)</h1>
+                    <p>Depends on call stack depth.</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top:90px;">
+            <div style="text-align:center;">
+                <h2 style="font-size:48px; background:linear-gradient(90deg,#FDE68A,#F59E0B); -webkit-background-clip:text; color:transparent;">
+                    📋 Complexity Cheat Sheet
+                </h2>
+            </div>
+            <div class="cards" style="margin-top:45px;">
+                <div class="card">
+                    <h2>Searching</h2>
+                    <hr style="margin:15px 0; border-color:#2B214E;">
+                    <p>Linear Search → O(n)</p>
+                    <p>Binary Search → O(log n)</p>
+                </div>
+                <div class="card">
+                    <h2>Sorting</h2>
+                    <hr style="margin:15px 0; border-color:#2B214E;">
+                    <p>Bubble Sort → O(n²)</p>
+                    <p>Merge Sort → O(n log n)</p>
+                    <p>Quick Sort → O(n log n)</p>
+                </div>
+                <div class="card">
+                    <h2>Memory</h2>
+                    <hr style="margin:15px 0; border-color:#2B214E;">
+                    <p>Variable → O(1)</p>
+                    <p>Array → O(n)</p>
+                    <p>Matrix → O(n²)</p>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <section id="interview" style="padding:100px 8%;">
+        <div style="text-align:center;margin-bottom:60px;">
+            <h2 style="font-size:52px; background:linear-gradient(90deg,#FDE68A,#F59E0B); -webkit-background-clip:text; color:transparent;">
+                🎯 Interview Questions
+            </h2>
+            <p style="color:#CBD5E1; font-size:18px; max-width:750px; margin:auto;">
+                Frequently asked Time & Space Complexity interview questions.
+            </p>
+        </div>
+
+        <details class="card" style="margin-bottom:20px;">
+            <summary style="cursor:pointer;font-size:20px;font-weight:600;">Difference between Big O and Big Θ?</summary>
+            <p style="margin-top:20px;line-height:2;">
+                <b>Big O</b> represents the maximum growth (Worst Case).<br><br>
+                <b>Big Θ</b> represents the exact growth when both upper and lower bounds are the same.
+            </p>
+        </details>
+
+        <details class="card" style="margin-bottom:20px;">
+            <summary style="cursor:pointer;font-size:20px;font-weight:600;">Why Binary Search is O(log n)?</summary>
+            <p style="margin-top:20px;line-height:2;">
+                Binary Search divides the search space into half every iteration.<br><br>
+                Total levels &rarr; log₂ n
+            </p>
+        </details>
+
+        <details class="card" style="margin-bottom:20px;">
+            <summary style="cursor:pointer;font-size:20px;font-weight:600;">Why Merge Sort is O(n log n)?</summary>
+            <p style="margin-top:20px;line-height:2;">
+                Every recursive level processes <b>n</b> elements.<br>
+                Number of levels = <b>log n</b><br><br>
+                Total = <b>n log n</b>
+            </p>
+        </details>
+
+        <details class="card" style="margin-bottom:20px;">
+            <summary style="cursor:pointer;font-size:20px;font-weight:600;">Why do we ignore constants?</summary>
+            <p style="margin-top:20px;line-height:2;">
+                As input size becomes very large, constants become insignificant.<br><br>
+                Example: O(5n) &rarr; O(n)
+            </p>
+        </details>
+
+        <details class="card" style="margin-bottom:20px;">
+            <summary style="cursor:pointer;font-size:20px;font-weight:600;">Difference between Time and Space Complexity?</summary>
+            <p style="margin-top:20px;line-height:2;">
+                Time Complexity &rarr; Execution Time<br><br>
+                Space Complexity &rarr; Memory Usage
+            </p>
+        </details>
+    </section>
+
+    <section style="padding:40px 8%;">
+        <div style="text-align:center;">
+            <h2 style="font-size:50px; background:linear-gradient(90deg,#FB7185,#F97316); -webkit-background-clip:text; color:transparent;">
+                ❌ Common Mistakes
+            </h2>
+        </div>
+        <div class="cards" style="margin-top:50px;">
+            <div class="card">
+                <h2 style="color:#F87171;">Wrong</h2>
+                <hr style="margin:15px 0; border-color:#2B214E;">
+                <p>O(n+n)</p>
+                <p>O(2n)</p>
+                <p>O(n²+n)</p>
+                <p>O(5)</p>
+            </div>
+            <div class="card">
+                <h2 style="color:#4ADE80;">Correct</h2>
+                <hr style="margin:15px 0; border-color:#2B214E;">
+                <p>O(n)</p>
+                <p>O(n)</p>
+                <p>O(n²)</p>
+                <p>O(1)</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="summary" style="padding:80px 8%;">
+        <div class="card">
+            <h2>📚 Summary</h2>
+            <hr style="margin:25px 0; border-color:#2B214E;">
+            <ul style="padding-left:25px;line-height:2.3;">
+                <li>Time Complexity measures execution time.</li>
+                <li>Space Complexity measures memory usage.</li>
+                <li>Big O → Worst Case.</li>
+                <li>Big Ω → Best Case.</li>
+                <li>Big Θ → Exact Growth.</li>
+                <li>Always explain both Time & Space Complexity.</li>
+                <li>Ignore constants and lower-order terms.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section style="padding:60px 8%;">
+        <div style="text-align:center;">
+            <h2 style="font-size:48px; background:linear-gradient(90deg,#C4B5FD,#A78BFA); -webkit-background-clip:text; color:transparent;">
+                📚 Continue Learning
+            </h2>
+        </div>
+        <div class="cards" style="margin-top:45px;">
+            <div class="card"><h2>📦 Arrays</h2><p>Memory Representation<br>Searching<br>Traversal</p></div>
+            <div class="card"><h2>🔗 Linked List</h2><p>Insertion<br>Deletion<br>Traversal</p></div>
+            <div class="card"><h2>📚 Stack</h2><p>Push<br>Pop<br>Peek</p></div>
+            <div class="card"><h2>🚶 Queue</h2><p>Enqueue<br>Dequeue<br>Circular Queue</p></div>
+            <div class="card"><h2>🌳 Trees</h2><p>BST<br>AVL<br>Traversal</p></div>
+            <div class="card"><h2>🕸 Graph</h2><p>DFS<br>BFS<br>Shortest Path</p></div>
+        </div>
+    </section>
+
+    <section class="end-signature">
+        <div class="star">✦</div>
+        <h2>That's it.</h2>
+        <div class="line"></div>
+        <div class="star">✦</div>
+    </section>
+
+    <footer>
+        <div style="max-width:1200px;margin:auto;">
+            <p style="color:#64748B;">© 2026 DSA Learning Platform</p>
+        </div>
+    </footer>
+
+    <a href="#top" style="position:fixed; left:30px; bottom:30px; width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,#A78BFA,#7C3AED); display:flex; justify-content:center; align-items:center; text-decoration:none; font-size:28px; color:white; box-shadow:0 20px 40px rgba(167,139,250,.35); z-index:9999;">&uarr;</a>
 
 </body>
-
 </html>
