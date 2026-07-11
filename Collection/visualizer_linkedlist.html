@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Linked List Engineering Workspace | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #090814; color: white; min-height: 100vh; overflow-x: hidden; padding-top: 80px; }
+        
+        body::before, body::after {
+            content: ""; position: fixed; width: 600px; height: 600px; border-radius: 50%; opacity: .08; filter: blur(140px); z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: rgba(10, 8, 25, .75); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, .08); z-index: 999;
+        }
+        .logo { font-size: 24px; font-weight: 700; background: linear-gradient(90deg, #E9D5FF, #A78BFA); -webkit-background-clip: text; color: transparent; text-decoration: none; }
+        .back-btn { color: #D6D3F5; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px; font-size: 14px; transition: color 0.2s; }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid; grid-template-columns: 420px 1fr; gap: 20px; max-width: 1650px; margin: 0 auto; padding: 20px;
+        }
+        .panel {
+            background: rgba(20, 18, 40, .75); border: 1px solid rgba(255, 255, 255, .06); border-radius: 16px; padding: 20px;
+            backdrop-filter: blur(25px); box-shadow: 0 15px 35px rgba(0, 0, 0, .3); display: flex; flex-direction: column; gap: 15px;
+        }
+        .panel-heading {
+            font-size: 13px; color: #A78BFA; font-weight: 600; text-transform: uppercase; letter-spacing: 0.75px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .type-selector-box {
+            display: flex; gap: 10px; background: #131022; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);
+        }
+        .type-option { display: flex; align-items: center; gap: 6px; font-size: 11px; cursor: pointer; color: #94A3B8; }
+        .type-option input { accent-color: #A78BFA; cursor: pointer; }
+        .type-option.active { color: #E9D5FF; font-weight: 600; }
+
+        .controls-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 10px; color: #94A3B8; }
+        input, textarea, select { background: #090814; border: 1px solid rgba(255, 255, 255, .15); border-radius: 6px; padding: 6px 10px; color: white; font-size: 13px; outline: none; }
+        input:focus, textarea:focus { border-color: #A78BFA; }
+
+        button {
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6); color: white; border: none; padding: 8px 12px;
+            border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: .2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(167, 139, 250, .2); }
+        button:disabled { background: #2B214E !important; color: #64748B !important; cursor: not-allowed; transform: none !important; }
+
+        .visualization-viewport {
+            background: #0B1120; border-radius: 16px; padding: 60px 20px; min-height: 240px; border: 1px solid rgba(255, 255, 255, .04);
+            overflow-x: auto; display: flex; align-items: center; justify-content: flex-start; gap: 65px; position: relative;
+        }
+        .canvas-label-track { position: absolute; top: 12px; left: 15px; font-size: 11px; color: #64748B; font-weight: 600; text-transform: uppercase; }
+
+        .canvas-arrows-svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
+        }
+        .canvas-arrows-svg path { fill: none; stroke-width: 2.5; marker-end: url(#arrowhead); transition: stroke 0.3s; }
+        .canvas-arrows-svg path.next-ptr { stroke: #A78BFA; }
+        .canvas-arrows-svg path.prev-ptr { stroke: #F472B6; }
+        .canvas-arrows-svg path.cyclic-ptr { stroke: #F59E0B; stroke-dasharray: 4; }
+
+        .head-pointer-box {
+            background: #1E1B37; border: 2px solid #F59E0B; border-radius: 8px; width: 85px; height: 50px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #F59E0B; font-weight: 600;
+            flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 2; transition: all 0.3s ease;
+        }
+
+        .node-container { display: flex; align-items: center; position: relative; flex-shrink: 0; padding: 10px 0; z-index: 2; }
+        .node-block {
+            background: rgba(30, 27, 55, 0.95); border: 2px solid #8B5CF6; border-radius: 8px; display: flex;
+            font-family: 'JetBrains Mono', monospace; font-size: 13px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 120px; height: 50px; text-align: center;
+        }
+        .node-block.active-flash { transform: scale(1.08); border-color: #C4B5FD; box-shadow: 0 0 20px #8B5CF6; }
+        .node-block.found-flash { border-color: #10B981; box-shadow: 0 0 20px #10B981; background: #065F46; }
+
+        .node-segment { display: flex; align-items: center; justify-content: center; height: 100%; }
+        .node-prev { width: 30px; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.1); color: #F472B6; font-size: 10px; font-weight: bold; }
+        .node-data { flex: 1; font-weight: 600; color: #E9D5FF; font-size: 15px; }
+        .node-next { width: 30px; background: rgba(255,255,255,0.03); border-left: 1px solid rgba(255,255,255,0.1); color: #A78BFA; font-size: 10px; font-weight: bold; }
+
+        .meta-labels { position: absolute; bottom: -28px; width: 100%; display: flex; flex-direction: column; align-items: center; font-size: 10px; font-family: 'JetBrains Mono'; }
+        .addr-lbl { color: #8B5CF6; }
+        .ptr-lbl { color: #FBBF24; font-weight: 600; text-transform: uppercase; margin-top: 1px; }
+
+        .memory-view-area {
+            display: grid; grid-template-columns: 150px 1fr; gap: 20px; background: #0B1120; padding: 20px;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); min-height: 160px; position: relative;
+        }
+        .mem-col { display: flex; flex-direction: column; gap: 10px; }
+        .mem-title { font-size: 11px; color: #64748B; font-weight: 600; text-transform: uppercase; }
+        .stack-head-ref {
+            background: #1E1B37; border: 1px solid #7C3AED; padding: 12px; border-radius: 8px; text-align: center;
+            font-family: 'JetBrains Mono'; font-size: 12px; width: 100%; margin-top: 15px; position: relative;
+        }
+        .heap-blocks-grid { display: flex; flex-wrap: wrap; gap: 15px; align-content: flex-start; }
+        .heap-node-dump {
+            background: #131022; border: 1px solid rgba(167,139,250,0.25); border-radius: 8px; padding: 8px 12px;
+            font-family: 'JetBrains Mono'; font-size: 11px; width: 130px;
+        }
+        .heap-node-dump.active { border-color: #A78BFA; background: #1E1B37; box-shadow: 0 0 10px rgba(167,139,250,0.2); }
+
+        .code-container {
+            background: #090814; padding: 14px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+            font-size: 13px; color: #A5F3FC; border-left: 3px solid #64748B; min-height: 56px; line-height: 1.4;
+        }
+
+        .step-list { display: flex; flex-direction: column; gap: 6px; }
+        .step-item {
+            display: flex; justify-content: space-between; align-items: center; background: #131022;
+            padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #94A3B8;
+        }
+        .step-item.active-step { color: #E2E8F0; }
+        .step-item.active-step i { color: #10B981; }
+
+        .complexity-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
+        .comp-node { background: #131022; padding: 8px; border-radius: 6px; font-size: 12px; }
+        .comp-node span { font-weight: 600; color: #F59E0B; display: block; margin-top: 2px; }
+
+        #diagnostic-terminal {
+            background: #090814; padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono';
+            font-size: 12px; color: #A5F3FC; min-height: 52px; border-left: 3px solid #8B5CF6; line-height: 1.5;
+        }
+
+        .playground-wrapper { display: flex; flex-direction: column; gap: 8px; }
+        .playground-wrapper textarea {
+            background: #090814; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+            padding: 10px; color: #E2E8F0; font-family: 'JetBrains Mono'; font-size: 12px; resize: none; height: 60px;
+        }
+
+        .svg-canvas-memory-link { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        .svg-canvas-memory-link path { stroke: #C4B5FD; stroke-width: 1.5; fill: none; stroke-dasharray: 3; }
+
+        @media(max-width: 1000px) { .workspace { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">DSA Learning Platform</a>
+        <div style="display: flex; gap: 20px;">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="index.html#overview" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Theory</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        
+        <!-- =================== LEFT PANEL =================== -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="panel">
+                <div class="panel-heading">Select Linked List Type Structure</div>
+                <div class="type-selector-box">
+                    <label class="type-option active" id="lbl-sll"><input type="radio" name="list-type" value="SLL" checked onchange="switchTypeListType('SLL')"> Singly (SLL)</label>
+                    <label class="type-option" id="lbl-dll"><input type="radio" name="list-type" value="DLL" onchange="switchTypeListType('DLL')"> Doubly (DLL)</label>
+                    <label class="type-option" id="lbl-cll"><input type="radio" name="list-type" value="CLL" onchange="switchTypeListType('CLL')"> Circular Singly</label>
+                    <label class="type-option" id="lbl-cdll"><input type="radio" name="list-type" value="CDLL" onchange="switchTypeListType('CDLL')"> Circular Doubly</label>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">Operational Methods Controller</div>
+                <div class="controls-row">
+                    <div class="form-group"><label>Value (Data)</label><input type="number" id="input-data" placeholder="e.g. 20"></div>
+                    <div class="form-group"><label>Pos / Match Key</label><input type="number" id="input-pos" placeholder="Index / Value"></div>
+                </div>
+                <div class="controls-row" id="insert-buttons-grid">
+                    <button onclick="triggerInsertion('first')">insertFirst()</button>
+                    <button onclick="triggerInsertion('last')">insertLast()</button>
+                    <button onclick="triggerInsertion('pos')">insertAtPos()</button>
+                </div>
+                <div class="controls-row" id="delete-buttons-grid">
+                    <button onclick="triggerDeletion('first')" style="background:linear-gradient(135deg,#EF4444,#DC2626)">deleteFirst()</button>
+                    <button onclick="triggerDeletion('last')" style="background:linear-gradient(135deg,#EF4444,#DC2626)">deleteLast()</button>
+                    <button onclick="triggerDeletion('pos')" style="background:linear-gradient(135deg,#EF4444,#DC2626)">deleteAtPos()</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="triggerSearch()" style="background:#1E1B37; border:1px solid #4B5563;"><i class="fa-solid fa-magnifying-glass"></i> search(E)</button>
+                    <button onclick="triggerReverse()" style="background:#1E1B37; border:1px solid #4B5563;"><i class="fa-solid fa-rotate"></i> reverse()</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="triggerAlgorithm('middle')">findMiddle()</button>
+                    <button onclick="triggerAlgorithm('cycle')">detectCycle()</button>
+                    <button onclick="triggerAlgorithm('sort')" style="background:linear-gradient(135deg,#EC4899,#C084FC)">sort()</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="triggerAlgorithm('traverse')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);"><i class="fa-solid fa-shoe-prints"></i> autoTraverse()</button>
+                    <button onclick="triggerAlgorithm('length')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);"><i class="fa-solid fa-arrow-left-long"></i> lengthCount()</button>
+                    <button onclick="clearListWorkspace()" style="background:#374151;"><i class="fa-solid fa-xmark"></i> clear()</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">Playground Script Command Macro Console</div>
+                <div class="playground-wrapper">
+                    <textarea id="txt-playground" placeholder="insertFirst(10);&#10;insertLast(20);&#10;insertLast(30);&#10;reverse();"></textarea>
+                    <button onclick="compilePlaygroundScript()" style="background:linear-gradient(135deg,#10B981,#059669);"><i class="fa-solid fa-play"></i> Compile & Run Script Macro</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">Node Structure Class Specifications</div>
+                <div class="code-container" id="class-blueprint-view" style="color:#CBD5E1; font-size:11px;">
+                    class Node {<br>&nbsp;&nbsp;int data;<br>&nbsp;&nbsp;Node next;<br>}
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== RIGHT PANEL =================== -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="panel">
+                <div class="panel-heading">Executing Line Logic Syntax</div>
+                <div class="code-container" id="java-syntax-view">Node head = null;</div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">Nodes Visual Graph Canvas Workspace</div>
+                <div class="visualization-viewport" id="viewport-canvas">
+                    <svg class="canvas-arrows-svg" id="arrows-svg">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 Z" fill="#A78BFA"/>
+                            </marker>
+                            <marker id="arrowhead-prev" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+                                <path d="M6,0 L0,3 L6,6 Z" fill="#F472B6"/>
+                            </marker>
+                            <marker id="arrowhead-cyclic" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 Z" fill="#F59E0B"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                    <div class="canvas-label-track" id="viewport-meta-title">Singly Linked List Model view</div>
+                    <div class="head-pointer-box" id="visual-head-node">
+                        <span>HEAD</span>
+                        <div style="font-size: 9px; opacity: 0.7;" id="head-ptr-val">null</div>
+                    </div>
+                    <div id="dynamic-nodes-holder" style="display: flex; gap: 65px; align-items: center;"></div>
+                </div>
+            </div>
+
+            <div class="panel" style="position: relative;">
+                <div class="panel-heading">Heap Memory Block Allocation Matrix view</div>
+                <div class="memory-view-area" id="memory-canvas-viewport">
+                    <svg class="svg-canvas-memory-link" id="mem-pointer-svg"><path d="" id="mem-pointer-line"/></svg>
+                    <div class="mem-col">
+                        <div class="mem-title">Stack Frame</div>
+                        <div class="stack-head-ref" id="stack-head-node">head<br><span style="font-size:9px; color:#A78BFA;" id="stack-head-addr">null</span></div>
+                    </div>
+                    <div class="mem-col">
+                        <div class="mem-title">Dynamic Heap Space</div>
+                        <div class="heap-blocks-grid" id="heap-nodes-bucket"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="panel">
+                    <div class="panel-heading">Execution Steps Flow Tracker</div>
+                    <div class="step-list" id="operation-step-flow-box">
+                        <div class="step-item active-step"><span>1. Visualizer Engine Standing By</span><i class="fa-solid fa-circle-check"></i></div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading">Asymptotic Time & Space Profiles</div>
+                    <div class="complexity-bar">
+                        <div class="comp-node">Time Complexity<span id="txt-comp-time">O(1)</span></div>
+                        <div class="comp-node">Space Complexity<span id="txt-comp-space">O(1)</span></div>
+                    </div>
+                    <div class="panel-heading" style="margin-top: 5px; border:none;">Diagnostic Execution Logs</div>
+                    <div id="diagnostic-terminal">Engine up. Adjust linked structures properties above to initialize execution workflows frames traces.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let listNodes = [
+            { data: 10, addr: 1004, next: 1008, prev: null },
+            { data: 20, addr: 1008, next: 1012, prev: 1004 },
+            { data: 30, addr: 1012, next: null, prev: 1008 }
+        ];
+        
+        let activeListType = "SLL"; 
+        let addressAllocationCounter = 1016; 
+
+        function syncUI() {
+            recalculateInternalPointersLinks();
+            renderVisualGraphCanvas();
+            renderHeapMemorySpaceGrid();
+            renderClassBlueprint();
+            setTimeout(() => {
+                drawNodeArrowsPaths();
+                drawStackHeadPointerLinkLine();
+            }, 50);
+        }
+
+        function renderClassBlueprint() {
+            const container = document.getElementById('class-blueprint-view');
+            if(activeListType === "SLL" || activeListType === "CLL") {
+                container.innerHTML = `class Node {<br>&nbsp;&nbsp;int data;<br>&nbsp;&nbsp;Node next;<br>}`;
+            } else {
+                container.innerHTML = `class Node {<br>&nbsp;&nbsp;Node prev;<br>&nbsp;&nbsp;int data;<br>&nbsp;&nbsp;Node next;<br>}`;
+            }
+        }
+
+        function recalculateInternalPointersLinks() {
+            if(listNodes.length === 0) return;
+            for(let i = 0; i < listNodes.length; i++) {
+                listNodes[i].prev = (i === 0) ? null : listNodes[i-1].addr;
+                listNodes[i].next = (i === listNodes.length - 1) ? null : listNodes[i+1].addr;
+            }
+            if(activeListType === "CLL" || activeListType === "CDLL") {
+                listNodes[listNodes.length - 1].next = listNodes[0].addr;
+                listNodes[0].prev = listNodes[listNodes.length - 1].addr;
+            }
+        }
+
+        function renderVisualGraphCanvas() {
+            const nodesHolder = document.getElementById('dynamic-nodes-holder');
+            nodesHolder.innerHTML = '';
+
+            document.getElementById('viewport-meta-title').innerText = `${activeListType} Structural Layout Flow view`;
+
+            if(listNodes.length === 0) {
+                document.getElementById('head-ptr-val').innerText = "null";
+                document.getElementById('stack-head-addr').innerText = "null";
+                return;
+            }
+
+            document.getElementById('head-ptr-val').innerText = `0x${listNodes[0].addr}`;
+            document.getElementById('stack-head-addr').innerText = `0x${listNodes[0].addr}`;
+
+            listNodes.forEach((node, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = "node-container";
+                wrapper.id = `graph-node-container-${idx}`;
+
+                let prevCellStr = (activeListType === "DLL" || activeListType === "CDLL") ? `<div class="node-segment node-prev" id="prev-slot-${idx}">•</div>` : '';
+                let nextCellStr = `<div class="node-segment node-next" id="next-slot-${idx}">•</div>`;
+
+                let ptrMetaText = (idx === 0) ? "HEAD" : "";
+                if(idx === listNodes.length - 1) ptrMetaText = (ptrMetaText === "HEAD") ? "HEAD/TAIL" : "TAIL";
+
+                wrapper.innerHTML = `
+                    <div class="node-block" id="node-block-id-${idx}">
+                        ${prevCellStr}
+                        <div class="node-segment node-data">${node.data}</div>
+                        ${nextCellStr}
+                    </div>
+                    <div class="meta-labels">
+                        <span class="addr-lbl">0x${node.addr}</span>
+                        <span class="ptr-lbl">${ptrMetaText}</span>
+                    </div>
+                `;
+                nodesHolder.appendChild(wrapper);
+            });
+        }
+
+        function drawNodeArrowsPaths() {
+            const svg = document.getElementById('arrows-svg');
+            const paths = svg.querySelectorAll('path');
+            paths.forEach(p => p.remove());
+
+            if (listNodes.length === 0) return;
+
+            const viewport = document.getElementById('viewport-canvas');
+            const vRect = viewport.getBoundingClientRect();
+
+            const headBox = document.getElementById('visual-head-node');
+            const firstNode = document.getElementById('node-block-id-0');
+            if (headBox && firstNode) {
+                const hRect = headBox.getBoundingClientRect();
+                const fRect = firstNode.getBoundingClientRect();
+
+                const startX = hRect.right - vRect.left;
+                const startY = (hRect.top + hRect.height / 2) - vRect.top;
+                const endX = fRect.left - vRect.left;
+                const endY = (fRect.top + fRect.height / 2) - vRect.top;
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${startX} ${startY} L ${endX - 5} ${endY}`);
+                path.setAttribute('stroke', '#F59E0B');
+                path.setAttribute('marker-end', 'url(#arrowhead)');
+                svg.appendChild(path);
+            }
+
+            for (let i = 0; i < listNodes.length; i++) {
+                const currentBlock = document.getElementById(`node-block-id-${i}`);
+                if (!currentBlock) continue;
+
+                const cRect = currentBlock.getBoundingClientRect();
+
+                if (i < listNodes.length - 1) {
+                    const nextBlock = document.getElementById(`node-block-id-${i+1}`);
+                    if (nextBlock) {
+                        const nRect = nextBlock.getBoundingClientRect();
+                        const startX = cRect.right - vRect.left - 5;
+                        const startY = cRect.top - vRect.top + 15;
+                        const endX = nRect.left - vRect.left;
+                        const endY = nRect.top - vRect.top + 15;
+
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        path.className.baseVal = "next-ptr";
+                        path.setAttribute('d', `M ${startX} ${startY} C ${(startX+endX)/2} ${startY - 10}, ${(startX+endX)/2} ${endY - 10}, ${endX - 5} ${endY}`);
+                        svg.appendChild(path);
+                    }
+                }
+
+                if ((activeListType === "DLL" || activeListType === "CDLL") && i > 0) {
+                    const prevBlock = document.getElementById(`node-block-id-${i-1}`);
+                    if (prevBlock) {
+                        const pRect = prevBlock.getBoundingClientRect();
+                        const startX = cRect.left - vRect.left + 5;
+                        const startY = cRect.top - vRect.top + 35;
+                        const endX = pRect.right - vRect.left;
+                        const endY = pRect.top - vRect.top + 35;
+
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        path.className.baseVal = "prev-ptr";
+                        path.setAttribute('d', `M ${startX} ${startY} C ${(startX+endX)/2} ${startY + 10}, ${(startX+endX)/2} ${endY + 10}, ${endX + 5} ${endY}`);
+                        path.setAttribute('marker-end', 'url(#arrowhead-prev)');
+                        svg.appendChild(path);
+                    }
+                }
+            }
+
+            if ((activeListType === "CLL" || activeListType === "CDLL") && listNodes.length > 0) {
+                const lastBlock = document.getElementById(`node-block-id-${listNodes.length - 1}`);
+                const firstBlock = document.getElementById('node-block-id-0');
+
+                if (lastBlock && firstBlock) {
+                    const lRect = lastBlock.getBoundingClientRect();
+                    const fRect = firstBlock.getBoundingClientRect();
+
+                    const startX = lRect.right - vRect.left - 15;
+                    const startY = lRect.bottom - vRect.top;
+                    const endX = fRect.left - vRect.left + 15;
+                    const endY = fRect.bottom - vRect.top;
+
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.className.baseVal = "cyclic-ptr";
+                    path.setAttribute('marker-end', 'url(#arrowhead-cyclic)');
+                    path.setAttribute('d', `M ${startX} ${startY} v 40 H ${endX} v -35`);
+                    svg.appendChild(path);
+
+                    if (activeListType === "CDLL") {
+                        const startXPrev = fRect.left - vRect.left + 15;
+                        const startYPrev = fRect.top - vRect.top;
+                        const endXPrev = lRect.right - vRect.left - 15;
+                        const endYPrev = lRect.top - vRect.top;
+
+                        const pathPrev = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        pathPrev.setAttribute('stroke', '#F472B6');
+                        pathPrev.setAttribute('stroke-width', '2.5');
+                        pathPrev.setAttribute('fill', 'none');
+                        pathPrev.setAttribute('stroke-dasharray', '4');
+                        pathPrev.setAttribute('marker-end', 'url(#arrowhead-cyclic)');
+                        pathPrev.setAttribute('d', `M ${startXPrev} ${startYPrev} v -40 H ${endXPrev} v 35`);
+                        svg.appendChild(pathPrev);
+                    }
+                }
+            }
+        }
+
+        function renderHeapMemorySpaceGrid() {
+            const bucket = document.getElementById('heap-nodes-bucket');
+            bucket.innerHTML = '';
+
+            listNodes.forEach((node, idx) => {
+                const div = document.createElement('div');
+                div.className = "heap-node-dump";
+                div.id = `heap-dump-node-${idx}`;
+                div.innerHTML = `
+                    <span style="color:#A78BFA; font-weight:600;">Node@0x${node.addr}</span><br>
+                    data: ${node.data}<br>
+                    next: ${node.next ? '0x'+node.next : 'null'}<br>
+                    ${(activeListType==="DLL"||activeListType==="CDLL") ? 'prev: '+(node.prev ? '0x'+node.prev : 'null') : ''}
+                `;
+                bucket.appendChild(div);
+            });
+        }
+
+        function drawStackHeadPointerLinkLine() {
+            const stackEl = document.getElementById('stack-head-node');
+            const heapEl = document.getElementById('heap-dump-node-0');
+            const svgPath = document.getElementById('mem-pointer-line');
+            const viewport = document.getElementById('memory-canvas-viewport');
+
+            if(!stackEl || !heapEl || !svgPath || !viewport) {
+                if(svgPath) svgPath.setAttribute('d', ''); 
+                return;
+            }
+
+            const vRect = viewport.getBoundingClientRect();
+            const sRect = stackEl.getBoundingClientRect();
+            const hRect = heapEl.getBoundingClientRect();
+
+            const startX = (sRect.left + sRect.width) - vRect.left;
+            const startY = (sRect.top + sRect.height / 2) - vRect.top;
+            const endX = hRect.left - vRect.left;
+            const endY = (hRect.top + hRect.height / 2) - vRect.top;
+
+            svgPath.setAttribute('d', `M ${startX} ${startY} C ${(startX+endX)/2} ${startY}, ${(startX+endX)/2} ${endY}, ${endX} ${endY}`);
+            document.getElementById('heap-dump-node-0').classList.add('active');
+        }
+
+        function updateMetaMetricsPanel(code, time, space, log) {
+            document.getElementById('java-syntax-view').innerHTML = code;
+            document.getElementById('txt-comp-time').innerText = time;
+            document.getElementById('txt-comp-space').innerText = space;
+            document.getElementById('diagnostic-terminal').innerText = log;
+        }
+
+        function renderStepsLogs(steps) {
+            const container = document.getElementById('operation-step-flow-box');
+            container.innerHTML = '';
+            steps.forEach((s, i) => {
+                container.innerHTML += `
+                    <div class="step-item ${s.done ? 'active-step' : ''}">
+                        <span>${i+1}. ${s.name}</span><i class="fa-solid ${s.done ? 'fa-circle-check' : 'fa-circle'}"></i>
+                    </div>
+                `;
+            });
+        }
+
+        function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
+
+        function switchTypeListType(type) {
+            activeListType = type;
+            document.querySelectorAll('.type-option').forEach(el => el.classList.remove('active'));
+            document.getElementById(`lbl-${type.toLowerCase()}`).classList.add('active');
+            syncUI();
+            updateMetaMetricsPanel(`// Instantiating structure standard frameworks vectors<br>LinkedList type = new ${type}();`, "O(1)", "O(1)", `Switched baseline context rules parameters safely over onto active mode: ${type} structural layout blueprints.`);
+        }
+
+        function lockInterfaceElements(shouldLock) {
+            document.querySelectorAll('button, input, textarea, input[type="radio"]').forEach(el => el.disabled = shouldLock);
+        }
+
+        /* =================== INSERTION ENGINE =================== */
+        async function triggerInsertion(mode) {
+            const dataInput = document.getElementById('input-data').value;
+            const posInput = document.getElementById('input-pos').value;
+
+            if(dataInput === "") return alert("Please clarify value parameters to insert items cells.");
+            const val = parseInt(dataInput);
+            
+            lockInterfaceElements(true); 
+
+            try {
+                const newAddr = addressAllocationCounter;
+                addressAllocationCounter += 4;
+                let newNodeObj = { data: val, addr: newAddr, next: null, prev: null };
+
+                renderStepsLogs([
+                    { name: "Instantiate New Node Block Object inside Heap memory context", done: true }, 
+                    { name: "Traverse elements mapping arrays to target offsets positions bounds", done: false }, 
+                    { name: "Re-link pointer reference structural variables vectors parameters", done: false }
+                ]);
+                updateMetaMetricsPanel(`Node temp = new Node(${val});<br>// Address allocated: 0x${newAddr}`, "O(1)", "O(1)", `Allocating heap storage frames spaces context to fit dynamic object variable containing data: ${val}`);
+                
+                const heapBucket = document.getElementById('heap-nodes-bucket');
+                heapBucket.innerHTML += `<div class="heap-node-dump active" id="tmp-heap-node">Node@0x${newAddr}<br>data: ${val}<br>next: pending</div>`;
+                await delay(1000);
+
+                if(mode === 'first' || listNodes.length === 0) {
+                    listNodes.unshift(newNodeObj);
+                    setVisualizerMetaDataInsertFirst(val, newAddr);
+                } 
+                else if(mode === 'last') {
+                    listNodes.push(newNodeObj);
+                    setVisualizerMetaDataInsertLast(val, newAddr);
+                } 
+                else if(mode === 'pos') {
+                    let idx = posInput === "" ? 0 : parseInt(posInput);
+                    idx = Math.max(0, Math.min(idx, listNodes.length));
+                    listNodes.splice(idx, 0, newNodeObj);
+                    setVisualizerMetaDataInsertPos(idx, val, newAddr);
+                }
+
+                syncUI();
+                
+                const finalIdx = listNodes.findIndex(n => n.addr === newAddr);
+                if (finalIdx !== -1) {
+                    const block = document.getElementById(`node-block-id-${finalIdx}`);
+                    if (block) block.classList.add('active-flash');
+                }
+                await delay(1000);
+            } finally {
+                lockInterfaceElements(false);
+                document.getElementById('input-data').value = '';
+                document.getElementById('input-pos').value = '';
+            }
+        }
+
+        function setVisualizerMetaDataInsertFirst(val, addr) {
+            updateMetaMetricsPanel(`temp.next = head;<br>head = temp;`, "O(1)", "O(1)", `Successfully attached new node element data mapping pointer target directly onto legacy Head structure index offset.`);
+            renderStepsLogs([{ name: "Instantiate New Node Block Object inside Heap memory context", done: true }, { name: "Traverse elements mapping arrays to target offsets positions bounds", done: true }, { name: "Re-link pointer reference structural variables vectors parameters", done: true }]);
+        }
+
+        function setVisualizerMetaDataInsertLast(val, addr) {
+            let timeComp = (activeListType === "CLL" || activeListType === "CDLL") ? "O(1)" : "O(N)";
+            updateMetaMetricsPanel(`tail.next = temp;<br>tail = temp;`, timeComp, "O(1)", `Appended element value ${val} safely onto structural tail offset address space sequence.`);
+            renderStepsLogs([{ name: "Instantiate New Node Block Object inside Heap memory context", done: true }, { name: "Traverse elements mapping arrays to target offsets positions bounds", done: true }, { name: "Re-link pointer reference structural variables vectors parameters", done: true }]);
+        }
+
+        function setVisualizerMetaDataInsertPos(idx, val, addr) {
+            updateMetaMetricsPanel(`Node curr = traverseTo(${idx});<br>temp.next = curr.next;<br>curr.next = temp;`, "O(N)", "O(1)", `Positioned data value element ${val} at target index offset location block [${idx}] inside sequence layout chain updates.`);
+            renderStepsLogs([{ name: "Instantiate New Node Block Object inside Heap memory context", done: true }, { name: "Traverse elements mapping arrays to target offsets positions bounds", done: true }, { name: "Re-link pointer reference structural variables vectors parameters", done: true }]);
+        }
+
+        /* =================== DELETION OPERATIONS =================== */
+        async function triggerDeletion(mode) {
+            if(listNodes.length === 0) return alert("Linked structures currently empty. Underflow block intercept vectors active.");
+            lockInterfaceElements(true);
+
+            try {
+                let targetIdx = 0;
+                if(mode === 'last') targetIdx = listNodes.length - 1;
+                if(mode === 'pos') {
+                    const posInput = document.getElementById('input-pos').value;
+                    targetIdx = posInput === "" ? 0 : parseInt(posInput);
+                    targetIdx = Math.max(0, Math.min(targetIdx, listNodes.length - 1));
+                }
+
+                renderStepsLogs([{ name: "Isolate target operational pointer nodes sequence index link maps", done: true }, { name: "Re-route structural routing pointer links configurations frames past target block", done: false }, { name: "Evacuate isolated target indices memory blocks allocations completely", done: false }]);
+                const block = document.getElementById(`node-block-id-${targetIdx}`);
+                if (block) block.classList.add('active-flash');
+                
+                let timeComp = (mode === 'first') ? "O(1)" : "O(N)";
+                updateMetaMetricsPanel(`Node target = head;<br>head = head.next;<br>target = null;`, timeComp, "O(1)", `Severing structural pointer variables reference links tracking head node targeting cell address context.`);
+                await delay(1000);
+
+                listNodes.splice(targetIdx, 1);
+                syncUI();
+
+                updateMetaMetricsPanel(`// Garbage collector removes isolated nodes references space layout safely.`, "O(1)", "O(1)", `Deleted selected target data index block cell reference out from execution head allocations.`);
+                renderStepsLogs([{ name: "Isolate target operational pointer nodes sequence index link maps", done: true }, { name: "Re-route structural routing pointer links configurations frames past target block", done: true }, { name: "Evacuate isolated target indices memory blocks allocations completely", done: true }]);
+                await delay(500);
+            } finally {
+                lockInterfaceElements(false);
+                document.getElementById('input-pos').value = '';
+            }
+        }
+
+        /* =================== SEARCH PIPELINE =================== */
+        async function triggerSearch() {
+            const posInput = document.getElementById('input-pos').value;
+            if(posInput === "") return alert("Enter matching search element parameter values payload inside key query input space.");
+            
+            const target = parseInt(posInput);
+            lockInterfaceElements(true);
+            
+            try {
+                updateMetaMetricsPanel(`Node curr = head;<br>while(curr != null) { ... }`, "O(N)", "O(1)", "Initializing sequential pointer traversal iteration loop routine match filters operations tracking...");
+
+                let matchIndexFound = -1;
+                for(let i = 0; i < listNodes.length; i++) {
+                    const block = document.getElementById(`node-block-id-${i}`);
+                    if (block) block.classList.add('active-flash');
+                    updateMetaMetricsPanel(`if(curr.data == ${target}) { return index; }`, "O(N)", "O(1)", `Evaluating node link sequence variable position data values mapping index: [${i}] (Value: ${listNodes[i].data})`);
+                    await delay(700);
+                    
+                    if(listNodes[i].data === target) {
+                        matchIndexFound = i;
+                        if (block) block.classList.remove('active-flash');
+                        if (block) block.classList.add('found-flash');
+                        updateMetaMetricsPanel(`// Match Verified!<br>Found target value inside sequence layout blocks.`, "O(N)", "O(1)", `Success Match! Confirmed value element payload query key target matched at pointer cell address 0x${listNodes[i].addr} (Index block slot alignment [${i}]).`);
+                        await delay(1200);
+                        if (block) block.classList.remove('found-flash');
+                        break;
+                    }
+                    if (block) block.classList.remove('active-flash');
+                }
+
+                if(matchIndexFound === -1) {
+                    updateMetaMetricsPanel(`// Search Loop Terminated.<br>Returns -1 mapping references context.`, "O(N)", "O(1)", `Scanned all loops sets; item ${target} does not exist inside active structures.`);
+                    await delay(500);
+                }
+            } finally {
+                lockInterfaceElements(false);
+                document.getElementById('input-pos').value = '';
+            }
+        }
+
+        /* =================== REVERSE MUTATION =================== */
+        async function triggerReverse() {
+            if(listNodes.length < 2) return alert("Insufficient element sets capacity variables constraints metrics available to reverse structure tracking paths.");
+            lockInterfaceElements(true);
+
+            try {
+                updateMetaMetricsPanel(`Node prev = null, curr = head, next = null;<br>// Reversing pointers directional metrics...`, "O(N)", "O(1)", "Executing sequential iterative pointer direction reversal loop pipelines metrics trackers configurations...");
+                
+                for(let i = 0; i < listNodes.length; i++) {
+                    const block = document.getElementById(`node-block-id-${i}`);
+                    if (block) block.classList.add('active-flash');
+                    await delay(300);
+                    if (block) block.classList.remove('active-flash');
+                }
+
+                listNodes.reverse();
+                syncUI();
+                updateMetaMetricsPanel(`head = prev; // Reassigned structure terminal boundaries nodes pointers`, "O(N)", "O(1)", "Pointer maps links completely inverted safely.");
+                await delay(500);
+            } finally {
+                lockInterfaceElements(false);
+            }
+        }
+
+        /* =================== ALGORITHMS ROUTINES =================== */
+        async function triggerAlgorithm(algo) {
+            if(listNodes.length === 0) return alert("Load elements context variables maps patterns inside layout before executing routines loops tracking algorithms.");
+            lockInterfaceElements(true);
+
+            try {
+                if(algo === 'middle') {
+                    updateMetaMetricsPanel(`Node slow = head, fast = head;<br>while(fast != null && fast.next != null) { slow=slow.next; fast=fast.next.next; }`, "O(N)", "O(1)", "Running Floyd's Tortoise and Hare tracking logic...");
+                    
+                    let slow = 0, fast = 0;
+                    while(fast < listNodes.length && fast + 1 < listNodes.length) {
+                        const sBlock = document.getElementById(`node-block-id-${slow}`);
+                        const fBlock = document.getElementById(`node-block-id-${fast}`);
+                        if (sBlock) sBlock.classList.add('active-flash');
+                        if (fBlock) fBlock.classList.add('found-flash');
+                        await delay(800);
+                        if (sBlock) sBlock.classList.remove('active-flash');
+                        if (fBlock) fBlock.classList.remove('found-flash');
+                        
+                        slow += 1; fast += 2;
+                    }
+                    
+                    const midBlock = document.getElementById(`node-block-id-${slow}`);
+                    if (midBlock) midBlock.classList.add('found-flash');
+                    updateMetaMetricsPanel(`Node middle = slow; // Data item contents: ${listNodes[slow].data}`, "O(N)", "O(1)", `Middle node context isolated cleanly at head boundary index position cell [${slow}].`);
+                    await delay(1500);
+                    if (midBlock) midBlock.classList.remove('found-flash');
+                }
+                else if(algo === 'cycle') {
+                    if(activeListType === "CLL" || activeListType === "CDLL") {
+                        updateMetaMetricsPanel(`// Structure initialized with explicit continuous cyclic links mappings rules definitions.<br>hasCycle == true;`, "O(1)", "O(1)", "Cycle Detection Engine: Circular operational modes are naturally looping structures.");
+                        document.querySelectorAll('.node-block').forEach(el => el.classList.add('found-flash'));
+                        await delay(1200);
+                        document.querySelectorAll('.node-block').forEach(el => el.classList.remove('found-flash'));
+                    } else {
+                        updateMetaMetricsPanel(`// running Floyd Cycle checking vectors loops tracks<br>if(fast == slow) { cycleDetected = true; }`, "O(N)", "O(1)", "Linear SLL/DLL validated safely: Scanned array terminal node referencing parameters mappings.");
+                        await delay(1000);
+                    }
+                }
+                else if(algo === 'length') {
+                    let counter = 0;
+                    for(let i = 0; i < listNodes.length; i++) {
+                        counter++;
+                        const block = document.getElementById(`node-block-id-${i}`);
+                        if (block) block.classList.add('active-flash');
+                        updateMetaMetricsPanel(`int count = ${counter};`, "O(N)", "O(1)", `Iterating list layout elements step counts: counter limits count: ${counter}`);
+                        await delay(300);
+                        if (block) block.classList.remove('active-flash');
+                    }
+                    updateMetaMetricsPanel(`return totalCount; // Value count evaluated as: ${counter}`, "O(N)", "O(1)", `Calculated length total dimensions profiles metrics: ${counter} elements nodes.`);
+                    await delay(800);
+                }
+                else if(algo === 'traverse') {
+                    for(let i = 0; i < listNodes.length; i++) {
+                        const block = document.getElementById(`node-block-id-${i}`);
+                        if (block) block.classList.add('active-flash');
+                        updateMetaMetricsPanel(`curr = curr.next; // Reading data frame: ${listNodes[i].data}`, "O(N)", "O(1)", `Stepping traversal pointer handle path maps through active address cell node: 0x${listNodes[i].addr}`);
+                        await delay(400);
+                        if (block) block.classList.remove('active-flash');
+                    }
+                }
+                else if(algo === 'sort') {
+                    updateMetaMetricsPanel("list.sort(); // Running structural node data swaps", "O(N log N)", "O(1)", "Sorting active array items structural data layouts...");
+                    listNodes.sort((a,b) => a.data - b.data);
+                    await delay(600);
+                    syncUI();
+                }
+            } finally {
+                lockInterfaceElements(false);
+            }
+        }
+
+        /* =================== PLAYGROUND COMMAND MACRO ENGINE =================== */
+        async function compilePlaygroundScript() {
+            const rawScript = document.getElementById('txt-playground').value;
+            if(rawScript.trim() === "") return alert("Type method parameters macro routines instructions strings inside input console block to run automation scripts.");
+
+            const operationalTokensLines = rawScript.split('\n');
+            lockInterfaceElements(true);
+
+            try {
+                for(let statementLine of operationalTokensLines) {
+                    let token = statementLine.trim().replace(';', '');
+                    if(token === "") continue;
+
+                    if(token.startsWith('insertFirst(')) {
+                        let val = parseInt(token.replace('insertFirst(', '').replace(')', ''));
+                        if(!isNaN(val)) {
+                            let newAddr = addressAllocationCounter; addressAllocationCounter += 4;
+                            listNodes.unshift({ data: val, addr: newAddr, next: null, prev: null });
+                            syncUI();
+                            updateMetaMetricsPanel(`playground.macro.insertFirst(${val});`, "O(1)", "O(1)", `Macro Compiled Insertion: Prepend value parameter element ${val} successfully onto active layout chains.`);
+                            await delay(700);
+                        }
+                    }
+                    else if(token.startsWith('insertLast(')) {
+                        let val = parseInt(token.replace('insertLast(', '').replace(')', ''));
+                        if(!isNaN(val)) {
+                            let newAddr = addressAllocationCounter; addressAllocationCounter += 4;
+                            listNodes.push({ data: val, addr: newAddr, next: null, prev: null });
+                            syncUI();
+                            updateMetaMetricsPanel(`playground.macro.insertLast(${val});`, "O(N)", "O(1)", `Macro Compiled Append: Appended data element parameter value ${val} safely onto tail offsets blocks.`);
+                            await delay(700);
+                        }
+                    }
+                    else if(token.startsWith('deleteFirst()')) {
+                        if(listNodes.length > 0) {
+                            listNodes.shift();
+                            syncUI();
+                            updateMetaMetricsPanel(`playground.macro.deleteFirst();`, "O(1)", "O(1)", `Macro Compiled Delete: Dropped lead reference cell block variables from structural head layout safely.`);
+                            await delay(700);
+                        }
+                    }
+                    else if(token.startsWith('reverse()')) {
+                        if(listNodes.length > 1) {
+                            listNodes.reverse();
+                            syncUI();
+                            updateMetaMetricsPanel(`playground.macro.reverse();`, "O(N)", "O(1)", `Macro Reverse Cycle: Inverted reference directional pointers loops structural frames sequence context.`);
+                            await delay(700);
+                        }
+                    }
+                }
+                updateMetaMetricsPanel(`// Playground automation script completed successfully.`, "O(Var)", "O(Var)", "Playground Script Macro execution engine completed successfully.");
+            } finally {
+                lockInterfaceElements(false);
+            }
+        }
+
+        function clearListWorkspace() {
+            listNodes = [];
+            syncUI();
+            updateMetaMetricsPanel(`head = null;`, "O(1)", "O(1)", "Linked list memory context fully wiped down and reset to initial states parameters values head definitions maps.");
+        }
+
+        window.onload = () => {
+            syncUI();
+            window.addEventListener('resize', () => {
+                drawNodeArrowsPaths();
+                drawStackHeadPointerLinkLine();
+            });
+        };
+    </script>
+</body>
+</html>

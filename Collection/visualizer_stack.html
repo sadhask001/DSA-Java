@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Stack Architecture Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #090814; color: white; min-height: 100vh; overflow-x: hidden; padding-top: 80px; }
+        
+        body::before, body::after {
+            content: ""; position: fixed; width: 600px; height: 600px; border-radius: 50%; opacity: .09; filter: blur(140px); z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: rgba(10, 8, 25, .75); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, .08); z-index: 999;
+        }
+        .logo { font-size: 24px; font-weight: 700; background: linear-gradient(90deg, #E9D5FF, #A78BFA); -webkit-background-clip: text; color: transparent; text-decoration: none; }
+        .back-btn { color: #D6D3F5; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px; font-size: 14px; transition: color 0.2s; }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid; grid-template-columns: 440px 1fr; gap: 20px; max-width: 1720px; margin: 0 auto; padding: 20px;
+        }
+        .panel {
+            background: rgba(20, 18, 40, .75); border: 1px solid rgba(255, 255, 255, .06); border-radius: 16px; padding: 20px;
+            backdrop-filter: blur(25px); box-shadow: 0 15px 35px rgba(0, 0, 0, .3); display: flex; flex-direction: column; gap: 12px;
+        }
+        .panel-heading {
+            font-size: 12px; color: #A78BFA; font-weight: 600; text-transform: uppercase; letter-spacing: 0.75px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .type-selector-box {
+            display: flex; gap: 10px; background: #131022; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);
+        }
+        .type-option { display: flex; align-items: center; gap: 6px; font-size: 11px; cursor: pointer; color: #94A3B8; }
+        .type-option input { accent-color: #A78BFA; cursor: pointer; }
+        .type-option.active { color: #E9D5FF; font-weight: 600; }
+
+        .controls-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 10px; color: #94A3B8; }
+        input, select, textarea { background: #090814; border: 1px solid rgba(255, 255, 255, .15); border-radius: 6px; padding: 6px 10px; color: white; font-size: 13px; outline: none; }
+        input:focus { border-color: #A78BFA; }
+
+        button {
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6); color: white; border: none; padding: 8px 10px;
+            border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: .2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(167, 139, 250, .2); }
+        button:disabled { background: #2B214E !important; color: #64748B !important; cursor: not-allowed; transform: none !important; }
+
+        /* Visualization Layout Viewports */
+        .visualization-viewport {
+            background: #0B1120; border-radius: 16px; padding: 30px; min-height: 280px; border: 1px solid rgba(255, 255, 255, .04);
+            display: flex; align-items: flex-end; justify-content: center; gap: 40px; position: relative; overflow-x: auto;
+        }
+        .canvas-label-track { position: absolute; top: 12px; left: 15px; font-size: 11px; color: #64748B; font-weight: 600; text-transform: uppercase; }
+
+        /* Module 5: Stack Visual Architectures */
+        .stack-array-frame { display: flex; flex-direction: column-reverse; width: 100px; border: 3px solid #64748B; border-top: none; padding: 4px; border-radius: 0 0 10px 10px; background: rgba(255,255,255,0.01); min-height: 200px; }
+        .stack-element {
+            height: 40px; background: rgba(124, 58, 237, 0.2); border: 2px solid #8B5CF6; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace;
+            font-size: 15px; font-weight: 600; color: #E9D5FF; margin-bottom: 4px; position: relative; transition: all 0.3s ease; width: 100%;
+        }
+        .stack-element:first-child { margin-bottom: 0; }
+        .stack-element.active-flash { background: #7C3AED !important; border-color: #C4B5FD !important; transform: scale(1.05); box-shadow: 0 0 15px #8B5CF6; }
+        .stack-element.found-flash { background: #10B981 !important; border-color: #34D399 !important; box-shadow: 0 0 15px #10B981; }
+        .stack-element.overflow-flash { background: #EF4444 !important; border-color: #F87171 !important; }
+
+        .ptr-indicator { position: absolute; left: -65px; color: #F59E0B; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono'; }
+        
+        /* Linked List Representation Layout */
+        .stack-ll-frame { display: flex; align-items: center; gap: 0px; min-height: 100px; padding: 10px; }
+        .ll-node { display: flex; align-items: center; border: 2px solid #8B5CF6; border-radius: 6px; overflow: hidden; background: #131022; height: 45px; }
+        .ll-data { padding: 0 14px; font-family: 'JetBrains Mono'; font-weight: 600; font-size: 15px; }
+        .ll-next { background: rgba(255,255,255,0.05); border-left: 1px solid rgba(255,255,255,0.1); width: 25px; height: 100%; display: flex; align-items: center; justify-content: center; color: #A78BFA; font-size: 10px; }
+        .ll-arrow { width: 35px; text-align: center; color: #A78BFA; font-weight: 700; font-size: 16px; }
+
+        .code-container {
+            background: #090814; padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px; color: #A5F3FC; border-left: 3px solid #64748B; min-height: 44px; display: flex; align-items: center;
+        }
+
+        .step-list { display: flex; flex-direction: column; gap: 5px; }
+        .step-item {
+            display: flex; justify-content: space-between; align-items: center; background: #131022;
+            padding: 6px 12px; border-radius: 6px; font-size: 11.5px; color: #94A3B8;
+        }
+        .step-item.done { color: #CBD5E1; }
+        .step-item.done i { color: #10B981; }
+
+        .complexity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 6px; text-align: center; }
+        .comp-card { background: #131022; padding: 6px; border-radius: 6px; font-size: 11px; }
+        .comp-card div:last-child { font-weight: 600; color: #F59E0B; margin-top: 1px; }
+
+        #diagnostic-terminal {
+            background: #090814; padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+            font-size: 12px; color: #A5F3FC; min-height: 52px; border-left: 3px solid #8B5CF6; line-height: 1.5;
+        }
+
+        /* Applications Interactive Arena Styles */
+        .app-demo-window {
+            background: #0F172A; border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;
+            display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-family: 'JetBrains Mono', monospace;
+        }
+
+        @media(max-width: 950px) { .workspace { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">DSA Learning Platform</a>
+        <div style="display: flex; gap: 20px;">
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="index.html#overview" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Theory</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        
+        <!-- =================== LEFT PANEL: METHOD CALL CONSOLES =================== -->
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            
+            <!-- Module 1: Architecture Initializer -->
+            <div class="panel">
+                <div class="panel-heading">Module 1 — Stack Initialization</div>
+                <div class="type-selector-box">
+                    <label class="type-option active" id="lbl-arr"><input type="radio" name="stack-backend" value="ARRAY" checked onchange="switchStackBackend('ARRAY')"> Array Sizing</label>
+                    <label class="type-option" id="lbl-ll"><input type="radio" name="stack-backend" value="LL" onchange="switchStackBackend('LL')"> Linked List</label>
+                </div>
+                <div class="form-group" id="capacity-form-wrap">
+                    <label>Fixed Max Capacity (Array limitation)</label>
+                    <input type="number" id="init-capacity-val" value="5" min="2" max="8" style="padding: 4px 8px;">
+                </div>
+            </div>
+
+            <!-- Core Operational Blocks -->
+            <div class="panel">
+                <div class="panel-heading">Modules 2 & 3 — Stack API Operations</div>
+                <div class="controls-row">
+                    <div class="form-group"><label>Value Payload (E)</label><input type="number" id="param-val" placeholder="e.g. 50"></div>
+                </div>
+                <div class="controls-row">
+                    <button onclick="executePush()"><i class="fa-solid fa-plus"></i> push(E)</button>
+                    <button onclick="executePop()" style="background:linear-gradient(135deg,#EF4444,#DC2626)"><i class="fa-solid fa-minus"></i> pop()</button>
+                    <button onclick="executePeek()" style="background:#1E1B37; border:1px solid #4B5563;"><i class="fa-solid fa-eye"></i> peek()</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="executeSearch()"><i class="fa-solid fa-magnifying-glass"></i> search()</button>
+                    <button onclick="executeContains()"><i class="fa-solid fa-question"></i> contains()</button>
+                    <button onclick="executeCapacityQuery('isEmpty')">isEmpty()</button>
+                    <button onclick="executeCapacityQuery('size')">size()</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="executeUtility('clone')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15)">clone()</button>
+                    <button onclick="executeUtility('toArray')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15)">toArray()</button>
+                    <button onclick="executeClear()" style="background:#374151; grid-column: span 2;"><i class="fa-solid fa-trash-can"></i> clear()</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="executeTraversal('top')" style="background:#111827; border:1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-arrow-down"></i> Top &rarr; Bottom</button>
+                    <button onclick="executeTraversal('bottom')" style="background:#111827; border:1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-arrow-up"></i> Bottom &rarr; Top</button>
+                </div>
+            </div>
+
+            <!-- Module 16: Macro Script Playground Console -->
+            <div class="panel">
+                <div class="panel-heading">Module 16 — Script Playground Macro</div>
+                <div class="playground-wrapper">
+                    <textarea id="txt-playground" placeholder="push(10);&#10;push(20);&#10;peek();&#10;pop();&#10;push(30);"></textarea>
+                    <button onclick="compilePlaygroundScript()" style="background:linear-gradient(135deg,#10B981,#059669); padding:6px; width:100%;"><i class="fa-solid fa-play"></i> Compile & Run Macro</button>
+                </div>
+            </div>
+
+            <!-- Module 15: Structural Core Comparisons Matrix -->
+            <div class="panel">
+                <div class="panel-heading">Module 15 — Framework Comparisons</div>
+                <table style="width:100%; font-size:10px; border-collapse:collapse; text-align:left; color:#CBD5E1;">
+                    <thead><tr style="color:#A78BFA; border-bottom:1px solid rgba(255,255,255,0.1);"><th style="padding:4px;">Feature</th><th>Array</th><th>Linked List</th></tr></thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.03);"><td style="padding:4px; font-weight:600;">Size Limit</td><td>Fixed Cap</td><td>Dynamic</td></tr>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.03);"><td style="padding:4px; font-weight:600;">Push/Pop</td><td>O(1)</td><td>O(1)</td></tr>
+                        <tr><td style="padding:4px; font-weight:600;">Memory Overhead</td><td>Less (Contiguous)</td><td>More (Pointers)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- =================== RIGHT PANEL: ANIMATION CANVASES =================== -->
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            
+            <!-- Module 12: Executing Java Syntax Line Viewport -->
+            <div class="panel">
+                <div class="panel-heading">Module 12 — Java Code Panel</div>
+                <div class="code-container" id="java-syntax-view">Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();</div>
+            </div>
+
+            <!-- Module 5: Memory Structural Visualization Canvases -->
+            <div class="panel">
+                <div class="panel-heading">Module 5 — Live Active Stack Memory View</div>
+                <div class="visualization-viewport" id="viewport-canvas">
+                    <!-- Elements dynamically rendered here based on active platform state definitions -->
+                </div>
+            </div>
+
+            <!-- Module 14: Functional Real-world Application Demonstrators Sandbox -->
+            <div class="panel">
+                <div class="panel-heading">Module 14 — Interactive Stack Application sandbox</div>
+                <div class="controls-row">
+                    <select id="app-demo-select" style="padding:4px;" onchange="syncSelectedApplicationInterface()">
+                        <option value="parentheses">Parentheses Matching Engine Balance</option>
+                        <option value="undoredo">Undo / Redo Action Stack History</option>
+                        <option value="backbutton">Browser Back Button History Traversal</option>
+                    </select>
+                    <button onclick="runSelectedApplicationSimulationRoutine()" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8)">Trigger Simulation</button>
+                </div>
+                <div class="app-demo-window" id="app-demo-box">
+                    Select a core practical use-case application pattern context script above to execute sandbox model tests frames.
+                </div>
+            </div>
+
+            <!-- Dual Columns Execution Flow steps logs trackers -->
+            <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 15px;">
+                
+                <!-- Module 11: Step by Step Flow layout component panel -->
+                <div class="panel">
+                    <div class="panel-heading">Module 11 — Step-by-Step Panel</div>
+                    <div class="step-list" id="operation-step-flow-box">
+                        <div class="step-item done"><span>1. Stack Architecture Blueprint Loaded</span><i class="fa-solid fa-circle-check"></i></div>
+                    </div>
+                </div>
+
+                <!-- Module 13: Asymptotic Complexity Metric Cards panel component -->
+                <div class="panel">
+                    <div class="panel-heading">Module 13 — Complexity Panel</div>
+                    <div class="complexity-grid">
+                        <div class="comp-card"><div>Push Time</div><div id="c-push">O(1)</div></div>
+                        <div class="comp-card"><div>Pop Time</div><div id="c-pop">O(1)</div></div>
+                        <div class="comp-card"><div>Peek Time</div><div id="c-peek">O(1)</div></div>
+                        <div class="comp-card"><div>Search Time</div><div id="c-search">O(n)</div></div>
+                    </div>
+                    <div class="panel-heading" style="margin-top: 4px; border:none;">Execution Log Outputs</div>
+                    <div id="diagnostic-terminal">Engine running. Fire API directives above to capture system execution trace snapshots.</div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Core framework state vectors tracking structural stack properties
+        let stackData = [10, 20, 30, 40];
+        let backendStructure = "ARRAY";
+        let maxFixedCapacity = 5;
+
+        // Simple application history variables to handle tracking mechanics for sandbox demonstrations
+        let appUndoHistory = ["Typed 'Hello'", "Inserted Image", "Deleted Row"];
+        let appRedoHistory = [];
+        let appBrowserHistory = ["google.com", "github.com", "stackoverflow.com"];
+
+        function syncUI() {
+            renderMemoryStackCanvasSpace();
+        }
+
+        function switchStackBackend(type) {
+            backendStructure = type;
+            document.querySelectorAll('.type-option').forEach(el => el.classList.remove('active'));
+            document.getElementById(`lbl-${type.toLowerCase()}`).classList.add('active');
+
+            const capInputWrap = document.getElementById('capacity-form-wrap');
+            capInputWrap.style.display = (type === "ARRAY") ? "flex" : "none";
+
+            syncUI();
+            setMetadataDisplays(`// Initializing backing structural model context vectors<br>Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();`, "O(1)", "O(1)", `Switched baseline context rules parameters safely over onto active mode: ${type} allocation models.`);
+        }
+
+        function renderMemoryStackCanvasSpace() {
+            const canvas = document.getElementById('viewport-canvas');
+            canvas.innerHTML = '';
+
+            if (backendStructure === "ARRAY") {
+                canvas.innerHTML = `<div class="canvas-label-track">Array Contiguous Vector representation</div>`;
+                const arrayFrame = document.createElement('div');
+                arrayFrame.className = "stack-array-frame";
+                arrayFrame.id = "array-memory-container";
+
+                maxFixedCapacity = parseInt(document.getElementById('init-capacity-val').value) || 5;
+
+                for (let i = 0; i < maxFixedCapacity; i++) {
+                    const item = document.createElement('div');
+                    if (i < stackData.length) {
+                        item.className = "stack-element allocated";
+                        item.id = `stack-cell-${i}`;
+                        item.innerText = stackData[i];
+                        
+                        if (i === stackData.length - 1) {
+                            item.innerHTML += `<span class="ptr-indicator" id="ptr-idx-${i}">TOP &rarr;</span>`;
+                        }
+                    } else {
+                        item.className = "stack-element unallocated";
+                        item.id = `stack-cell-${i}`;
+                        item.style.borderStyle = "dashed";
+                        item.style.borderColor = "rgba(255,255,255,0.08)";
+                        item.innerText = "_";
+                    }
+                    arrayFrame.appendChild(item);
+                }
+                canvas.appendChild(arrayFrame);
+            } 
+            else {
+                canvas.innerHTML = `<div class="canvas-label-track">Linked list pointer chain representation</div>`;
+                const llFrame = document.createElement('div');
+                llFrame.className = "stack-ll-frame";
+
+                if(stackData.length === 0) {
+                    llFrame.innerHTML = `<div style="color:#64748B; font-style:italic;">TOP &rarr; NULL</div>`;
+                    canvas.appendChild(llFrame);
+                    return;
+                }
+
+                // Render left-to-right starting from the stack top element representation 
+                for (let i = stackData.length - 1; i >= 0; i--) {
+                    const node = document.createElement('div');
+                    node.className = "node-container";
+                    node.id = `stack-cell-${i}`;
+
+                    let arrowStr = (i === 0) ? ` <div class="ll-arrow" style="color:#64748B; font-size:11px;">&rarr;Ø</div>` : ` <div class="ll-arrow">&rarr;</div>`;
+                    let topLabelStr = (i === stackData.length - 1) ? `<span class="ptr-indicator" style="left:0; top:-25px;">TOP<br> ↓</span>` : '';
+
+                    node.innerHTML = `
+                        ${topLabelStr}
+                        <div class="ll-node">
+                            <div class="ll-data">${stackData[i]}</div>
+                            <div class="ll-next">•</div>
+                        </div>
+                        ${arrowStr}
+                    `;
+                    llFrame.appendChild(node);
+                }
+                canvas.appendChild(llFrame);
+            }
+        }
+
+        function setMetadataDisplays(code, time, space, diagnostic) {
+            document.getElementById('java-syntax-view').innerHTML = code;
+            document.getElementById('diagnostic-terminal').innerText = diagnostic;
+        }
+
+        function populateStepTracerLogs(steps) {
+            const container = document.getElementById('operation-step-flow-box');
+            container.innerHTML = '';
+            steps.forEach((s) => {
+                container.innerHTML += `
+                    <div class="step-item ${s.done ? 'done' : ''}">
+                        <span>${s.name}</span><i class="fa-solid ${s.done ? 'fa-circle-check' : 'fa-circle'}"></i>
+                    </div>
+                `;
+            });
+        }
+
+        function lockGlobalInterface(shouldLock) {
+            document.querySelectorAll('button, input, textarea, radio').forEach(el => el.disabled = shouldLock);
+        }
+
+        function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
+
+        /* =================== MODULE 6: PUSH ANIMATION OPERATIONAL FLOWS =================== */
+        async function executePush() {
+            const valInput = document.getElementById('param-val').value;
+            if (valInput === "") return alert("Please specify vector variable data element values properties inputs fields context.");
+
+            const val = parseInt(valInput);
+            maxFixedCapacity = parseInt(document.getElementById('init-capacity-val').value) || 5;
+
+            // Module 9: Overflow Structural Protection Constraints Block
+            if (backendStructure === "ARRAY" && stackData.length >= maxFixedCapacity) {
+                setMetadataDisplays(`// Overflow exception triggered<br>throw new StackOverflowError();`, "O(1)", "O(1)", "TRAPPED: Stack Overflow condition hit! Boundary array layout capacity constraint limits full.");
+                populateStepTracerLogs([{ name: "Check Overflow Threshold Condition", done: true }, { name: "Operation Aborted Exception safely", done: true }]);
+                
+                document.getElementById('array-memory-container').style.borderColor = "#EF4444";
+                await delay(1000);
+                document.getElementById('array-memory-container').style.borderColor = "#64748B";
+                return;
+            }
+
+            lockGlobalInterface(true);
+            populateStepTracerLogs([
+                { name: "Verify structural allocation bounds boundaries (Overflow evaluation checks)", done: true },
+                { name: "Allocate new node block storage frame context data field", done: false },
+                { name: "Re-assign TOP offset reference tracker value index pointers", done: false }
+            ]);
+            await delay(600);
+
+            stackData.push(val);
+            syncUI();
+
+            const targetIdx = stackData.length - 1;
+            const targetCell = document.getElementById(`stack-cell-${targetIdx}`);
+            if (targetCell) targetCell.classList.add('active-flash');
+
+            setMetadataDisplays(`stack.push(${val});`, "O(1)", "O(1)", `Successfully appended target data value element ${val} at stack TOP offset position boundary.`);
+            populateStepTracerLogs([
+                { name: "Verify structural allocation bounds boundaries (Overflow evaluation checks)", done: true },
+                { name: "Allocate new node block storage frame context data field", done: true },
+                { name: "Re-assign TOP offset reference tracker value index pointers", done: true }
+            ]);
+
+            await delay(1000);
+            if (targetCell) targetCell.classList.remove('active-flash');
+            lockGlobalInterface(false);
+            document.getElementById('param-val').value = '';
+        }
+
+        /* =================== MODULE 7: POP ANIMATION OPERATIONAL FLOWS =================== */
+        async function executePop() {
+            // Module 9: Underflow Boundary Protection Intercept loops
+            if (stackData.length === 0) {
+                setMetadataDisplays(`// Underflow exception triggered<br>throw new EmptyStackException();`, "O(1)", "O(1)", "TRAPPED: Stack Underflow condition hit! Data sequences vectors empty.");
+                populateStepTracerLogs([{ name: "Verify Underflow Boundary Constraints", done: true }, { name: "Operation Aborted Exception safely", done: true }]);
+                return;
+            }
+
+            lockGlobalInterface(true);
+            const targetIdx = stackData.length - 1;
+            const targetCell = document.getElementById(`stack-cell-${targetIdx}`);
+            if (targetCell) targetCell.classList.add('active-flash');
+
+            populateStepTracerLogs([
+                { name: "Verify stack layout capacity data structural items availability status", done: true },
+                { name: "Isolate and read active contents payload at target TOP index cell", done: true },
+                { name: "Sever terminal reference pointers loops and slide TOP down", done: false }
+            ]);
+            setMetadataDisplays(`int poppedVal = stack.pop(); // Fetches ${stackData[targetIdx]}`, "O(1)", "O(1)", `Isolating target element value data payload ${stackData[targetIdx]} out from the execution loop context scope.`);
+            await delay(1000);
+
+            const discardedItem = stackData.pop();
+            syncUI();
+
+            setMetadataDisplayOutputsPopFinished(discardedItem);
+            lockGlobalInterface(false);
+        }
+
+        function setMetadataDisplayOutputsPopFinished(item) {
+            setMetadataDisplays(`stack.pop();`, "O(1)", "O(1)", `Successfully popped element ${item} out from the trailing boundary offset index references context safely.`);
+            populateStepTracerLogs([
+                { name: "Verify stack layout capacity data structural items availability status", done: true },
+                { name: "Isolate and read active contents payload at target TOP index cell", done: true },
+                { name: "Sever terminal reference pointers loops and slide TOP down", done: true }
+            ]);
+        }
+
+        /* =================== MODULE 8: PEEK HIGHLIGHT ANIMATION =================== */
+        async function executePeek() {
+            if (stackData.length === 0) return alert("Stack structure currently empty bounds allocation frames.");
+            lockGlobalInterface(true);
+
+            const targetIdx = stackData.length - 1;
+            const targetCell = document.getElementById(`stack-cell-${targetIdx}`);
+            if (targetCell) targetCell.classList.add('found-flash');
+
+            setMetadataDisplays(`int topElement = stack.peek(); // Returns ${stackData[targetIdx]}`, "O(1)", "O(1)", `Constant-Time Read: Querying stack terminal TOP offset context safely returned value payload: ${stackData[targetIdx]}`);
+            populateStepTracerLogs([{ name: "Read active pointer structural variable value at TOP location directly", done: true }]);
+            
+            await delay(1200);
+            if (targetCell) targetCell.classList.remove('found-flash');
+            lockGlobalInterface(false);
+        }
+
+        /* =================== MODULE 10: SEARCH ANIMATION LOOPS =================== */
+        async function executeSearch() {
+            const valInput = document.getElementById('param-val').value;
+            if (valInput === "") return alert("Enter target matching filter query values properties argument to evaluate loops.");
+            
+            const target = parseInt(valInput);
+            lockGlobalInterface(true);
+
+            setMetadataDisplays(`int depthPos = stack.search(${target});`, "O(N)", "O(1)", "Initializing linear step search scan loop matching parameters criteria keys fields...");
+            
+            let matchedIdx = -1;
+            // Java Stack search method is 1-based distance from the TOP element position reference layout
+            for (let i = stackData.length - 1; i >= 0; i--) {
+                const cell = document.getElementById(`stack-cell-${i}`);
+                if (cell) cell.classList.add('active-flash');
+                await delay(600);
+                if (cell) cell.classList.remove('active-flash');
+
+                if (stackData[i] === target) {
+                    matchedIdx = stackData.length - i; 
+                    if (cell) cell.classList.add('found-flash');
+                    setMetadataDisplays(`int depthPos = stack.search(${target}); // Returns ${matchedIdx}`, "O(N)", "O(1)", `Match Confirmed! Variable element target key discovered at linear distance slot position [${matchedIdx}] relative to TOP reference pointer.`);
+                    await delay(1200);
+                    if (cell) cell.classList.remove('found-flash');
+                    break;
+                }
+            }
+
+            if (matchedIdx === -1) {
+                setMetadataDisplays(`int depthPos = stack.search(${target}); // Returns -1`, "O(N)", "O(1)", `Search Complete: Queried item data payload ${target} does not reside within allocation scopes bounds.`);
+            }
+
+            lockGlobalInterface(false);
+            document.getElementById('param-val').value = '';
+        }
+
+        /* =================== MODULE 3: ADDITIONAL API WRAPPERS =================== */
+        async function executeContains() {
+            const valInput = document.getElementById('param-val').value;
+            if (valInput === "") return alert("Enter a target search data pattern key filter.");
+            const target = parseInt(valInput);
+
+            lockGlobalInterface(true);
+            let hit = stackData.includes(target);
+            setMetadataDisplays(`boolean found = stack.contains(${target}); // Returns ${hit}`, "O(N)", "O(1)", `Java Vector abstraction lookup completed: contains tracking result checked status == ${hit}`);
+            await delay(800);
+            lockGlobalInterface(false);
+            document.getElementById('param-val').value = '';
+        }
+
+        async function executeCapacityQuery(mode) {
+            if (mode === 'size') {
+                setMetadataDisplays(`int n = stack.size(); // Returns ${stackData.length}`, "O(1)", "O(1)", `Queried absolute sizing dimensions counter field variables mapping values count: ${stackData.length}`);
+            } else {
+                let status = (stackData.length === 0);
+                setMetadataDisplays(`boolean emptyStatus = stack.isEmpty(); // Returns ${status}`, "O(1)", "O(1)", `Evaluated element structural count fields parameters status boundaries limits checked: empty == ${status}`);
+            }
+        }
+
+        async function executeClear() {
+            stackData = [];
+            syncUI();
+            setMetadataDisplays(`stack.clear();`, "O(1)", "O(1)", "Nullified internal tracking variables offsets footprints storage. Stack context reset cleanly to absolute zero scales.");
+        }
+
+        async function executeTraversal(dir) {
+            if (stackData.length === 0) return alert("Stack container space currently empty vectors fields context.");
+            lockGlobalInterface(true);
+
+            setMetadataDisplays(`// Spawning elements iteration stream loop handle...`, "O(N)", "O(1)", `Initializing continuous traversal loop sequence routing matching direction pattern properties context: ${dir}`);
+
+            if (dir === 'top') {
+                for (let i = stackData.length - 1; i >= 0; i--) {
+                    const cell = document.getElementById(`stack-cell-${i}`);
+                    if (cell) cell.classList.add('active-flash');
+                    setMetadataDisplays(`// Reading stack segment element offset index reference: [${i}]<br>Object item = stack.get(${i}); // Value: ${stackData[i]}`, "O(N)", "O(1)", `Reading value context entry pointer data frame items parameters sequences: ${stackData[i]}`);
+                    await delay(600);
+                    if (cell) cell.classList.remove('active-flash');
+                }
+            } else {
+                for (let i = 0; i < stackData.length; i++) {
+                    const cell = document.getElementById(`stack-cell-${i}`);
+                    if (cell) cell.classList.add('active-flash');
+                    setMetadataDisplays(`// Reading stack segment element offset index reference: [${i}]<br>Object item = stack.get(${i}); // Value: ${stackData[i]}`, "O(N)", "O(1)", `Reading value context entry pointer data frame items parameters sequences: ${stackData[i]}`);
+                    await delay(600);
+                    if (cell) cell.classList.remove('active-flash');
+                }
+            }
+
+            setMetadataDisplays(`// Traversal loop stream terminated cleanly context frames.`, "O(1)", "O(1)", "Linear exploration pass completely processed over stack entries storage blocks frames.");
+            lockGlobalInterface(false);
+        }
+
+        async function executeUtility(mode) {
+            lockGlobalInterface(true);
+            if (mode === 'clone') {
+                setMetadataDisplays(`Object clonedStack = stack.clone();`, "O(N)", "O(N)", "Deep Duplication: Instantiated clear separate heap allocation structural clones block mirroring active stack values elements arrays.");
+            } else {
+                setMetadataDisplays(`Object[] dataArray = stack.toArray();`, "O(N)", "O(N)", "Conversion Action: Splicing linear static arrays matrix copies out from background sequential elements context scopes targets.");
+            }
+            await delay(1000);
+            lockGlobalInterface(false);
+        }
+
+        /* =================== MODULE 14: INTERACTIVE APPLICATION DEMONSTRATIONS =================== */
+        function syncSelectedApplicationInterface() {
+            const app = document.getElementById('app-demo-select').value;
+            const container = document.getElementById('app-demo-box');
+
+            if (app === 'parentheses') {
+                container.innerHTML = `String equation = "(A + B) * {C}";<br>Active Parser evaluation character tracker view window context.`;
+            } else if (app === 'undoredo') {
+                container.innerHTML = `Undo Stack: [${appUndoHistory.join(' | ')}] <br>Redo Stack: [${appRedoHistory.length ? appRedoHistory.join(' | ') : 'empty'}]`;
+            } else {
+                container.innerHTML = `Browser History back stack sequences: [${appBrowserHistory.join(' &rarr; ')}]`;
+            }
+        }
+
+        async function runSelectedApplicationSimulationRoutine() {
+            const app = document.getElementById('app-demo-select').value;
+            const container = document.getElementById('app-demo-box');
+            lockGlobalInterface(true);
+
+            if (app === 'parentheses') {
+                container.innerHTML = `Evaluating string tokens... checking character '(' &rarr; PUSH TO STACK`;
+                stackData.push('('); syncUI(); await delay(1000);
+                container.innerHTML = `Evaluating string tokens... checking character ')' &rarr; POP FROM STACK (Balances match confirmed!)`;
+                stackData.pop(); syncUI(); await delay(1000);
+                container.innerHTML = `Parsing complete: Equation balanced properly verified via structural character checking algorithms parameters maps.`;
+            } 
+            else if (app === 'undoredo') {
+                if(appUndoHistory.length === 0) {
+                    container.innerHTML = "History logs clean. Perform updates first.";
+                } else {
+                    let action = appUndoHistory.pop();
+                    appRedoHistory.push(action);
+                    container.innerHTML = `Executing Ctrl+Z Undo Action: Popped task '${action}' out from history tracking log and shifted onto Redo vector tracking parameters.`;
+                    stackData.pop(); syncUI(); await delay(1000);
+                }
+            } 
+            else if (app === 'backbutton') {
+                if(appBrowserHistory.length <= 1) {
+                    container.innerHTML = "Terminal fallback base location reached. Cannot backtrack downstream.";
+                } else {
+                    let page = appBrowserHistory.pop();
+                    container.innerHTML = `Back Arrow clicked: Popping URL location entry pointer '${page}' from browser history stack sequence. Regressing viewport tracking...`;
+                    stackData.pop(); syncUI(); await delay(1000);
+                }
+            }
+
+            lockGlobalInterface(false);
+        }
+
+        /* =================== MODULE 16: PLAYGROUND SCRIPT MACRO PARSER =================== */
+        async function compilePlaygroundScript() {
+            const script = document.getElementById('txt-playground').value;
+            if (script.trim() === "") return alert("Type script operations macros inside the playground workspace to execute lines loops.");
+
+            const lines = script.split('\n');
+            lockGlobalInterface(true);
+
+            for (let line of lines) {
+                let token = line.trim().replace(';', '');
+                if (token === "") continue;
+
+                if (token.startsWith('push(')) {
+                    let val = parseInt(token.replace('push(', '').replace(')', ''));
+                    if (!isNaN(val)) {
+                        stackData.push(val); syncUI();
+                        setMetadataDisplays(`playground.macro.push(${val});`, "O(1)", "O(1)", `Macro execution: appended value ${val} onto top pointer allocation.`);
+                        await delay(800);
+                    }
+                } 
+                else if (token.startsWith('pop()')) {
+                    if (stackData.length > 0) {
+                        stackData.pop(); syncUI();
+                        setMetadataDisplays(`playground.macro.pop();`, "O(1)", "O(1)", "Macro execution: evacuated terminal top cell reference element.");
+                        await delay(800);
+                    }
+                }
+                else if (token.startsWith('peek()')) {
+                    if (stackData.length > 0) {
+                        setMetadataDisplays(`playground.macro.peek(); // Value: ${stackData[stackData.length-1]}`, "O(1)", "O(1)", "Macro evaluation: queried top element values fields metrics.");
+                        await delay(800);
+                    }
+                }
+            }
+
+            setMetadataDisplays(`// Playground program completed execution frames safely.`, "O(1)", "O(1)", "Playground command macro console finished running your instructions lines targets.");
+            lockGlobalInterface(false);
+        }
+
+        // Initialize visualization environment elements profiles context frames ready maps loops 
+        window.onload = () => {
+            syncUI();
+            syncSelectedApplicationInterface();
+        };
+    </script>
+</body>
+</html>

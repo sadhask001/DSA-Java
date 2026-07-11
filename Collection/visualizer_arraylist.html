@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate ArrayList Engineering Engine | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        /* Ambient Background Shadows */
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Main Workspace Grid Configuration (Requested Best UI Layout Strategy) */
+        .workspace {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 20px;
+            max-width: 1550px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel-heading {
+            font-size: 13px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Forms, Inputs & Action Buttons */
+        .controls-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label { font-size: 10px; color: #94A3B8; }
+        input, select {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+        input:focus { border-color: #A78BFA; }
+
+        button {
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: .2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(167, 139, 250, .2); }
+        button:disabled { background: #2B214E !important; color: #64748B !important; cursor: not-allowed; transform: none !important; }
+
+        /* Dynamic Progress Bars Indicators */
+        .progress-box {
+            background: #131022;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .progress-meta { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
+        .bar-outer { width: 100%; height: 8px; background: #090814; border-radius: 4px; overflow: hidden; }
+        .bar-inner { height: 100%; width: 0%; transition: width 0.4s ease; }
+        #bar-cap-fill { background: #3B82F6; }
+        #bar-size-fill { background: #10B981; }
+
+        /* Memory Stack vs Heap Live Canvas Visual Structure Styles */
+        .memory-split {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 20px;
+            background: #0B1120;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.03);
+            position: relative;
+            min-height: 180px;
+        }
+        .mem-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .mem-header { font-size: 11px; color: #64748B; font-weight: 600; text-transform: uppercase; }
+        .stack-variable {
+            background: #1E1B37;
+            border: 1px solid #7C3AED;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
+            margin-top: 20px;
+            position: relative;
+        }
+        .heap-obj-box {
+            background: rgba(30, 27, 55, 0.5);
+            border: 1px dashed rgba(167, 139, 250, 0.4);
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+            font-size: 12px;
+        }
+        .heap-obj-box.active { border: 2px solid #8B5CF6; background: #131022; }
+
+        /* Global Array Strip View Configurations */
+        .array-strip {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 15px 5px;
+            min-height: 110px;
+            align-items: flex-start;
+        }
+        .cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .box {
+            width: 55px;
+            height: 55px;
+            background: rgba(30, 27, 55, 0.3);
+            border: 2px dashed rgba(167, 139, 250, 0.2);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #E9D5FF;
+            transition: all 0.3s ease;
+        }
+        .cell.allocated .box { background: rgba(30, 27, 55, 0.85); border: 2px solid #8B5CF6; }
+        .cell.unallocated .box { color: rgba(255,255,255,0.15); font-weight: 400; font-size: 12px; }
+        .idx-lbl { margin-top: 6px; font-size: 11px; color: #64748B; font-weight: 600; }
+        
+        /* Interactive Animation Flash Highlights matching requested behaviors */
+        .box.active-flash { background: #7C3AED !important; border-color: #C4B5FD !important; transform: scale(1.05); box-shadow: 0 0 15px #8B5CF6; }
+        .box.shift-flash { background: #F59E0B !important; border-color: #FBBF24 !important; transform: translateY(-4px); }
+        .box.found-flash { background: #10B981 !important; border-color: #34D399 !important; box-shadow: 0 0 15px #10B981; }
+        .box.swap-flash { background: #EC4899 !important; border-color: #F472B6 !important; }
+        
+        .cursor-indicator { position: absolute; top: -22px; color: #F59E0B; font-size: 13px; display: none; }
+        .cell.has-cursor .cursor-indicator { display: block; animation: bounce 0.5s infinite alternate; }
+
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+
+        /* Code & Step Panels */
+        .code-block {
+            background: #090814;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #A5F3FC;
+            border-left: 3px solid #64748B;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+        .code-highlight { border-left-color: #3B82F6; color: #FBBF24; background: rgba(59, 130, 246, 0.05); }
+
+        .step-list { display: flex; flex-direction: column; gap: 8px; }
+        .step-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #131022;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #94A3B8;
+        }
+        .step-item.done { color: #CBD5E1; }
+        .step-item.done i { color: #10B981; }
+        .step-item.pending i { color: #64748B; }
+
+        .complexity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
+        .comp-card { background: #131022; padding: 8px; border-radius: 6px; font-size: 12px; }
+        .comp-card div:last-child { font-weight: 600; color: #F59E0B; margin-top: 2px; }
+
+        #terminal-log {
+            background: #090814;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #A5F3FC;
+            min-height: 52px;
+            border-left: 3px solid #8B5CF6;
+        }
+
+        /* Playground Macro Mode Console styling */
+        .playground-area { display: flex; flex-direction: column; gap: 8px; }
+        .playground-area textarea {
+            background: #090814;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 10px;
+            color: #E2E8F0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            resize: none;
+            height: 65px;
+            outline: none;
+        }
+        .playground-area textarea:focus { border-color: #8B5CF6; }
+
+        /* Reference Connector Pointer SVG Overlay */
+        .svg-arrow-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .svg-arrow-overlay path {
+            stroke: #A78BFA;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4;
+            animation: dash 1s linear infinite;
+        }
+        @keyframes dash { to { stroke-dashoffset: -20; } }
+
+        @media(max-width: 950px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">DSA Learning Platform</a>
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    </header>
+
+    <main class="workspace">
+        
+        <!-- ================= LEFT COLLATERAL CONTROL CONTROLLERS ================= -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- Standard Controls & Operations Dashboard -->
+            <div class="panel">
+                <div class="panel-heading">ArrayList Methods Controller</div>
+                
+                <!-- Append Methods Row -->
+                <div class="controls-row">
+                    <div class="form-group">
+                        <label>Value</label>
+                        <input type="number" id="op-val" placeholder="e.g. 20">
+                    </div>
+                    <div class="form-group">
+                        <label>Index (Optional)</label>
+                        <input type="number" id="op-idx" placeholder="Index">
+                    </div>
+                </div>
+                <div class="controls-row">
+                    <button onclick="triggerAdd()"><i class="fa-solid fa-plus"></i> add(E)</button>
+                    <button onclick="triggerSet()" style="background:linear-gradient(135deg,#F59E0B,#D97706)"><i class="fa-solid fa-pen"></i> set()</button>
+                </div>
+
+                <!-- Query / Mutate Individual Actions -->
+                <div class="controls-row">
+                    <button onclick="triggerGet()" style="background:#1E1B37; border:1px solid #4B5563;"><i class="fa-solid fa-eye"></i> get(idx)</button>
+                    <button onclick="triggerRemove()" style="background:linear-gradient(135deg,#EF4444,#DC2626)"><i class="fa-solid fa-trash"></i> remove(idx)</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="triggerContains()" style="background:#131022; border:1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-question"></i> contains()</button>
+                    <button onclick="triggerIndexOf()" style="background:#131022; border:1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-arrow-index"></i> indexOf()</button>
+                </div>
+
+                <!-- Capacity Custom Adjustments -->
+                <div class="controls-row">
+                    <button onclick="triggerTrim()" style="background:#0F172A; border:1px solid #3B82F6;"><i class="fa-solid fa-compress"></i> trimToSize()</button>
+                    <button onclick="triggerEnsureCap()" style="background:#0F172A; border:1px solid #3B82F6;"><i class="fa-solid fa-expand"></i> ensureCap(20)</button>
+                </div>
+
+                <!-- Structural Operations Row -->
+                <div class="controls-row">
+                    <button onclick="triggerSort()" style="background:linear-gradient(135deg,#EC4899,#C084FC)"><i class="fa-solid fa-sort"></i> sort()</button>
+                    <button onclick="triggerReverse()" style="background:linear-gradient(135deg,#EC4899,#C084FC)"><i class="fa-solid fa-repeat"></i> reverse()</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="triggerIterator()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);"><i class="fa-solid fa-shoe-prints"></i> iterator()</button>
+                    <button onclick="triggerCopy()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);"><i class="fa-solid fa-clone"></i> cloneCopy()</button>
+                    <button onclick="triggerClear()" style="background:#374151; grid-column: span 2;"><i class="fa-solid fa-xmark"></i> clear()</button>
+                </div>
+            </div>
+
+            <!-- Macro Commands Playground Editor Block -->
+            <div class="panel">
+                <div class="panel-heading">Playground Editor Mode Macro</div>
+                <div class="playground-area">
+                    <textarea id="playground-code" placeholder="add(10);&#10;add(20);&#10;add(1,15);&#10;remove(2);&#10;set(0,100);"></textarea>
+                    <button onclick="executePlayground()" style="background:linear-gradient(135deg,#10B981,#059669);"><i class="fa-solid fa-play"></i> Compile & Run Playground Macro</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Monitor Metrics Tracking Profile -->
+            <div class="panel">
+                <div class="panel-heading">Capacity vs Size Tracker</div>
+                <div class="progress-box">
+                    <div class="progress-meta"><span>Current Allocated Array Capacity</span><span id="txt-capacity">10</span></div>
+                    <div class="bar-outer"><div class="bar-inner" id="bar-cap-fill"></div></div>
+                </div>
+                <div class="progress-box">
+                    <div class="progress-meta"><span>Active Index Elements Size</span><span id="txt-size">4</span></div>
+                    <div class="bar-outer"><div class="bar-inner" id="bar-size-fill"></div></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= RIGHT DISPLAY WORKSPACE AREA ================= -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- Java Syntax Live Statement Code Mirroring Screen -->
+            <div class="panel">
+                <div class="panel-heading">Active Java Statement Executing</div>
+                <div class="code-block" id="java-code-view">list = new ArrayList&lt;&gt;(10);</div>
+            </div>
+
+            <!-- Stack vs Heap Structural Memory Allocation Viewports -->
+            <div class="panel" style="position: relative;">
+                <div class="panel-heading">Contiguous Allocation Memory View (Stack &rarr; Heap Map)</div>
+                <div class="memory-split" id="memory-canvas-area">
+                    <svg class="svg-arrow-overlay" id="arrow-svg"><path d="" id="pointer-line"/></svg>
+                    
+                    <div class="mem-col">
+                        <div class="mem-header">Stack Memory</div>
+                        <div class="stack-variable" id="stack-list-ref">list <br><span style="font-size:9px; color:#A78BFA;">(Reference)</span></div>
+                    </div>
+                    
+                    <div class="mem-col" style="align-items: flex-start; padding-left: 20px;">
+                        <div class="mem-header">Heap Memory Space</div>
+                        <div class="heap-obj-box" id="heap-arraylist-obj">
+                            <span style="font-weight: 600; color: #D8B4FE;">ArrayList Object Instance</span>
+                            <div style="margin-top: 5px; font-family:'JetBrains Mono'; font-size:11px; color:#94A3B8;">
+                                size : <span id="heap-size-val" style="color:#10B981">4</span><br>
+                                capacity : <span id="heap-cap-val" style="color:#3B82F6">10</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Arrays Graphic Elements Block Canvas Visualizer -->
+            <div class="panel">
+                <div class="panel-heading" id="array-strip-header">Internal Data Storage Elements Sequence Array Layout</div>
+                <div class="array-strip" id="primary-array-strip"></div>
+                <div class="array-strip" id="secondary-array-strip" style="display:none; border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 10px;"></div>
+            </div>
+
+            <!-- Double Column Analytical Statistics Layout Panels -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Step Panel Component View -->
+                <div class="panel">
+                    <div class="panel-heading">Operation Steps Flow Panel</div>
+                    <div class="step-list" id="step-panel-container">
+                        <div class="step-item done"><span>1. Initialize Visualization Environment</span><i class="fa-solid fa-circle-check"></i></div>
+                    </div>
+                </div>
+
+                <!-- Complexity Stats Panel Component View -->
+                <div class="panel">
+                    <div class="panel-heading">Algorithmic Asymptotic Complexities</div>
+                    <div class="complexity-grid">
+                        <div class="comp-card"><div>Time Complexity</div><div id="comp-time">O(1)</div></div>
+                        <div class="comp-card"><div>Space Complexity</div><div id="comp-space">O(1)</div></div>
+                    </div>
+                    <div class="panel-heading" style="margin-top:5px; border:none;">Execution Trace Diagnostic Logs</div>
+                    <div id="terminal-log">Engine running. Awaiting input method instructions triggers.</div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Internal data structural vectors configuration profiles state values
+        let listData = [10, 20, 30, 40];
+        let currentCapacity = 10;
+        const maxSupportedCap = 24;
+
+        // Reset runtime execution pipeline lock variables
+        let isEngineRunning = false;
+
+        function updateMetricsDashboard() {
+            document.getElementById('txt-capacity').innerText = currentCapacity;
+            document.getElementById('txt-size').innerText = listData.length;
+            
+            document.getElementById('heap-size-val').innerText = listData.length;
+            document.getElementById('heap-cap-val').innerText = currentCapacity;
+
+            // Compute percentages ratios accurately
+            const capPercent = Math.min((currentCapacity / maxSupportedCap) * 100, 100);
+            const sizePercent = Math.min((listData.length / currentCapacity) * 100, 100);
+
+            document.getElementById('bar-cap-fill').style.width = `${capPercent}%`;
+            document.getElementById('bar-size-fill').style.width = `${sizePercent}%`;
+
+            renderPrimaryArrayView();
+            drawStackToHeapPointerLine();
+        }
+
+        function renderPrimaryArrayView() {
+            const container = document.getElementById('primary-array-strip');
+            container.innerHTML = '';
+            
+            for(let i = 0; i < currentCapacity; i++) {
+                const cellWrapper = document.createElement('div');
+                if(i < listData.length) {
+                    cellWrapper.className = "cell allocated";
+                    cellWrapper.innerHTML = `
+                        <div class="cursor-indicator"><i class="fa-solid fa-arrow-down"></i></div>
+                        <div class="box" id="box-${i}">${listData[i]}</div>
+                        <div class="idx-lbl">${i}</div>
+                    `;
+                } else {
+                    cellWrapper.className = "cell unallocated";
+                    cellWrapper.innerHTML = `
+                        <div class="cursor-indicator"><i class="fa-solid fa-arrow-down"></i></div>
+                        <div class="box" id="box-${i}">_</div>
+                        <div class="idx-lbl">${i}</div>
+                    `;
+                }
+                container.appendChild(cellWrapper);
+            }
+        }
+
+        // Draw live scalable dynamic pointer layout connecting stack frame box to heap object
+        function drawStackToHeapPointerLine() {
+            const stackEl = document.getElementById('stack-list-ref');
+            const heapEl = document.getElementById('heap-arraylist-obj');
+            const svgPath = document.getElementById('pointer-line');
+            const container = document.getElementById('memory-canvas-area');
+
+            if(!stackEl || !heapEl || !svgPath || !container) return;
+
+            const cRect = container.getBoundingClientRect();
+            const sRect = stackEl.getBoundingClientRect();
+            const hRect = heapEl.getBoundingClientRect();
+
+            // Calculate exact relative node terminal offsets alignment points
+            const startX = (sRect.left + sRect.width) - cRect.left;
+            const startY = (sRect.top + sRect.height / 2) - cRect.top;
+            const endX = hRect.left - cRect.left;
+            const endY = (hRect.top + hRect.height / 2) - cRect.top;
+
+            svgPath.setAttribute('d', `M ${startX} ${startY} C ${(startX + endX)/2} ${startY}, ${(startX + endX)/2} ${endY}, ${endX} ${endY}`);
+            document.getElementById('heap-arraylist-obj').classList.add('active');
+        }
+
+        function setVisualizerMetaData(codeStr, timeStr, spaceStr, logStr) {
+            document.getElementById('java-code-view').innerHTML = codeStr;
+            document.getElementById('comp-time').innerText = timeStr;
+            document.getElementById('comp-space').innerText = spaceStr;
+            document.getElementById('terminal-log').innerText = logStr;
+        }
+
+        function populateStepsPanel(stepsArray) {
+            const container = document.getElementById('step-panel-container');
+            container.innerHTML = '';
+            stepsArray.forEach((step, idx) => {
+                const item = document.createElement('div');
+                item.className = step.done ? "step-item done" : "step-item pending";
+                item.innerHTML = `<span>${idx + 1}. ${step.name}</span><i class="fa-solid ${step.done ? 'fa-circle-check' : 'fa-circle'}"></i>`;
+                container.appendChild(item);
+            });
+        }
+
+        function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
+
+        // Global Controller Buttons lock mechanisms loops to guarantee integrity during active trace loops
+        function toggleUIControlsLock(shouldLock) {
+            isEngineRunning = shouldLock;
+            const components = document.querySelectorAll('button, input, textarea, select');
+            components.forEach(c => c.disabled = shouldLock);
+        }
+
+        /* ================= METHOD 1: DYNAMIC EXPANSION GROWTH LIFECYCLE ROUTINES ================= */
+        async function evaluateAndAnimateCapacityGrowth() {
+            if(listData.length < currentCapacity) return false;
+
+            const oldCapacity = currentCapacity;
+            const newCapacity = oldCapacity + Math.floor(oldCapacity / 2); // 1.5x Java growth factor bounds calculations
+            
+            document.getElementById('array-strip-header').innerText = "Internal Storage Array Layout [GROWTH CYCLE INITIATED]";
+            setVisualizerMetaData(`// Capacity Full! Triggering internally:<br>Int newCapacity = oldCapacity + (oldCapacity >> 1);`, "O(N)", "O(N)", "Capacity limit overflow encountered! Allocating new, larger array footprint space...");
+
+            populateStepsPanel([
+                { name: "Detect Capacity Threshold Breach", done: true },
+                { name: "Allocate New Larger Transferred Buffer Array Space (1.5x Size)", done: false },
+                { name: "Migrate Iterative Elements Array Sequences One-by-One", done: false },
+                { name: "Purge Old Dereferenced Base Memory Pointers Array", done: false }
+            ]);
+
+            // Reveal secondary array segment strip buffer acting as target dynamic memory block allocation
+            const secStrip = document.getElementById('secondary-array-strip');
+            secStrip.style.display = 'flex';
+            secStrip.innerHTML = '';
+            
+            for(let i = 0; i < newCapacity; i++) {
+                secStrip.innerHTML += `
+                    <div class="cell unallocated">
+                        <div class="box" id="sec-box-${i}">_</div>
+                        <div class="idx-lbl">New [${i}]</div>
+                    </div>
+                `;
+            }
+            await delay(1200);
+
+            populateStepsPanel([
+                { name: "Detect Capacity Threshold Breach", done: true },
+                { name: "Allocate New Larger Transferred Buffer Array Space (1.5x Size)", done: true },
+                { name: "Migrate Iterative Elements Array Sequences One-by-One", done: false },
+                { name: "Purge Old Dereferenced Base Memory Pointers Array", done: false }
+            ]);
+
+            // Copy items over sequentially, cell by cell, to show the linear overhead
+            for(let i = 0; i < listData.length; i++) {
+                document.getElementById(`box-${i}`).classList.add('active-flash');
+                document.getElementById(`sec-box-${i}`).classList.add('active-flash');
+                document.getElementById(`sec-box-${i}`).innerText = listData[i];
+                setVisualizerMetaData(`// Cloning sequence traces...<br>newArray[${i}] = oldArray[${i}];`, "O(N)", "O(N)", `Migrating value element ${listData[i]} into fresh new destination memory array index [${i}]`);
+                await delay(600);
+                document.getElementById(`box-${i}`).classList.remove('active-flash');
+                document.getElementById(`sec-box-${i}`).classList.remove('active-flash');
+            }
+
+            populateStepsPanel([
+                { name: "Detect Capacity Threshold Breach", done: true },
+                { name: "Allocate New Larger Transferred Buffer Array Space (1.5x Size)", done: true },
+                { name: "Migrate Iterative Elements Array Sequences One-by-One", done: true },
+                { name: "Purge Old Dereferenced Base Memory Pointers Array", done: false }
+            ]);
+
+            document.getElementById('primary-array-strip').style.opacity = '0.3';
+            setVisualizerMetaData(`// Garbage Collection sweeps old reference profiles<br>oldArray = null;`, "O(1)", "O(1)", "Old structural memory context isolated and deleted successfully. Swapping buffer references.");
+            await delay(900);
+
+            // Complete reference mutation allocations swaps internally
+            currentCapacity = newCapacity;
+            document.getElementById('primary-array-strip').style.opacity = '1';
+            secStrip.style.display = 'none';
+            document.getElementById('array-strip-header').innerText = "Internal Data Storage Elements Sequence Array Layout";
+            
+            populateStepsPanel([
+                { name: "Detect Capacity Threshold Breach", done: true },
+                { name: "Allocate New Larger Transferred Buffer Array Space (1.5x Size)", done: true },
+                { name: "Migrate Iterative Elements Array Sequences One-by-One", done: true },
+                { name: "Purge Old Dereferenced Base Memory Pointers Array", done: true }
+            ]);
+            
+            updateMetricsDashboard();
+            return true;
+        }
+
+        /* ================= TARGET METHODS WRAPPERS ANIMATIONS LIFECYCLES ================= */
+        
+        // 🎯 4 & 5: add(value) / add(index, value) Implementation
+        async function triggerAdd() {
+            const valInput = document.getElementById('op-val').value;
+            const idxInput = document.getElementById('op-idx').value;
+            if(valInput === "") return alert("Please specify element numeric inputs data parameter values.");
+
+            const val = parseInt(valInput);
+            toggleUIControlsLock(true);
+
+            // Execute sizing verification loops first
+            await evaluateAndAnimateCapacityGrowth();
+
+            let targetIdx = idxInput === "" ? listData.length : parseInt(idxInput);
+            if(targetIdx < 0 || targetIdx > listData.length) {
+                alert("Index out of structural operational bounds allocations limits safely.");
+                toggleUIControlsLock(false);
+                return;
+            }
+
+            if(idxInput === "") {
+                // 🎯 4. Standard Append Action
+                populateStepsPanel([
+                    { name: "Verify Boundary Capacity", done: true },
+                    { name: "Assign Value directly to tail Index slot location", done: false },
+                    { name: "Increment Internal Size tracker mapping values counter", done: false }
+                ]);
+                
+                setVisualizerMetaData(`list.add(${val});`, "O(1) Amortized", "O(1)", `Appending element data payload value ${val} directly onto the vector terminal tail index position [${targetIdx}]`);
+                listData.push(val);
+                updateMetricsDashboard();
+                
+                document.getElementById(`box-${targetIdx}`).classList.add('active-flash');
+                await delay(800);
+                document.getElementById(`box-${targetIdx}`).classList.remove('active-flash');
+
+                populateStepsPanel([
+                    { name: "Verify Boundary Capacity", done: true },
+                    { name: "Assign Value directly to tail Index slot location", done: true },
+                    { name: "Increment Internal Size tracker mapping values counter", done: true }
+                ]);
+            } else {
+                // 🎯 5. Positional Shift Action Insertion
+                populateStepsPanel([
+                    { name: "Verify Sizing Boundaries Thresholds", done: true },
+                    { name: "Shift Trailing Elements Downstream Right (+1 Offset Shift)", done: false },
+                    { name: "Inject New Payload Element at vacant target index reference slot", done: false },
+                    { name: "Increment Structural Elements Size Counter Metrics", done: false }
+                ]);
+
+                setVisualizerMetaData(`list.add(${targetIdx}, ${val});`, "O(N)", "O(1)", `Shifting trailing elements right starting from index position slot alignment coordinates [${targetIdx}] to accommodate fresh insertion...`);
+                
+                // Visual shift tracking loop steps visualization
+                for(let i = listData.length; i > targetIdx; i--) {
+                    document.getElementById(`box-${i-1}`).classList.add('shift-flash');
+                    await delay(450);
+                    document.getElementById(`box-${i}`).innerText = document.getElementById(`box-${i-1}`).innerText;
+                    document.getElementById(`box-${i}`).classList.add('allocated');
+                    document.getElementById(`box-${i-1}`).innerText = "_";
+                    document.getElementById(`box-${i-1}`).classList.remove('shift-flash');
+                }
+
+                populateStepsPanel([
+                    { name: "Verify Sizing Boundaries Thresholds", done: true },
+                    { name: "Shift Trailing Elements Downstream Right (+1 Offset Shift)", done: true },
+                    { name: "Inject New Payload Element at vacant target index reference slot", done: false },
+                    { name: "Increment Structural Elements Size Counter Metrics", done: false }
+                ]);
+
+                listData.splice(targetIdx, 0, val);
+                updateMetricsDashboard();
+                document.getElementById(`box-${targetIdx}`).classList.add('active-flash');
+                setVisualizerMetaData(`list.add(${targetIdx}, ${val});`, "O(N)", "O(1)", `Successfully placed data target value ${val} inside freshly vacated index structural slot [${targetIdx}]`);
+                await delay(850);
+                document.getElementById(`box-${targetIdx}`).classList.remove('active-flash');
+
+                populateStepsPanel([
+                    { name: "Verify Sizing Boundaries Thresholds", done: true },
+                    { name: "Shift Trailing Elements Downstream Right (+1 Offset Shift)", done: true },
+                    { name: "Inject New Payload Element at vacant target index reference slot", done: true },
+                    { name: "Increment Structural Elements Size Counter Metrics", done: true }
+                ]);
+            }
+
+            toggleUIControlsLock(false);
+            document.getElementById('op-val').value = '';
+            document.getElementById('op-idx').value = '';
+        }
+
+        // 🎯 6. remove(index) Implementation
+        async function triggerRemove() {
+            const idxInput = document.getElementById('op-idx').value;
+            if(idxInput === "") return alert("Specify explicit index coordinate properties arguments to execute structural removals.");
+            
+            const idx = parseInt(idxInput);
+            if(idx < 0 || idx >= listData.length) return alert("Target index out of structural elements boundaries restrictions context limits.");
+
+            toggleUIControlsLock(true);
+            populateStepsPanel([
+                { name: "Locate and Evacuate Element Target value parameters context data", done: true },
+                { name: "Compress Bounds Layout: Shift Trailing Elements Left (-1 Offset Shift)", done: false },
+                { name: "Zero Out Dead Tail Reference Cell and Decrement Tracker Size", done: false }
+            ]);
+
+            document.getElementById(`box-${idx}`).classList.add('active-flash');
+            setVisualizerMetaData(`list.remove(${idx});`, "O(N)", "O(1)", `Extracting target element value data data payload ${listData[idx]} out from index location slot [${idx}]`);
+            await delay(900);
+            document.getElementById(`box-${idx}`).classList.remove('active-flash');
+
+            // Shift elements left visuals loop steps animations track mapping configurations
+            for(let i = idx; i < listData.length - 1; i++) {
+                document.getElementById(`box-${i+1}`).classList.add('shift-flash');
+                await delay(450);
+                document.getElementById(`box-${i}`).innerText = document.getElementById(`box-${i+1}`).innerText;
+                document.getElementById(`box-${i+1}`).classList.remove('shift-flash');
+            }
+
+            listData.splice(idx, 1);
+            updateMetricsDashboard();
+            setVisualizerMetaData(`list.remove(${idx});`, "O(N)", "O(1)", `Compacted array structural space layout safely. Dead reference points zeroed out and removed cleanly.`);
+            
+            populateStepsPanel([
+                { name: "Locate and Evacuate Element Target value parameters context data", done: true },
+                { name: "Compress Bounds Layout: Shift Trailing Elements Left (-1 Offset Shift)", done: true },
+                { name: "Zero Out Dead Tail Reference Cell and Decrement Tracker Size", done: true }
+            ]);
+            await delay(600);
+            toggleUIControlsLock(false);
+            document.getElementById('op-idx').value = '';
+        }
+
+        // 🎯 7. set(index, value) Implementation
+        async function triggerSet() {
+            const idxInput = document.getElementById('op-idx').value;
+            const valInput = document.getElementById('op-val').value;
+            if(idxInput === "" || valInput === "") return alert("Provide both index location parameters AND modified replacement values payload inputs.");
+
+            const idx = parseInt(idxInput);
+            const val = parseInt(valInput);
+            if(idx < 0 || idx >= listData.length) return alert("Index out of bound context mapping elements thresholds.");
+
+            toggleUIControlsLock(true);
+            populateStepsPanel([
+                { name: "Validate array indexing reference address metrics boundaries bounds", done: true },
+                { name: "Overwrite data reference variable slot value instantly at absolute offset", done: true }
+            ]);
+
+            listData[idx] = val;
+            updateMetricsDashboard();
+            document.getElementById(`box-${idx}`).classList.add('active-flash');
+            setVisualizerMetaData(`list.set(${idx}, ${val});`, "O(1)", "O(1)", `Direct Reference Overwrite: Overriding target data variable structural index address block [${idx}] instantly with payload value: ${val}`);
+            await delay(1000);
+            document.getElementById(`box-${idx}`).classList.remove('active-flash');
+            
+            toggleUIControlsLock(false);
+            document.getElementById('op-val').value = '';
+            document.getElementById('op-idx').value = '';
+        }
+
+        // 🎯 8. get(index) Implementation
+        async function triggerGet() {
+            const idxInput = document.getElementById('op-idx').value;
+            if(idxInput === "") return alert("Please specify an query target index argument parameters block.");
+            const idx = parseInt(idxInput);
+            if(idx < 0 || idx >= listData.length) return alert("Index out of bounds context matching exceptions.");
+
+            toggleUIControlsLock(true);
+            document.getElementById(`box-${idx}`).classList.add('found-flash');
+            setVisualizerMetaData(`int val = list.get(${idx}); // Returns ${listData[idx]}`, "O(1)", "O(1)", `Positional Address Lookup Evaluation: Accessing element block index position [${idx}] directly via fast hardware offset pointers mapping address structure context.`);
+            await delay(1200);
+            document.getElementById(`box-${idx}`).classList.remove('found-flash');
+            toggleUIControlsLock(false);
+            document.getElementById('op-idx').value = '';
+        }
+
+        // 🎯 9. contains() Implementation
+        async function triggerContains() {
+            const valInput = document.getElementById('op-val').value;
+            if(valInput === "") return alert("Enter structural elements numeric filter parameters variables target text value patterns to track.");
+            const target = parseInt(valInput);
+
+            toggleUIControlsLock(true);
+            setVisualizerMetaData(`boolean hasIt = list.contains(${target});`, "O(N)", "O(1)", `Initializing Linear Search Scan Loop: Step-by-step element evaluation loop testing parameters matching data configurations items logic...`);
+
+            let found = false;
+            for(let i = 0; i < listData.length; i++) {
+                document.getElementById(`box-${i}`).classList.add('active-flash');
+                await delay(600);
+                if(listData[i] === target) {
+                    document.getElementById(`box-${i}`).classList.remove('active-flash');
+                    document.getElementById(`box-${i}`).classList.add('found-flash');
+                    setVisualizerMetaData(`boolean hasIt = list.contains(${target}); // Returns true`, "O(N)", "O(1)", `Match Confirmed! Element data target key value ${target} found directly residing within array bounds index position block slot [${i}].`);
+                    found = true;
+                    await delay(1200);
+                    document.getElementById(`box-${i}`).classList.remove('found-flash');
+                    break;
+                }
+                document.getElementById(`box-${i}`).classList.remove('active-flash');
+            }
+
+            if(!found) setVisualizerMetaData(`boolean hasIt = list.contains(${target}); // Returns false`, "O(N)", "O(1)", `Search Complete: Scanned all allocation blocks; queried variable element text pattern target value keys context does not exist inside array vectors.`);
+            toggleUIControlsLock(false);
+            document.getElementById('op-val').value = '';
+        }
+
+        // 🎯 10. indexOf() Implementation
+        async function triggerIndexOf() {
+            const valInput = document.getElementById('op-val').value;
+            if(valInput === "") return alert("Enter match string numeric variable criteria arguments to evaluate index position loops tracking matches.");
+            const target = parseInt(valInput);
+
+            toggleUIControlsLock(true);
+            let indexResult = -1;
+
+            for(let i = 0; i < listData.length; i++) {
+                document.getElementById(`box-${i}`).classList.add('active-flash');
+                setVisualizerMetaData(`int idx = list.indexOf(${target}); // Checking index [${i}]`, "O(N)", "O(1)", `Comparing cell variable data value array bounds data blocks index location [${i}] (${listData[i]}) vs target filter query values properties argument (${target})`);
+                await delay(600);
+                if(listData[i] === target) {
+                    indexResult = i;
+                    document.getElementById(`box-${i}`).classList.remove('active-flash');
+                    document.getElementById(`box-${i}`).classList.add('found-flash');
+                    await delay(1000);
+                    document.getElementById(`box-${i}`).classList.remove('found-flash');
+                    break;
+                }
+                document.getElementById(`box-${i}`).classList.remove('active-flash');
+            }
+
+            setVisualizerMetaData(`int idx = list.indexOf(${target}); // Returns ${indexResult}`, "O(N)", "O(1)", `Linear scan terminated. Resulting output index parameter match offset location index established as: ${indexResult}`);
+            toggleUIControlsLock(false);
+            document.getElementById('op-val').value = '';
+        }
+
+        // 🎯 11. clear() Implementation
+        async function triggerClear() {
+            toggleUIControlsLock(true);
+            setVisualizerMetaData(`list.clear();`, "O(N)", "O(1)", "Nullifying internal structural reference pointers allocations fields. Flushing items data vectors...");
+            
+            for(let i = 0; i < listData.length; i++) {
+                document.getElementById(`box-${i}`).classList.add('active-flash');
+            }
+            await delay(800);
+            
+            listData = [];
+            updateMetricsDashboard();
+            setVisualizerMetaData(`list.clear();`, "O(N)", "O(1)", "All elements cleared down safely. Internal dynamic element tracking tracker size tracker parameter variable reset to absolute zero. Base physical array capacity bounds preserved.");
+            await delay(500);
+            toggleUIControlsLock(false);
+        }
+
+        // 🎯 12. trimToSize() Implementation
+        async function triggerTrim() {
+            if(listData.length === currentCapacity) return alert("Array footprint size metrics matches perfectly with actual metrics scales allocation frames capacity elements fields. Skipping execution triggers.");
+            toggleUIControlsLock(true);
+            
+            const oldCap = currentCapacity;
+            currentCapacity = listData.length === 0 ? 4 : listData.length; // Baseline safety checks rules bindings
+            
+            setVisualizerMetaData(`list.trimToSize();`, "O(N)", "O(N)", `Trimming extra memory overhead variables slots blocks. Reallocating internal structural storage grid bounds footprint tracking. Compacting capacity from ${oldCap} down strictly to size elements constraints value count: ${currentCapacity}`);
+            await delay(1000);
+            
+            updateMetricsDashboard();
+            toggleUIControlsLock(false);
+        }
+
+        // 🎯 13. ensureCapacity(20) Implementation
+        async function triggerEnsureCap() {
+            toggleUIControlsLock(true);
+            const minimumTargetCap = 20;
+            if(currentCapacity >= minimumTargetCap) {
+                setVisualizerMetaData(`list.ensureCapacity(20); // No change`, "O(1)", "O(1)", `Current allocated capacity mapping reference bounds (${currentCapacity}) already exceeds target required threshold parameter definitions argument (${minimumTargetCap}).`);
+                await delay(800);
+            } else {
+                setVisualizerMetaData(`list.ensureCapacity(20);`, "O(N)", "O(N)", `Manual Dynamic Reservation requested: Overriding internal capacity parameters boundaries structure layout vectors layout to allocate absolute structural capacity mapping limits down to 20 continuous cells.`);
+                await delay(1000);
+                currentCapacity = minimumTargetCap;
+                updateMetricsDashboard();
+            }
+            toggleUIControlsLock(false);
+        }
+
+        // 🎯 14. Sorting (Bubble Sort Step Swaps Animation Traces)
+        async function triggerSort() {
+            if(listData.length < 2) return alert("Insufficient element quantities bounds configurations available to execute sorting runs algorithms metrics loops.");
+            toggleUIControlsLock(true);
+            
+            setVisualizerMetaData(`Collections.sort(list);`, "O(N log N)", "O(log N)", "Initializing systematic sorting algorithms sequences pipeline checks tracking operations tracking arrays mutations...");
+            
+            let localArr = [...listData];
+            // Simple operational Bubble Sort visualization logic to trace cell swapping transitions actions clearly
+            for(let i = 0; i < localArr.length; i++) {
+                for(let j = 0; j < localArr.length - i - 1; j++) {
+                    document.getElementById(`box-${j}`).classList.add('swap-flash');
+                    document.getElementById(`box-${j+1}`).classList.add('swap-flash');
+                    setVisualizerMetaData(`// Evaluating adjacent variables pairs metrics alignments<br>if(list.get(${j}) > list.get(${j+1})) { ... }`, "O(N²)", "O(1)", `Comparing data elements adjacent pairs index structures coordinates: Cell [${j}] (${localArr[j]}) vs Cell [${j+1}] (${localArr[j+1]})`);
+                    await delay(700);
+
+                    if(localArr[j] > localArr[j+1]) {
+                        let temp = localArr[j];
+                        localArr[j] = localArr[j+1];
+                        localArr[j+1] = temp;
+                        
+                        // Swap data elements values visuals trace mappings screens updates instantly
+                        document.getElementById(`box-${j}`).innerText = localArr[j];
+                        document.getElementById(`box-${j+1}`).innerText = localArr[j+1];
+                        setVisualizerMetaData(`// Executing memory swap vectors variables values operations routines<br>int temp = a; a = b; b = temp;`, "O(N²)", "O(1)", `Swapping value locations elements properties components fields: Moved structural properties fields out into active layout configurations.`);
+                        await delay(700);
+                    }
+                    document.getElementById(`box-${j}`).classList.remove('swap-flash');
+                    document.getElementById(`box-${j+1}`).classList.remove('swap-flash');
+                }
+            }
+            listData = localArr;
+            updateMetricsDashboard();
+            setVisualizerMetaData(`Collections.sort(list); // Done`, "O(N log N)", "O(log N)", "Data vector elements structure fully sorted out across natural ascending numerical alignment parameters mapping values scales.");
+            toggleUIControlsLock(false);
+        }
+
+        // 🎯 15. Reverse Implementation
+        async function triggerReverse() {
+            if(listData.length < 2) return;
+            toggleUIControlsLock(true);
+            setVisualizerMetaData(`Collections.reverse(list);`, "O(N)", "O(1)", "Reversing array positioning layout tracking chronologies sequence items matrices...");
+
+            let left = 0;
+            let right = listData.length - 1;
+            while(left < right) {
+                document.getElementById(`box-${left}`).classList.add('swap-flash');
+                document.getElementById(`box-${right}`).classList.add('swap-flash');
+                await delay(600);
+
+                let temp = listData[left];
+                listData[left] = listData[right];
+                listData[right] = temp;
+
+                document.getElementById(`box-${left}`).innerText = listData[left];
+                document.getElementById(`box-${right}`).innerText = listData[right];
+                await delay(600);
+
+                document.getElementById(`box-${left}`).classList.remove('swap-flash');
+                document.getElementById(`box-${right}`).classList.remove('swap-flash');
+                left++;
+                right--;
+            }
+            updateMetricsDashboard();
+            setVisualizerMetaData(`Collections.reverse(list); // Done`, "O(N)", "O(1)", "Completed array inverted layout mapping sequencing safely.");
+            toggleUIControlsLock(false);
+        }
+
+        // 🎯 16. Iterator Cursor Pointer Movements Implementation
+        async function triggerIterator() {
+            if(listData.length === 0) return alert("Array list empty scope. Load data frames items elements vectors before initiating loops trackers iterator handles.");
+            toggleUIControlsLock(true);
+
+            setVisualizerMetaData(`Iterator&lt;Integer&gt; it = list.iterator();`, "O(1)", "O(1)", "Instantiated Java core internal iteration cursor reference pointer hooks mappings context...");
+            await delay(800);
+
+            for(let i = 0; i < listData.length; i++) {
+                const elementWrapper = document.getElementById(`primary-array-strip`).children[i];
+                elementWrapper.classList.add('has-cursor');
+                setVisualizerMetaData(`while(it.hasNext()) {<br>  Integer item = it.next(); // Evaluates to: ${listData[i]}<br>}`, "O(N)", "O(1)", `Advancing sequence iterator framework cursor handle track line layout pointer directly focusing target offset address tracking array bounds index cell allocation [${i}]`);
+                await delay(950);
+                elementWrapper.classList.remove('has-cursor');
+            }
+
+            setVisualizerMetaData(`// Iterator loop terminated context<br>it.hasNext() == false;`, "O(1)", "O(1)", "Cursor sequence tracking hit structural array terminal boundaries safely. Iterator handle reference instance released.");
+            toggleUIControlsLock(false);
+        }
+
+        // 🎯 17. Copy Clone Architecture Simulation
+        async function triggerCopy() {
+            toggleUIControlsLock(true);
+            setVisualizerMetaData(`ArrayList&lt;Integer&gt; list2 = new ArrayList&lt;&gt;(list);`, "O(N)", "O(N)", "Instantiating second independent memory layout tracking target destination grid array clone block footprint configuration sets...");
+            
+            const secStrip = document.getElementById('secondary-array-strip');
+            secStrip.style.display = 'flex';
+            secStrip.innerHTML = '';
+            
+            for(let i = 0; i < currentCapacity; i++) {
+                secStrip.innerHTML += `
+                    <div class="cell unallocated">
+                        <div class="box" id="copy-box-${i}">_</div>
+                        <div class="idx-lbl">List2 [${i}]</div>
+                    </div>
+                `;
+            }
+            await delay(1000);
+
+            for(let i = 0; i < listData.length; i++) {
+                document.getElementById(`box-${i}`).classList.add('found-flash');
+                document.getElementById(`copy-box-${i}`).classList.add('found-flash');
+                document.getElementById(`copy-box-${i}`).innerText = listData[i];
+                document.getElementById(`copy-box-${i}`).parentElement.className = "cell allocated";
+                setVisualizerMetaData(`list2.add(list.get(${i}));`, "O(N)", "O(N)", `Deep Copy Action: Extracting item ${listData[i]} from List1 to allocate independent reference instance slot inside target cloned structural variable List2 index cell reference [${i}]`);
+                await delay(500);
+                document.getElementById(`box-${i}`).classList.remove('found-flash');
+                document.getElementById(`copy-box-${i}`).classList.remove('found-flash');
+            }
+
+            setVisualizerMetaData(`// Deep copy layout duplication cycle safe.<br>List2 dynamic instance cloned independently inside Heap.`, "O(N)", "O(N)", "Deep clone sequence replication structural cycle fully operational. Extracted dynamic storage blocks mapped.");
+            await delay(1200);
+            secStrip.style.display = 'none';
+            toggleUIControlsLock(false);
+        }
+
+        /* ================= EXTRA HIGHLY RECOMMENDED FEATURE: MACRO PLAYGROUND MODE INTERPRETER ENGINE ================= */
+        async function executePlayground() {
+            const codeAreaInput = document.getElementById('playground-code').value;
+            if(codeAreaInput.trim() === "") return alert("Type dynamic structural operations commands sequences inside the input playground workspace to compile execution script pipelines.");
+
+            // Standardize execution token lines
+            const operationalTokensLines = codeAreaInput.split('\n');
+            toggleUIControlsLock(true);
+
+            for(let commandLine of operationalTokensLines) {
+                let currentInstructionCleanToken = commandLine.trim().replace(';', '');
+                if(currentInstructionCleanToken === "") continue;
+
+                // Simple Regular Expressions Parsers to map macros pipeline values configurations safely 
+                if(currentInstructionCleanToken.startsWith('add(')) {
+                    let internalArgsArgumentsData = currentInstructionCleanToken.replace('add(', '').replace(')', '').split(',');
+                    if(internalArgsArgumentsData.length === 1) {
+                        let val = parseInt(internalArgsArgumentsData[0]);
+                        if(!isNaN(val)) {
+                            await evaluateAndAnimateCapacityGrowth();
+                            listData.push(val);
+                            updateMetricsDashboard();
+                            setVisualizerMetaData(`playground.macro.add(${val});`, "O(1) Amortized", "O(1)", `Macro Compiled Append: Added value element properties parameter ${val} dynamically to sequential arrays structures.`);
+                            await delay(800);
+                        }
+                    } else if(internalArgsArgumentsData.length === 2) {
+                        let idx = parseInt(internalArgsArgumentsData[0]);
+                        let val = parseInt(internalArgsArgumentsData[1]);
+                        if(!isNaN(idx) && !isNaN(val) && idx >= 0 && idx <= listData.length) {
+                            await evaluateAndAnimateCapacityGrowth();
+                            listData.splice(idx, 0, val);
+                            updateMetricsDashboard();
+                            setVisualizerMetaData(`playground.macro.add(${idx}, ${val});`, "O(N)", "O(1)", `Macro Insertion Shift: Injected variable context element parameters ${val} exactly at location offset pointer location index [${idx}] safely.`);
+                            await delay(800);
+                        }
+                    }
+                } else if(currentInstructionCleanToken.startsWith('remove(')) {
+                    let idx = parseInt(currentInstructionCleanToken.replace('remove(', '').replace(')', ''));
+                    if(!isNaN(idx) && idx >= 0 && idx < listData.length) {
+                        listData.splice(idx, 1);
+                        updateMetricsDashboard();
+                        setVisualizerMetaData(`playground.macro.remove(${idx});`, "O(N)", "O(1)", `Macro Removal Compaction: Evacuated index reference position target cell entry pointer [${idx}] and pulled alignment blocks inward.`);
+                        await delay(800);
+                    }
+                } else if(currentInstructionCleanToken.startsWith('set(')) {
+                    let internalArgsArgumentsData = currentInstructionCleanToken.replace('set(', '').replace(')', '').split(',');
+                    if(internalArgsArgumentsData.length === 2) {
+                        let idx = parseInt(internalArgsArgumentsData[0]);
+                        let val = parseInt(internalArgsArgumentsData[1]);
+                        if(!isNaN(idx) && !isNaN(val) && idx >= 0 && idx < listData.length) {
+                            listData[idx] = val;
+                            updateMetricsDashboard();
+                            setVisualizerMetaData(`playground.macro.set(${idx}, ${val});`, "O(1)", "O(1)", `Macro Direct Mutate: Overwrote parameters values index position allocation address offset ${idx} instantly to store target variable data: ${val}`);
+                            await delay(800);
+                        }
+                    }
+                }
+            }
+
+            setVisualizerMetaData(`// Playground execution sequence finalized.<br>Macro Script pipeline ran through targets completely.`, "O(Var)", "O(Var)", "Playground Macro Script execution sequence finalized successfully. Main structural allocations matrix grid values preserved.");
+            toggleUIControlsLock(false);
+        }
+
+        // Window life loop bootstrap tracking initiation configuration 
+        window.onload = () => {
+            updateMetricsDashboard();
+            window.addEventListener('resize', drawStackToHeapPointerLine);
+        };
+    </script>
+</body>
+</html>
