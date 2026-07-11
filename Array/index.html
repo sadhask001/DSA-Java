@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Arrays | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+        }
+
+        /* Ambient Glow Backgrounds */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        /* Navbar */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            color: #C4B5FD;
+        }
+
+        /* Layout Grid */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar a:hover {
+            color: #A78BFA;
+            padding-left: 5px;
+        }
+
+        /* Content Area */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .module-section {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 40px;
+        }
+
+        .module-section h1 {
+            font-size: 38px;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Concept Cards */
+        .card {
+            background: rgba(20, 18, 40, .65);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .2);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #D8B4FE;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p {
+            color: #CBD5E1;
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Standardized Operation Layout Container Grid */
+        .op-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .op-block {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .op-block h4 {
+            font-size: 13px;
+            color: #A78BFA;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Code/Terminal blocks */
+        pre {
+            background: #0B1120 !important;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            color: #A5F3FC;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .terminal-box {
+            background: #05050a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #34D399;
+            border-left: 3px solid #10B981;
+        }
+
+        /* Action Redirect Elements */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .complexity-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #F59E0B;
+            background: rgba(245, 158, 11, 0.08);
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .inline-visualizer-btn {
+            background: rgba(30, 27, 55, 0.6);
+            color: #C4B5FD;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .inline-visualizer-btn:hover {
+            background: rgba(167, 139, 250, 0.15);
+            color: white;
+            border-color: #A78BFA;
+        }
+
+        /* Floating Visualizer Button Element */
+        .visualizer-float-btn {
+            position: fixed;
+            right: 40px;
+            bottom: 40px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            text-decoration: none;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 20px 40px rgba(167, 139, 250, .4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .visualizer-float-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(167, 139, 250, .55);
+        }
+
+        /* Next Page Card Link styling */
+        .next-page-card {
+            background: linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9));
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: right;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .next-page-card:hover {
+            border-color: #A78BFA;
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.15);
+        }
+
+        .next-link-btn {
+            background: linear-gradient(135deg, #A78BFA, #7C3AED);
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        .next-link-btn:hover {
+            transform: translateX(4px);
+        }
+
+        /* Info boxes & Lists */
+        .info-pill-container {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .info-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            color: #CBD5E1;
+        }
+
+        .tip-callout {
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 4px solid #3B82F6;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #93C5FD;
+        }
+
+        ul.bullet-list {
+            padding-left: 20px;
+            line-height: 1.8;
+            color: #CBD5E1;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1100px) {
+            .layout-grid { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .op-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">DSA Learning Platform</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="collections.html" class="nav-btn"><i class="fa-solid fa-layer-group"></i> Back to Collection</a>
+        </div>
+    </header>
+
+    <!-- Floating Action Tracker Trigger Element -->
+    <a href="visualizer_array1D.html" class="visualizer-float-btn">
+        <i class="fa-solid fa-play"></i> (Visualizer)
+    </a>
+
+    <main class="layout-grid">
+        
+        <!-- Sidebar Navigation Roadmap Elements Matrix -->
+        <aside class="sidebar">
+            <h3>📑 Syllabus Roadmap</h3>
+            <ul>
+                <li><a href="#mod-basics"><i class="fa-solid fa-book"></i> Array Basics</a></li>
+                <li><a href="#mod-basic-ops"><i class="fa-solid fa-gear"></i> Basic Operations</a></li>
+                <li><a href="#mod-utilities"><i class="fa-solid fa-wrench"></i> Utility Operations</a></li>
+                <li><a href="#mod-math"><i class="fa-solid fa-calculator"></i> Mathematical Operations</a></li>
+                <li><a href="#mod-rearrange"><i class="fa-solid fa-arrows-spin"></i> Array Rearrangement</a></li>
+                <li><a href="#mod-interview"><i class="fa-solid fa-briefcase"></i> Common Interview Ops</a></li>
+                <li><a href="#mod-utility-class"><i class="fa-solid fa-code"></i> Arrays Utility Class</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Curricular Theoretical Core Content Section Area -->
+        <div class="content-area">
+            
+            <!-- ARRAY BASICS -->
+            <section id="mod-basics" class="module-section">
+                <h1>Array Basics</h1>
+                
+                <div class="card">
+                    <h2>What is an Array?</h2>
+                    <p>An array is a data structure used to store a collection of elements of the same data type in contiguous memory locations. Instead of declaring separate variables for each value, an array holds multiple values under a single name using index-based tracking offsets starting at index 0.</p>
+                    
+                    <div class="info-pill-container">
+                        <span class="info-pill"><strong>Features:</strong> Homogeneous Data, Fixed Size, Continuous Memory, Random Access ($O(1)$)</span>
+                    </div>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4><i class="fa-solid fa-thumbs-up"></i> Advantages</h4>
+                            <ul class="bullet-list">
+                                <li>Instant elements lookup using index references.</li>
+                                <li>Excellent cache locality due to continuous blocks alignment.</li>
+                                <li>Memory efficient for storing sequential entries.</li>
+                            </ul>
+                        </div>
+                        <div class="op-block">
+                            <h4><i class="fa-solid fa-thumbs-down"></i> Disadvantages</h4>
+                            <ul class="bullet-list">
+                                <li>Fixed static sizing allocations limits; cannot change size at runtime.</li>
+                                <li>Shifting overhead cost ($O(n)$) incurred during structural insertions/deletions.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tip-callout">
+                        <strong>🌍 Real-Life Analogy:</strong> Think of an array like a row of numbered lockers in a school hallway. Each locker is the exact same size, sits sequentially next to the other, and can be instantly accessed if you know its specific locker number (index).
+                    </div>
+                </div>
+
+                <!-- Memory Addressing Logic Blueprint Section -->
+                <div class="card">
+                    <h2>Memory Allocation Concept & Formula</h2>
+                    <p>Because arrays occupy structured continuous hardware segments, the system does not need to scan through previous elements to access a targeted slot. It computes the physical space offset instantly using the standard **Random Access Addressing Formula**:</p>
+                    
+                    <div style="background: #090814; padding: 20px; border-radius: 12px; border: 1px solid rgba(167, 139, 250, 0.2); font-family: 'JetBrains Mono', monospace; font-size: 16px; color: #E9D5FF; text-align: center; margin: 20px 0;">
+                        Address = Base Address + (Data Type Size × Index Position)
+                    </div>
+                    
+                    <p><strong>Formula Variables Breakdown:</strong></p>
+                    <ul class="bullet-list" style="margin-left: 15px; margin-bottom: 15px;">
+                        <li><strong>Base Address:</strong> The initial physical RAM starting pointer where the array's index `[0]` sits.</li>
+                        <li><strong>Data Type Size:</strong> The byte footprint consumed by a single element data cell (e.g., `Integer = 4 Bytes`, `Double = 8 Bytes`, `Byte = 1 Byte`).</li>
+                        <li><strong>Index Position:</strong> The absolute zero-indexed offset parameter targeting the value slot.</li>
+                    </ul>
+                    
+                    <p><strong>Example Mathematical Trace:</strong> Suppose an integer array starts at Base Address `1000`. To access index position `[3]`, the memory engine maps the configuration instantly: $\text{Address} = 1000 + (4 \times 3) = 1012$.</p>
+                </div>
+
+                <div class="card">
+                    <h2>Memory Layout: Stack vs Heap</h2>
+                    <p>In Java, arrays are treated as objects. Therefore, memory distribution is split into two areas:</p>
+                    <ul class="bullet-list" style="margin-bottom: 15px;">
+                        <li><strong>Stack Memory:</strong> Stores the array reference variable pointer name.</li>
+                        <li><strong>Heap Memory:</strong> Allocates the actual continuous memory blocks containing array element boxes and default values.</li>
+                    </ul>
+<pre>
+// Memory Mapping Lifecycle Trace
+int[] arr;          // Stack variable pointer reference created
+arr = new int[4];   // Heap blocks memory allocated sequentially: [0, 0, 0, 0]
+</pre>
+                </div>
+            </section>
+
+            <!-- BASIC OPERATIONS -->
+            <section id="mod-basic-ops" class="module-section">
+                <h1>Basic Operations</h1>
+
+                <div class="card" id="op-create">
+                    <h2>1. Create Array</h2>
+                    <p><strong>📖 Definition:</strong> Allocates a fixed-size contiguous memory block segment for elements of a declared data type.</p>
+                    <p><strong>🎯 Purpose:</strong> Reserves room in system heap memory before setting explicit elements entries values.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code Implementation</h4>
+                            <pre>int[] arr = new int[5];</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input / 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input: Size = 5<br>
+                                Output: [0, 0, 0, 0, 0] (Initialized with defaults)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-callout">
+                        <strong>📝 Step-by-Step Explanation:</strong> Java checks the declared variable size parameter, finds a continuous open chunk of 20 bytes (5 elements $\times$ 4 bytes for Integer) in the heap, zeroes them out, and points the stack reference pointer directly to its base memory address.
+                    </div>
+
+                    <div class="action-bar">
+                        <div>
+                            <span class="complexity-tag">Time: O(1)</span>
+                            <span class="complexity-tag">Space: O(N)</span>
+                        </div>
+                        <a href="visualizer_array1D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> Simulate Step</a>
+                    </div>
+                </div>
+
+                <div class="card" id="op-insert">
+                    <h2>2. Insert Elements</h2>
+                    <p><strong>📖 Definition:</strong> Assigns numeric literals directly into the array utilizing absolute zero-based index address targets.</p>
+                    <p><strong>🎯 Purpose:</strong> Populates reserved array structures slots with active runtime datasets variables values.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code Implementation</h4>
+<pre>arr[0] = 10;
+arr[1] = 20;
+arr[2] = 30;
+arr[3] = 40;
+arr[4] = 50;</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input / 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input values: 10 20 30 40 50<br>
+                                Output state: [10, 20, 30, 40, 50]
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-bar">
+                        <div>
+                            <span class="complexity-tag">Time: O(1) per assignment</span>
+                            <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+                        <a href="visualizer_array1D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> Simulate Step</a>
+                    </div>
+                </div>
+
+                <div class="card" id="op-access">
+                    <h2>5. Access Element</h2>
+                    <p><strong>📖 Definition:</strong> Retrieves values elements data fields instantly using a single position offset argument reference pointer.</p>
+                    
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code Implementation</h4>
+                            <pre>int element = arr[2]; // Direct Lookup</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input / 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input target index: 2<br>
+                                Output returned value: 30
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-callout">
+                        <strong>❓ Interview Tip:</strong> Array access runs at lightning fast $O(1)$ constant time profile because the machine calculates the element target memory location using simple mathematical pointer addition under the hood.
+                    </div>
+
+                    <div class="action-bar">
+                        <div>
+                            <span class="complexity-tag">Time: O(1)</span>
+                            <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+                        <a href="visualizer_array1D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> Simulate Step</a>
+                    </div>
+                </div>
+
+                <div class="card" id="op-search">
+                    <h2>7. Search Element (Linear Search)</h2>
+                    <p><strong>📖 Definition:</strong> Evaluates elements keys individually step-by-step from index 0 until the matching criteria filter key is hit.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code Implementation</h4>
+<pre>for(int i = 0; i < arr.length; i++) {
+    if(arr[i] == target) return i; // Found
+}</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input / 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input query item: Search = 30<br>
+                                Output trace return: Found at Index 2
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-bar">
+                        <div>
+                            <span class="complexity-tag">Time: O(N)</span>
+                            <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+                        <a href="visualizer_array1D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> Simulate Step</a>
+                    </div>
+                </div>
+
+                <div class="card" id="op-delete">
+                    <h2>8. Delete Element</h2>
+                    <p><strong>📖 Definition:</strong> Extracts value parameters datasets, shifting all remaining adjacent trailing frames one slot left to preserve compaction sequence parameters configurations.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code Implementation</h4>
+<pre>// Deleting value at index 2 by shifting left
+for(int i = 2; i < arr.length - 1; i++) {
+    arr[i] = arr[i + 1];
+}</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input / 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Initial state: [10, 20, 30, 40, 50]<br>
+                                Target deletion value: 30<br>
+                                Output state profile: [10, 20, 40, 50, 0]
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-bar">
+                        <div>
+                            <span class="complexity-tag">Time: O(N)</span>
+                            <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+                        <a href="visualizer_array1D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> Simulate Step</a>
+                    </div>
+                </div>
+
+                <div class="card" id="op-insert-pos">
+                    <h2>11. Insert at Position</h2>
+                    <p><strong>📖 Definition:</strong> Shifts all trailing elements downstream right starting from the target location boundary, making a vacant slot to inject the new value.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code Layout</h4>
+<pre>for(int i = size - 1; i >= pos; i--) {
+    arr[i+1] = arr[i]; // Shift right
+}
+arr[pos] = value; // Inject</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input / 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input Initial: 10 20 40 50<br>
+                                Position Target: 2, Value: 30<br>
+                                Output Final array state: 10 20 30 40 50
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-bar">
+                        <div>
+                            <span class="complexity-tag">Time: O(N)</span>
+                            <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+                        <a href="visualizer_array1D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> Simulate Step</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- UTILITY OPERATIONS -->
+            <section id="mod-utilities" class="module-section">
+                <h1>Utility Operations</h1>
+
+                <div class="card">
+                    <h2>Inversion, Replication, and Analytical Searching API Blocks</h2>
+                    <p>Utility macros manipulate array properties. These workflows can reverse arrays in place, build isolated deep clones inside the heap, or check data equity profiles.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>🔄 Reverse Array</h4>
+                            <p style="font-size:13px; color:#94A3B8;">Two-pointer swap method loops inward to mirror array boundaries entries.</p>
+                            <div class="terminal-box" style="margin-bottom:10px;">In: [10, 20, 30, 40] &rarr; Out: [40, 30, 20, 10]</div>
+                            <span class="complexity-tag">Time: O(N)</span> <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+
+                        <div class="op-block">
+                            <h4>🔍 Binary Search Engine</h4>
+                            <p style="font-size:13px; color:#94A3B8;">Splits sorted array ranges in half repeatedly to locate matching query targets in logarithmic time profiles.</p>
+                            <div class="terminal-box" style="margin-bottom:10px;">Sorted In: [10, 20, 30, 40] &rarr; Search: 30 &rarr; Out: Index 2</div>
+                            <span class="complexity-tag">Time: O(log N)</span> <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MATHEMATICAL OPERATIONS -->
+            <section id="mod-math" class="module-section">
+                <h1>Mathematical Operations</h1>
+                <div class="card">
+                    <h2>Statistical and Frequency Profile Analytics</h2>
+                    <p>Linear $O(n)$ scanning algorithms evaluate collection aggregates and frequency maps by checking each block cell sequence item.</p>
+                    
+                    <ul class="bullet-list" style="margin-top:15px; margin-bottom:15px;">
+                        <li><strong>Sum & Average:</strong> Accales value counters down through loops.</li>
+                        <li><strong>Maximum / Minimum boundary filters:</strong> Tracks the highest or lowest numeric value seen while traversing.</li>
+                        <li><strong>Second Largest element lookup:</strong> Tracks the two highest variables values simultaneously in a single loop scan pass.</li>
+                        <li><strong>Frequencies profiling maps:</strong> Counts duplicate occurrences across target variable keys.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ARRAY REARRANGEMENT -->
+            <section id="mod-rearrange" class="module-section">
+                <h1>Array Rearrangement</h1>
+                <div class="card">
+                    <h2>Rotations, Shift Compactions, and Pointer Swaps</h2>
+                    
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>🔄 Rotate by K Shifts</h4>
+                            <p>Shifts element indices out of bounds and wraps them around. This is usually optimized using a 3-step block inversion strategy: `reverse(0, k-1)`, `reverse(k, n-1)`, then `reverse(0, n-1)`.</p>
+                            <span class="complexity-tag">Time: O(N)</span> <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+                        <div class="op-block">
+                            <h4>🧹 Move Zeroes to End</h4>
+                            <p>Uses a read/write pointer model. It drops active non-zero elements into early sequence cells before zero-filling all trailing memory block cells.</p>
+                            <span class="complexity-tag">Time: O(N)</span> <span class="complexity-tag">Space: O(1)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMMON INTERVIEW OPERATIONS -->
+            <section id="mod-interview" class="module-section">
+                <h1>Common Interview Operations</h1>
+                <div class="card">
+                    <h2>Advanced Logic Engineering Core Blueprints</h2>
+                    <p>These algorithmic structures are frequently tested during enterprise live-coding interviews to evaluate optimization logic paradigms.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>✨ Remove Duplicates (Sorted)</h4>
+                            <p style="font-size:13px; color:#CBD5E1; margin-bottom:10px;">Maintains unique entries via a slow-pointer tracking index system.</p>
+                            <pre style="font-size:11px;">if(arr[i] != arr[j]) arr[++i] = arr[j];</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>🔀 Merge Two Sorted Arrays</h4>
+                            <p style="font-size:13px; color:#CBD5E1; margin-bottom:10px;">Employs a two-pointer merge sorting pass layout to build a consolidated, sorted array.</p>
+                            <span class="complexity-tag">Time: O(N + M)</span> <span class="complexity-tag">Space: O(N + M)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ARRAYS UTILITY CLASS -->
+            <section id="mod-utility-class" class="module-section">
+                <h1>Arrays Utility Class (`java.util.Arrays`)</h1>
+                <div class="card">
+                    <h2>Built-in Framework Capabilities</h2>
+                    <p>The standard library provides optimized native array operations routines via the `java.util.Arrays` utility wrapper class.</p>
+
+                    <table style="width:100%; border-collapse:collapse; margin-top:20px; font-size:14px; text-align: left; color:#CBD5E1;">
+                        <thead>
+                            <tr style="background:#1C1936; color:#C4B5FD; font-weight:600;">
+                                <th style="padding:12px;">Method Signature</th>
+                                <th style="padding:12px;">Operational Characteristics Scope</th>
+                                <th style="padding:12px;">Asymptotic Time Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <td style="padding:12px; font-family:'JetBrains Mono'; color:#34D399;">Arrays.sort(arr)</td>
+                                <td style="padding:12px;">Employs optimized Dual-Pivot Quicksort.</td>
+                                <td style="padding:12px; font-family:'JetBrains Mono'; color:#F59E0B;">O(N log N)</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <td style="padding:12px; font-family:'JetBrains Mono'; color:#34D399;">Arrays.binarySearch(arr, target)</td>
+                                <td style="padding:12px;">Traces matching values across a sorted layout.</td>
+                                <td style="padding:12px; font-family:'JetBrains Mono'; color:#F59E0B;">O(log N)</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <td style="padding:12px; font-family:'JetBrains Mono'; color:#34D399;">Arrays.copyOf(arr, newLength)</td>
+                                <td style="padding:12px;">Clones element sequences into a fresh array.</td>
+                                <td style="padding:12px; font-family:'JetBrains Mono'; color:#F59E0B;">O(N)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:12px; font-family:'JetBrains Mono'; color:#34D399;">Arrays.fill(arr, val)</td>
+                                <td style="padding:12px;">Populates all array cells with a single value.</td>
+                                <td style="padding:12px; font-family:'JetBrains Mono'; color:#F59E0B;">O(N)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- NEXT PAGE ROUTING SYSTEM CARD BUTTON -->
+            <div class="next-page-card">
+                <span style="font-size: 13px; color: #A78BFA; text-transform: uppercase; letter-spacing: 1px;">Finished 1D Storage?</span>
+                <h2 style="font-size: 24px; margin: 5px 0 10px; color: #FFF;">Explore Multi-Dimensional Data Layouts</h2>
+                <p style="margin-bottom: 0; text-align: right; max-width: 600px;">Step into Two-Dimensional matrices rows and columns architecture maps. Master Row-Major vs Column-Major translation logic offsets.</p>
+                <a href="array2D_theory.html" class="next-link-btn">
+                    Next Section: 2D Arrays <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
