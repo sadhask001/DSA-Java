@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering 2D Arrays & Matrices | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+        }
+
+        /* Ambient Glow Backgrounds */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        /* Navbar */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            color: #C4B5FD;
+        }
+
+        /* Layout Grid */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar Navigation Map */
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar a:hover {
+            color: #A78BFA;
+            padding-left: 5px;
+        }
+
+        /* Content Area */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .module-section {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 40px;
+        }
+
+        .module-section h1 {
+            font-size: 38px;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Concept Cards */
+        .card {
+            background: rgba(20, 18, 40, .65);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .2);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #D8B4FE;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p {
+            color: #CBD5E1;
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Standardized Content Blocks */
+        .op-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .op-block {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .op-block h4 {
+            font-size: 13px;
+            color: #A78BFA;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Interactive Memory Visualization Layout */
+        .interactive-memory-wrapper {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .memory-interactive-canvas {
+            background: #0B1120;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: #CBD5E1;
+            user-select: none;
+        }
+
+        .mem-interactive-node {
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+            border: 1px solid transparent;
+        }
+        .mem-interactive-node:hover {
+            background: rgba(167, 139, 250, 0.15);
+            border-color: rgba(167, 139, 250, 0.4);
+            transform: scale(1.02);
+        }
+        .mem-interactive-node.active-focus {
+            background: #7C3AED !important;
+            color: white !important;
+            border-color: #C4B5FD !important;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        .memory-diagnostic-feed {
+            background: rgba(10, 8, 25, 0.8);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .feed-heading {
+            font-size: 11px;
+            color: #A78BFA;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .feed-body {
+            font-size: 13.5px;
+            color: #94A3B8;
+            line-height: 1.6;
+        }
+
+        /* Tables formatting */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 13.5px;
+            text-align: left;
+            color: #CBD5E1;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        th {
+            background: #1C1936;
+            color: #C4B5FD;
+            font-weight: 600;
+        }
+
+        pre {
+            background: #0B1120 !important;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            color: #A5F3FC;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.03);
+            margin: 10px 0;
+        }
+
+        .terminal-box {
+            background: #05050a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #34D399;
+            border-left: 3px solid #10B981;
+            line-height: 1.5;
+        }
+
+        /* Actions Redirect */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .complexity-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #F59E0B;
+            background: rgba(245, 158, 11, 0.08);
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            margin-right: 8px;
+        }
+
+        .inline-visualizer-btn {
+            background: rgba(30, 27, 55, 0.6);
+            color: #C4B5FD;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .inline-visualizer-btn:hover {
+            background: rgba(167, 139, 250, 0.15);
+            color: white;
+            border-color: #A78BFA;
+        }
+
+        /* Floating Action Trigger Badge */
+        .visualizer-float-btn {
+            position: fixed;
+            right: 40px;
+            bottom: 40px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            text-decoration: none;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 20px 40px rgba(167, 139, 250, .4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .visualizer-float-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(167, 139, 250, .55);
+        }
+
+        .tip-callout {
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 4px solid #3B82F6;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #93C5FD;
+        }
+
+        ul.bullet-list {
+            padding-left: 20px;
+            line-height: 1.8;
+            color: #CBD5E1;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1100px) {
+            .layout-grid { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .interactive-memory-wrapper { grid-template-columns: 1fr; }
+            .op-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">DSA Learning Platform</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Back to Collection</a>
+        </div>
+    </header>
+
+    <!-- Floating Action Visualizer Button Trigger -->
+    <a href="visualizer_array2D.html" class="visualizer-float-btn">
+        <i class="fa-solid fa-play"></i> (Visualizer)
+    </a>
+
+    <main class="layout-grid">
+        
+        <!-- Sidebar Hierarchical Roadmap List -->
+        <aside class="sidebar">
+            <h3>📑 Matrix Syllabus</h3>
+            <ul>
+                <li><a href="#matrix-basics"><i class="fa-solid fa-book"></i> Matrix Basics</a></li>
+                <li><a href="#memory-allocation"><i class="fa-solid fa-brain"></i> Memory Allocation</a></li>
+                <li><a href="#crud-operations"><i class="fa-solid fa-layer-group"></i> Core Operations</a></li>
+                <li><a href="#math-operations"><i class="fa-solid fa-calculator"></i> Matrix Mathematics</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <div class="content-area">
+            
+            <!-- SECTION 1: MATRIX BASICS -->
+            <section id="matrix-basics" class="module-section">
+                <h1>2D Array Basics</h1>
+                <div class="card">
+                    <h2>What is a 2D Array?</h2>
+                    <p>A 2D array is a multi-dimensional structure organized as a grid of elements categorized into row and column coordinates. In Java, a 2D array is treated explicitly as an **array of arrays**. Each row coordinate functions as an autonomous reference pointer referencing an independent 1D array object stored elsewhere in heap storage.</p>
+                </div>
+            </section>
+
+            <!-- SECTION 2: MEMORY ALLOCATION CONCEPT -->
+            <section id="memory-allocation" class="module-section">
+                <h1>Memory Allocation</h1>
+                
+                <div class="card">
+                    <h2>What Happens in Memory?</h2>
+                    <p>When a multi-dimensional array is created, the JVM separates pointer handles and data payloads across different areas:</p>
+                    <pre>
+int[][] matrix = {
+    {10, 20, 30},
+    {40, 50, 60},
+    {70, 80, 90}
+};</pre>
+                    <p>The variable pointer reference resides securely inside the local Stack Frame context block, while the actual arrays are instantiated as individual objects inside the Heap memory pool.</p>
+                    
+                    <!-- INTERACTIVE MEMORY CONTAINER MAP -->
+                    <div class="interactive-memory-wrapper">
+                        <div class="memory-interactive-canvas">
+                            <div>STACK MEMORY</div>
+                            <div style="margin: 5px 0 15px 0;">
+                                <div class="mem-interactive-node" id="node-stack" onclick="updateMemoryDiagnosticsFeed('stack')">matrix ──&gt; [ 0x1000 ]</div>
+                            </div>
+                            
+                            <div>HEAP MEMORY</div>
+                            <div style="margin: 5px 0 5px 0; color: #A78BFA; font-size:11px;">matrix (Reference Object Array)</div>
+                            <div style="background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px; display: inline-block; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div class="mem-interactive-node" id="node-ref-0" onclick="updateMemoryDiagnosticsFeed('ref')">0x2000</div> | 
+                                <div class="mem-interactive-node" id="node-ref-1" onclick="updateMemoryDiagnosticsFeed('ref')">0x3000</div> | 
+                                <div class="mem-interactive-node" id="node-ref-2" onclick="updateMemoryDiagnosticsFeed('ref')">0x4000</div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                                <div>
+                                    <div style="color: #60A5FA; font-size:11px; margin-bottom:4px;">Row 0 (0x2000)</div>
+                                    <div class="mem-interactive-node" id="node-row-0" onclick="updateMemoryDiagnosticsFeed('row0')" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding: 6px;">[10][20][30]</div>
+                                </div>
+                                <div>
+                                    <div style="color: #60A5FA; font-size:11px; margin-bottom:4px;">Row 1 (0x3000)</div>
+                                    <div class="mem-interactive-node" id="node-row-1" onclick="updateMemoryDiagnosticsFeed('row1')" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding: 6px;">[40][50][60]</div>
+                                </div>
+                                <div>
+                                    <div style="color: #60A5FA; font-size:11px; margin-bottom:4px;">Row 2 (0x4000)</div>
+                                    <div class="mem-interactive-node" id="node-row-2" onclick="updateMemoryDiagnosticsFeed('row2')" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding: 6px;">[70][80][90]</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FEED TERMINAL SIDE PANEL -->
+                        <div class="memory-diagnostic-feed">
+                            <div class="feed-heading" id="feed-header">Trace Monitor Panel</div>
+                            <div class="feed-body" id="feed-text">Click any memory element block layer inside the diagram to trace runtime allocations live inside the JVM environment.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADDRESS CALCULATIONS FORMULAS -->
+                <div class="card">
+                    <h2>Address Calculation Principles</h2>
+                    <p>To implement standard random-access lookups without scanning, compilers perform explicit mathematical conversions based on data type size footprints.</p>
+                    
+                    <div class="tip-callout" style="border-left-color: #A78BFA; background: rgba(167, 139, 250, 0.02); color: #E9D5FF;">
+                        <strong>1D Array Reference Address Formula:</strong><br>
+                        <span style="font-family: 'JetBrains Mono';">Address = Base Address + (Index × Size of Data Type)</span>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Index</th>
+                                <th>Formula</th>
+                                <th>Address</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>1000 + (0 × 4)</td><td>1000</td><td>10</td></tr>
+                            <tr><td>1</td><td>1000 + (1 × 4)</td><td>1004</td><td>20</td></tr>
+                            <tr><td>2</td><td>1000 + (2 × 4)</td><td>1008</td><td>30</td></tr>
+                            <tr><td>3</td><td>1000 + (3 × 4)</td><td>1012</td><td>40</td></tr>
+                            <tr><td>4</td><td>1000 + (4 × 4)</td><td>1016</td><td>50</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="color:#D8B4FE; font-size:16px; margin-top:25px;">2D Array Conceptual Row-Major Formula (DSA Standard)</h3>
+                    <p>For a bounded matrix structure possessing $R$ rows and $C$ columns:</p>
+                    <div style="background:#090814; padding:20px; border-radius:12px; border:1px solid rgba(167, 139, 250, 0.15); font-family:'JetBrains Mono'; font-size:15px; color:#E9D5FF; text-align:center; margin:15px 0;">
+                        Address = Base + ((Row × NumberOfColumns + Column) × DataTypeSize)
+                    </div>
+
+                    <p><strong>Example Evaluation:</strong> Finding the target location coordinate for `matrix[2][1]` given a Base Address of `1000`, `Column Sizing = 3`, and an Integer size footprint of `4 Bytes`:</p>
+<pre>
+Address = 1000 + ((2 × 3) + 1) × 4
+        = 1000 + (6 + 1) × 4
+        = 1000 + 7 × 4
+        = 1000 + 28 = 1028</pre>
+                </div>
+
+                <div class="card">
+                    <h2>Conceptual Row-Major Memory Mapping Matrix</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Col</th>
+                                <th>Mathematical Formula Translation</th>
+                                <th>Calculated Address</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>1000 + ((0 × 3 + 0) × 4)</td><td>1000</td><td>10</td></tr>
+                            <tr><td>0</td><td>1</td><td>1000 + ((0 × 3 + 1) × 4)</td><td>1004</td><td>20</td></tr>
+                            <tr><td>0</td><td>2</td><td>1000 + ((0 × 3 + 2) × 4)</td><td>1008</td><td>30</td></tr>
+                            <tr><td>1</td><td>0</td><td>1000 + ((1 × 3 + 0) × 4)</td><td>1012</td><td>40</td></tr>
+                            <tr><td>1</td><td>1</td><td>1000 + ((1 × 3 + 1) × 4)</td><td>1016</td><td>50</td></tr>
+                            <tr><td>1</td><td>2</td><td>1000 + ((1 × 3 + 2) × 4)</td><td>1020</td><td>60</td></tr>
+                            <tr><td>2</td><td>0</td><td>1000 + ((2 × 3 + 0) × 4)</td><td>1024</td><td>70</td></tr>
+                            <tr><td>2</td><td>1</td><td>1000 + ((2 × 3 + 1) × 4)</td><td>1028</td><td>80</td></tr>
+                            <tr><td>2</td><td>2</td><td>1000 + ((2 × 3 + 2) × 4)</td><td>1032</td><td>90</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECTION 3: CORE OPERATIONS -->
+            <section id="crud-operations" class="module-section">
+                <h1>Core Operations</h1>
+
+                <!-- 1. Declaration -->
+                <div class="card">
+                    <h2>Declaration</h2>
+                    <p><strong>📖 Definition:</strong> Declaration informs the compiler that a designated tracking variable is reserved to hold a two-dimensional array reference. At this stage, no hardware memory allocation occurs.</p>
+                    <p><strong>🎯 Purpose:</strong> To create a local stack reference identifier capable of pointing to heap-instantiated structures later.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Writing "Classroom Seating Chart" on an empty file folder. The folder wrapper exists, but no chart pages reside inside.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code</h4>
+                            <pre>int[][] matrix;</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input: None<br>
+                                Output: Reference Variable Created
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> `int[][]` specifies a 2D integer array. `matrix` is merely a reference variable; no grid coordinates or rows exist yet.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(1)</span><span class="complexity-tag">Space: O(1)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+
+                <!-- 2. Creation -->
+                <div class="card">
+                    <h2>Creation</h2>
+                    <p><strong>📖 Definition:</strong> Creation allocates memory for the rows and columns on the heap.</p>
+                    <p><strong>🎯 Purpose:</strong> To reserve memory before storing values.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Buying a notebook with 3 rows and 4 columns already printed.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code</h4>
+                            <pre>int[][] matrix = new int[3][4];</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input: Rows = 3, Columns = 4<br><br>
+                                Output:<br>
+                                0 0 0 0<br>0 0 0 0<br>0 0 0 0
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> JVM allocates memory. Every element gets the default value 0.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(R × C)</span><span class="complexity-tag">Space: O(R × C)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+
+                <!-- 3. Initialization -->
+                <div class="card">
+                    <h2>Initialization</h2>
+                    <p><strong>📖 Definition:</strong> Initialization assigns values to the matrix.</p>
+                    <p><strong>🎯 Purpose:</strong> To store actual data.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Filling marks in a classroom mark sheet.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code</h4>
+<pre>int[][] matrix = {
+    {10,20},
+    {30,40}
+};</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input:<br>10 20<br>30 40<br><br>
+                                Output:<br>10 20<br>30 40
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> First row contains 10 and 20. Second row contains 30 and 40.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(R × C)</span><span class="complexity-tag">Space: O(1)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+
+                <!-- 4. Display Matrix -->
+                <div class="card">
+                    <h2>Display Matrix</h2>
+                    <p><strong>📖 Definition:</strong> Print every element row by row.</p>
+                    <p><strong>🎯 Purpose:</strong> To view all values stored in the matrix.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Reading attendance from a classroom seating chart.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code</h4>
+<pre>for(int i=0;i&lt;rows;i++){
+    for(int j=0;j&lt;cols;j++){
+        System.out.print(matrix[i][j]+" ");
+    }
+    System.out.println();
+}</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input:<br>10 20<br>30 40<br><br>
+                                Output:<br>10 20<br>30 40
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> Outer loop moves through rows. Inner loop prints each column.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(R × C)</span><span class="complexity-tag">Space: O(1)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+
+                <!-- 5. Access an Element -->
+                <div class="card">
+                    <h2>Access an Element</h2>
+                    <p><strong>📖 Definition:</strong> Retrieve an element using its row and column index.</p>
+                    <p><strong>🎯 Purpose:</strong> To read a specific value.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Finding the student sitting in Row 2, Column 1.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code</h4>
+                            <pre>System.out.println(matrix[1][0]);</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input:<br>Row = 1<br>Column = 0<br><br>
+                                Output:<br>30
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> Array indexing starts from 0. matrix[1][0] targets row 1, column 0 which resolves to 30.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(1)</span><span class="complexity-tag">Space: O(1)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+
+                <!-- 6. Update an Element -->
+                <div class="card">
+                    <h2>Update an Element</h2>
+                    <p><strong>📖 Definition:</strong> Replace an existing value with a new one.</p>
+                    <p><strong>🎯 Purpose:</strong> Modify stored data.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Correcting a student's mark in a mark sheet.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code</h4>
+                            <pre>matrix[1][1]=99;</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input:<br>Update Row=1<br>Column=1<br>New Value=99<br><br>
+                                Output:<br>10 20<br>30 99
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> Only one element changes.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(1)</span><span class="complexity-tag">Space: O(1)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+
+                <!-- 7. Search an Element -->
+                <div class="card">
+                    <h2>Search an Element</h2>
+                    <p><strong>📖 Definition:</strong> Find whether a value exists in the matrix.</p>
+                    <p><strong>🎯 Purpose:</strong> Locate a required element.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Searching for a student's roll number in a seating arrangement.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code</h4>
+<pre>for(int i=0;i&lt;rows;i++){
+    for(int j=0;j&lt;cols;j++){
+        if(matrix[i][j]==30){
+            System.out.println(i+" "+j);
+        }
+    }
+}</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input:<br>Search = 30<br><br>
+                                Output:<br>Found at Row 1 Column 0
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> Every element is checked until the target is found.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(R × C)</span><span class="complexity-tag">Space: O(1)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: MATRIX MATHEMATICS -->
+            <section id="math-operations" class="module-section">
+                <h1>Matrix Mathematics</h1>
+
+                <!-- 8. Matrix Addition -->
+                <div class="card">
+                    <h2>8. Matrix Addition</h2>
+                    <p><strong>📖 Definition:</strong> Add corresponding elements of two matrices having the same dimensions.</p>
+                    <p><strong>🎯 Purpose:</strong> Combine data from two matrices.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Adding marks from Midterm and Internal Assessment.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code Layout</h4>
+                            <pre>result[i][j]=a[i][j]+b[i][j];</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input:<br>
+                                A:<br>1 2<br>3 4<br>
+                                B:<br>5 6<br>7 8<br><br>
+                                Output:<br>6 8<br>10 12
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> Each position is added independently: 1+5=6, 2+6=8, 3+7=10, 4+8=12.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(R × C)</span><span class="complexity-tag">Space: O(R × C)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+
+                <!-- 9. Matrix Multiplication -->
+                <div class="card">
+                    <h2>9. Matrix Multiplication</h2>
+                    <p><strong>📖 Definition:</strong> Multiply two compatible matrices to produce a new matrix.</p>
+                    <p><strong>🎯 Purpose:</strong> Perform mathematical matrix multiplication.</p>
+                    <p><strong>🌍 Real-Life Example:</strong> Used in graphics, AI, robotics, and image transformations.</p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>💻 Java Code Layout</h4>
+<pre>for (int i = 0; i < R1; i++) {
+    for (int j = 0; j < C2; j++) {
+        for (int k = 0; k < C1; k++) {
+            result[i][j] += a[i][k] * b[k][j];
+        }
+    }
+}</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>📥 Input & 📤 Output Data</h4>
+                            <div class="terminal-box">
+                                Input:<br>
+                                A:<br>1 2<br>3 4<br>
+                                B:<br>5 6<br>7 8<br><br>
+                                Output:<br>19 22<br>43 50
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size:14px; color:#CBD5E1;"><strong>📝 Explanation:</strong> Each element is computed using the row of the first matrix and the column of the second matrix.</p>
+
+                    <div class="action-bar">
+                        <div><span class="complexity-tag">Time: O(R × C × K)</span><span class="complexity-tag">Space: O(R × C)</span></div>
+                        <a href="visualizer_array2D.html" class="inline-visualizer-btn"><i class="fa-solid fa-circle-play"></i> (Visualizer)</a>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- INTERACTIVE LABELS RUNTIME ROUTINES -->
+    <script>
+        function updateMemoryDiagnosticsFeed(layer) {
+            // Clean selection highlights
+            document.querySelectorAll('.mem-interactive-node').forEach(el => el.classList.remove('active-focus'));
+            
+            const header = document.getElementById('feed-header');
+            const text = document.getElementById('feed-text');
+            
+            if (layer === 'stack') {
+                document.getElementById('node-stack').classList.add('active-focus');
+                header.innerText = "Stack Frame Reference [0x1000]";
+                text.innerText = "The local execution stack allocates fixed address frames during thread runs. Variable symbol 'matrix' holds an explicit reference pointer address value pointing to the base handle of the object array inside the Heap pool.";
+            } 
+            else if (layer === 'ref') {
+                document.getElementById('node-ref-0').classList.add('active-focus');
+                document.getElementById('node-ref-1').classList.add('active-focus');
+                document.getElementById('node-ref-2').classList.add('active-focus');
+                header.innerText = "Reference Master Array Object";
+                text.innerText = "Java builds multi-dimensional grids as an 'Array of Arrays'. This intermediate tracking block doesn't hold data primitives; instead, it holds reference pointer values pointing directly to individual row vectors (0x2000, 0x3000, 0x4000) inside the heap.";
+            }
+            else if (layer === 'row0') {
+                document.getElementById('node-row-0').classList.add('active-focus');
+                header.innerText = "Row 0 Sub-Array [0x2000]";
+                text.innerText = "An independent 1D array instance object on the heap holding raw primitives at row position index 0. Elements are packed into a continuous block: matrix[0][0]=10, matrix[0][1]=20, matrix[0][2]=30.";
+            }
+            else if (layer === 'row1') {
+                document.getElementById('node-row-1').classList.add('active-focus');
+                header.innerText = "Row 1 Sub-Array [0x3000]";
+                text.innerText = "The independent 1D array instance object on the heap for row index 1. Contains data values: matrix[1][0]=40, matrix[1][1]=50, matrix[1][2]=60.";
+            }
+            else if (layer === 'row2') {
+                document.getElementById('node-row-2').classList.add('active-focus');
+                header.innerText = "Row 2 Sub-Array [0x4000]";
+                text.innerText = "The independent 1D array instance object on the heap for row index 2. Contains data values: matrix[2][0]=70, matrix[2][1]=80, matrix[2][2]=90.";
+            }
+        }
+    </script>
+</body>
+</html>
