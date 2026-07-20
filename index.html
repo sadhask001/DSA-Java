@@ -3,362 +3,546 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java & DSA Architecture Roadmap | Interactive Learning Path</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Interactive Collections & Maps Hierarchy | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Great+Vibes&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
         body {
-            background: #06050f;
-            color: #fff;
+            background: #090814;
+            color: white;
             min-height: 100vh;
             overflow-x: hidden;
             padding-top: 100px;
-            padding-bottom: 80px;
         }
 
-        /* Ambient Cyber Glow Effects */
-        body::before, body::after {
-            content: ""; position: fixed; width: 800px; height: 700px; border-radius: 50%; opacity: .1; filter: blur(160px); z-index: -2;
+        /* Ambient Glow Backgrounds */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .12;
+            filter: blur(150px);
+            z-index: -1;
         }
-        body::before { left: -300px; top: -200px; background: #a78bfa; }
-        body::after { right: -300px; bottom: -200px; background: #6366f1; }
 
-        /* Fixed Navigation Header */
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .12;
+            filter: blur(150px);
+            z-index: -1;
+        }
+
         header {
-            position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 6%; background: rgba(6, 5, 15, 0.75); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, .06); z-index: 999;
-        }
-        .logo-wrap { display: flex; align-items: center; gap: 10px; }
-        .logo-icon { color: #8b5cf6; font-size: 24px; animation: pulse 2s infinite; }
-        .logo { font-size: 22px; font-weight: 700; background: linear-gradient(90deg, #f3e8ff, #a78bfa); -webkit-background-clip: text; color: transparent; text-decoration: none; }
-
-        /* Search Filter Controls */
-        .search-area { max-width: 600px; margin: 30px auto; padding: 0 20px; text-align: center; }
-        .search-area p { color: #94a3b8; font-size: 14px; margin-bottom: 15px; }
-        .search-box { position: relative; width: 100%; }
-        .search-box input {
-            width: 100%; padding: 14px 20px 14px 45px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.04); color: white; font-size: 14px; outline: none; transition: all 0.3s;
-        }
-        .search-box input:focus { border-color: #8b5cf6; background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); }
-        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 16px; }
-
-        /* Roadmap.sh-Style Node Graph Track Container */
-        .roadmap-viewport {
-            max-width: 1000px;
-            margin: 50px auto 0;
-            padding: 0 20px;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            gap: 40px;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .65);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
         }
 
-        /* Central Continuous Vector Pathway Connection Line */
-        .roadmap-viewport::before {
-            content: '';
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            color: #C4B5FD;
+        }
+
+        main {
+            max-width: 1450px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, .35);
+        }
+
+        h2.section-title {
+            font-size: 34px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-align: center;
+        }
+
+        .desc {
+            color: #CBD5E1;
+            margin-bottom: 40px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* Canvas Workspace setup */
+        .tree-wrapper {
+            background: #0B1120;
+            border-radius: 16px;
+            padding: 40px 10px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            position: relative;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hierarchy-tree {
+            position: relative;
+            width: 1400px;
+            height: 540px;
+            user-select: none;
+        }
+
+        /* Vector Connection Lines Overlay */
+        .tree-svg {
             position: absolute;
-            left: 50%; top: 0; bottom: 0; width: 3px;
-            background: linear-gradient(to bottom, #8b5cf6 0%, #6366f1 50%, rgba(99, 102, 241, 0.05) 100%);
-            transform: translateX(-50%);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
             z-index: 1;
         }
 
-        /* Main Conceptual Pipeline Station Blocks */
-        .roadmap-station {
-            position: relative;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            z-index: 2;
+        .tree-svg line {
+            stroke: rgba(255, 255, 255, 0.12);
+            stroke-width: 2;
         }
 
-        /* Node Core Wrapper Box Layout */
-        .node-wrapper {
-            background: #110f24;
-            border: 2px solid #312e5c;
-            border-radius: 16px;
-            width: 580px;
-            padding: 24px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .tree-svg line.dashed {
+            stroke-dasharray: 5, 5;
         }
 
-        .roadmap-station:hover .node-wrapper {
-            border-color: #8b5cf6;
-            transform: translateY(-4px);
-            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.25);
-        }
-
-        /* Roadmap.sh Connective Central Pin-Dots */
-        .node-pin {
+        /* Nodes Interactive Styling */
+        .node {
             position: absolute;
-            left: 50%; top: 32px;
-            width: 14px; height: 14px;
-            background: #06050f;
-            border: 3px solid #312e5c;
-            border-radius: 50%;
-            transform: translateX(-50%);
-            z-index: 4;
-            transition: all 0.3s;
-        }
-        .roadmap-station:hover .node-pin {
-            border-color: #a78bfa;
-            background: #a78bfa;
-            box-shadow: 0 0 12px #8b5cf6;
-            scale: 1.2;
-        }
-
-        /* Station Text Content Specifications */
-        .node-info-zone { margin-bottom: 15px; }
-        .node-info-zone h3 { font-size: 18px; color: #f1f5f9; display: flex; align-items: center; gap: 8px; font-weight: 600; }
-        .node-info-zone h3 i { font-size: 16px; width: 24px; }
-        .node-info-zone p { font-size: 13px; color: #94a3b8; margin-top: 4px; line-height: 1.5; }
-
-        /* Clickable Nested Sub-Topics Group Cards Array */
-        .sub-links-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 8px;
-            margin-top: 12px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .topic-route-link {
-            background: #181635;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 10px 20px;
             border-radius: 8px;
-            padding: 8px 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
-            color: #c4b5fd;
-            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
             text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
         }
 
-        .topic-route-link:hover {
-            background: #8b5cf6;
+        .node.interface {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 2px solid #34D399;
+        }
+
+        .node.class {
+            background: #E5E7EB;
+            color: #1F2937;
+            border: 2px solid #9CA3AF;
+        }
+
+        .node:hover {
+            transform: translateY(-4px) scale(1.04);
+            box-shadow: 0 10px 20px rgba(167, 139, 250, 0.3);
+        }
+
+        .node.interface:hover { background: #A7F3D0; }
+        .node.class:hover { background: #F3F4F6; }
+
+        .node.dimmed {
+            opacity: 0.18;
+            transform: scale(0.95);
+        }
+
+        .node.highlighted {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.7);
+            border-color: #8B5CF6 !important;
+        }
+
+        .tip-box {
+            margin-top: 30px;
+            background: #131022;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            text-align: center;
+            font-size: 14px;
+            color: #A78BFA;
+        }
+
+        .end-signature {
+            padding: 100px 20px 60px;
+            text-align: center;
+        }
+
+        .end-signature .star {
+            font-size: 34px;
+            color: #D8B4FE;
+            margin: 15px 0;
+        }
+
+        .end-signature h2 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 110px;
+            font-weight: 400;
+            color: #D8B4FE;
+            text-shadow: 0 0 25px rgba(216, 180, 254, .35);
+            margin: 10px 0;
+        }
+
+        .end-signature .line {
+            width: 320px;
+            height: 2px;
+            margin: 18px auto;
+            background: linear-gradient(90deg, transparent, #C4B5FD, transparent);
+        }
+
+        footer {
+            padding: 40px 8%;
+            background: rgba(10, 8, 25, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, .05);
+            text-align: center;
+        }
+
+        /* Modal Overlay System */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(9, 8, 20, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #17142B;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 20px;
+            width: 500px;
+            max-width: 90%;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.open .modal-card { transform: translateY(0); }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #D8B4FE;
+        }
+
+        .modal-badge {
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #64748B;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-close:hover { color: #EF4444; }
+
+        .modal-body {
+            color: #CBD5E1;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .modal-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
             color: white;
-            border-color: #a78bfa;
-            transform: scale(1.03);
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.2s;
         }
 
-        /* Master Global Redirect Module Trigger */
-        .master-access-overlay-link {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; cursor: pointer; border-radius: 16px;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
-
-        @media (max-width: 640px) {
-            .node-wrapper { width: 100%; margin-left: 20px; }
-            .roadmap-viewport::before { left: 10px; transform: none; }
-            .node-pin { left: 10px; transform: translateX(-50%); }
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(167, 139, 250, .3);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-wrap">
-            <i class="fa-solid fa-network-wired logo-icon"></i>
-            <a href="index.html" class="logo">DSA Learning Platform</a>
-        </div>
+        <a href="index.html" class="logo">DSA Learning Platform</a>
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
     </header>
 
-    <main style="width: 100%;">
-        
-        <div class="search-area">
-            <p>Interactive tree guide maps checking structural Java environments configurations. Click nodes to trace sub-modules.</p>
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="roadmap-filter" placeholder="Search milestones, algorithms or collections..." onkeyup="filterRoadmapTree()">
-            </div>
-        </div>
+    <main>
+        <div class="container">
+            <h2 class="section-title">Collections & Maps Architecture Map</h2>
+            <p class="desc">Isolate architectural groups by clicking an Interface header, or select any node directly to look into algorithmic characteristics and navigate sections.</p>
 
-        <!-- Node Graph Workspace Blueprint Layout -->
-        <div class="roadmap-viewport" id="roadmap-tree-canvas">
+            <div class="tree-wrapper">
+                <div class="hierarchy-tree" id="tree-container">
+                    <svg class="tree-svg">
+                        <line x1="450" y1="50" x2="450" y2="100" />
+                        
+                        <line x1="450" y1="140" x2="450" y2="170" />
+                        <line x1="150" y1="170" x2="750" y2="170" />
+                        <line x1="150" y1="170" x2="150" y2="200" />
+                        <line x1="450" y1="170" x2="450" y2="200" />
+                        <line x1="750" y1="170" x2="750" y2="200" />
 
-            <!-- Checkpoint 1: Complexity -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="Complexity/index.html" class="master-access-overlay-link" title="Open Complexity Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-chart-line" style="color: #60a5fa;"></i> Complexity Analysis</h3>
-                        <p>Mathematical framework metrics evaluating program processing bounds.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Complexity/index.html#time" class="topic-route-link">Time Complexity</a>
-                        <a href="Complexity/index.html#space" class="topic-route-link">Space Complexity</a>
-                    </div>
+                        <line class="dashed" x1="150" y1="240" x2="150" y2="280" />
+                        <line class="dashed" x1="45" y2="280" x2="255" y2="280" />
+                        <line class="dashed" x1="45" y1="280" x2="45" y2="310" />
+                        <line class="dashed" x1="150" y1="280" x2="150" y2="310" />
+                        <line class="dashed" x1="255" y1="280" x2="255" y2="310" />
+                        <line x1="150" y1="350" x2="150" y2="410" /> <line x1="450" y1="240" x2="450" y2="280" />
+                        <line class="dashed" x1="450" y1="280" x2="555" y2="280" />
+                        <line class="dashed" x1="555" y1="280" x2="555" y2="310" />
+                        <line class="dashed" x1="410" y1="350" x2="410" y2="410" /> <line class="dashed" x1="375" y1="325" x2="305" y2="325" /> <line x1="725" y1="240" x2="725" y2="310" /> <line class="dashed" x1="750" y1="240" x2="845" y2="240" />
+                        <line class="dashed" x1="845" y1="240" x2="845" y2="310" /> <line class="dashed" x1="755" y1="255" x2="845" y2="255" />
+                        <line class="dashed" x1="845" y1="255" x2="845" y2="410" /> <line x1="695" y1="350" x2="695" y2="410" /> <line class="dashed" x1="695" y1="450" x2="695" y2="490" /> <line x1="1175" y1="240" x2="1175" y2="310" /> <line class="dashed" x1="1200" y1="240" x2="1295" y2="240" />
+                        <line class="dashed" x1="1295" y1="240" x2="1295" y2="310" /> <line class="dashed" x1="1205" y1="255" x2="1295" y2="255" />
+                        <line class="dashed" x1="1295" y1="255" x2="1295" y2="410" /> <line x1="1145" y1="350" x2="1145" y2="410" /> <line class="dashed" x1="1145" y1="450" x2="1145" y2="490" /> </svg>
+
+                    <div class="node interface" style="top: 10px; left: 375px; width: 150px;" id="Iterable" onclick="handleNodeClick('Iterable')">Iterable</div>
+                    <div class="node interface" style="top: 100px; left: 375px; width: 150px;" id="Collection" onclick="handleNodeClick('Collection')">Collection</div>
+                    
+                    <div class="node interface" style="top: 200px; left: 80px; width: 140px;" id="List" onclick="handleListSubtree(event)">List</div>
+                    <div class="node interface" style="top: 200px; left: 380px; width: 140px;" id="Queue" onclick="handleQueueSubtree(event)">Queue</div>
+                    <div class="node interface" style="top: 200px; left: 680px; width: 140px;" id="Set" onclick="handleSetSubtree(event)">Set</div>
+
+                    <div class="node class" style="top: 310px; left: 5px; width: 85px;" id="ArrayList" onclick="handleNodeClick('ArrayList')">ArrayList</div>
+                    <div class="node class" style="top: 310px; left: 105px; width: 85px;" id="Vector" onclick="handleNodeClick('Vector')">Vector</div>
+                    <div class="node class" style="top: 310px; left: 205px; width: 95px;" id="LinkedList" onclick="handleNodeClick('LinkedList')">LinkedList</div>
+                    <div class="node class" style="top: 410px; left: 105px; width: 85px;" id="Stack" onclick="handleNodeClick('Stack')">Stack</div>
+
+                    <div class="node interface" style="top: 310px; left: 350px; width: 95px;" id="Deque" onclick="handleNodeClick('Deque')">Deque</div>
+                    <div class="node class" style="top: 310px; left: 495px; width: 120px;" id="PriorityQueue" onclick="handleNodeClick('PriorityQueue')">PriorityQueue</div>
+                    <div class="node class" style="top: 410px; left: 340px; width: 110px;" id="ArrayDeque" onclick="handleNodeClick('ArrayDeque')">ArrayDeque</div>
+
+                    <div class="node interface" style="top: 310px; left: 645px; width: 100px;" id="SortedSet" onclick="handleNodeClick('SortedSet')">SortedSet</div>
+                    <div class="node interface" style="top: 410px; left: 625px; width: 130px;" id="NavigableSet" onclick="handleNodeClick('NavigableSet')">NavigableSet</div>
+                    <div class="node class" style="top: 490px; left: 645px; width: 95px;" id="TreeSet" onclick="handleNodeClick('TreeSet')">TreeSet</div>
+                    <div class="node class" style="top: 310px; left: 790px; width: 95px;" id="HashSet" onclick="handleNodeClick('HashSet')">HashSet</div>
+                    <div class="node class" style="top: 410px; left: 790px; width: 100px; font-size:12px; line-height:1.2; padding:8px 5px;" id="LinkedHashSet" onclick="handleNodeClick('LinkedHashSet')">Linked<br>HashSet</div>
+
+                    <div class="node interface" style="top: 200px; left: 1110px; width: 130px;" id="Map" onclick="handleMapSubtree(event)">Map</div>
+                    
+                    <div class="node interface" style="top: 310px; left: 1095px; width: 105px;" id="SortedMap" onclick="handleNodeClick('SortedMap')">SortedMap</div>
+                    <div class="node interface" style="top: 410px; left: 1075px; width: 135px;" id="NavigableMap" onclick="handleNodeClick('NavigableMap')">NavigableMap</div>
+                    <div class="node class" style="top: 490px; left: 1095px; width: 95px;" id="TreeMap" onclick="handleNodeClick('TreeMap')">TreeMap</div>
+                    <div class="node class" style="top: 310px; left: 1240px; width: 95px;" id="HashMap" onclick="handleNodeClick('HashMap')">HashMap</div>
+                    <div class="node class" style="top: 410px; left: 1240px; width: 100px; font-size:12px; line-height:1.2; padding:8px 5px;" id="LinkedHashMap" onclick="handleNodeClick('LinkedHashMap')">Linked<br>HashMap</div>
                 </div>
             </div>
 
-            <!-- Checkpoint 2: Arrays -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="Array/index.html" class="master-access-overlay-link" title="Open Arrays Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-table-cells" style="color: #34d399;"></i> Array Architectures</h3>
-                        <p>Contiguous physical memory blocks layout parameters random lookups formulas.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Array/index.html" class="topic-route-link">1D-Array</a>
-                        <a href="Array/index.html" class="topic-route-link">2D-Matrix</a>
-                    </div>
-                </div>
+            <div class="tip-box">
+                <i class="fa-solid fa-circle-info"></i> Click blank space inside the tree terminal box framework container to clear subtree focus instantly.
             </div>
-
-            <!-- Checkpoint 3: Searching Checkpoint Link -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="Searching/index.html" class="master-access-overlay-link" title="Open Searching Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-magnifying-glass" style="color: #f59e0b;"></i> Searching Routines</h3>
-                        <p>Scanning sweeps methodologies isolating precise value positions elements criteria.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Searching/index.html#linear" class="topic-route-link">Linear Search</a>
-                        <a href="Searching/index.html#binary" class="topic-route-link">Binary Search</a>
-                        <a href="Searching/index.html#jump" class="topic-route-link">Jump Search</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Checkpoint 4: Sorting Frameworks -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="sorting/index.html" class="master-access-overlay-link" title="Open Sorting Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-arrow-down-1-9" style="color: #ec4899;"></i> Sorting Engines</h3>
-                        <p>Data reorganization pipelines implementing strategic elements swapping partitions.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="sorting/index.html#selection" class="topic-route-link">Selection Sort</a>
-                        <a href="sorting/index.html#insertion" class="topic-route-link">Insertion Sort</a>
-                        <a href="sorting/index.html#bubble" class="topic-route-link">Bubble Sort</a>
-                        <a href="sorting/index.html#count" class="topic-route-link">Count Sort</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Checkpoint 5: Collection Utilities Framework -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="Collection/index.html" class="master-access-overlay-link" title="Open Collections Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-layer-group" style="color: #a78bfa;"></i> Java Collections Framework</h3>
-                        <p>Engineered container templates optimizing object collection allocations dynamically.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Collection/index.html#list" class="topic-route-link">List API</a>
-                        <a href="Collection/index.html#set" class="topic-route-link">Set API</a>
-                        <a href="Collection/index.html#queue" class="topic-route-link">Queue API</a>
-                        <a href="Collection/index.html#map" class="topic-route-link">Map Registers</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Checkpoint 6: Trees Hierarchies -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="Trees/index.html" class="master-access-overlay-link" title="Open Trees Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-tree" style="color: #10b981;"></i> Hierarchical Trees</h3>
-                        <p>Branching non-linear structures managing linked node pointer references maps.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Trees/index.html#binary" class="topic-route-link">Binary Tree</a>
-                        <a href="Trees/index.html#bst" class="topic-route-link">Binary Search (BST)</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Checkpoint 7: Graph Connected Networks -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="Graph/index.html" class="master-access-overlay-link" title="Open Graphs Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-circle-nodes" style="color: #2563eb;"></i> Graphs & Topologies</h3>
-                        <p>Interconnected vertex coordinate architectures handling network routing problems maps.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Graph/index.html#matrix" class="topic-route-link">Adj Matrix</a>
-                        <a href="Graph/index.html#list" class="topic-route-link">Adj List</a>
-                        <a href="Graph/index.html#bfs" class="topic-route-link">BFS Traversal</a>
-                        <a href="Graph/index.html#dfs" class="topic-route-link">DFS Traversal</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Checkpoint 8: Algorithmic Core Paradigms -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="Algorithm/index.html" class="master-access-overlay-link" title="Open Algorithms Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-brain" style="color: #f43f5e;"></i> Algorithmic Core Paradigms</h3>
-                        <p>Advanced algorithmic solution blueprints sorting complex mathematical issues.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Algorithm/index.html#bruteforce" class="topic-route-link">Brute Force</a>
-                        <a href="Algorithm/index.html#recursion" class="topic-route-link">Recursive Strategy</a>
-                        <a href="Algorithm/index.html#dp" class="topic-route-link">Dynamic Prog</a>
-                        <a href="Algorithm/index.html#divide" class="topic-route-link">Divide & Conquer</a>
-                        <a href="Algorithm/index.html#greedy" class="topic-route-link">Greedy Strategy</a>
-                        <a href="Algorithm/index.html#backtrack" class="topic-route-link">Backtracking</a>
-                        <a href="Algorithm/index.html#random" class="topic-route-link">Randomized</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Checkpoint 9: Advanced Concepts -->
-            <div class="roadmap-station">
-                <div class="node-pin"></div>
-                <div class="node-wrapper">
-                    <a href="Advance/index.html" class="master-access-overlay-link" title="Open Advanced Concepts Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-wand-magic-sparkles" style="color: #fbbf24;"></i> Advance Engineering Concepts</h3>
-                        <p>Advanced data modifications rules, masking tricks, and complex metadata parsing engines.</p>
-                    </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <span class="topic-route-link">Bit Masking</span>
-                        <span class="topic-route-link">Segment Trees</span>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </main>
 
+    <div class="modal-overlay" id="modal-container" onclick="closeModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title" id="m-title">Structure</div>
+                <div class="modal-badge" id="m-type">Interface</div>
+            </div>
+            <div class="modal-body" id="m-desc">Module documentation text parameters details mapping.</div>
+            <a href="#" class="modal-btn" id="m-link">Launch Analysis Module &rarr;</a>
+        </div>
+    </div>
+
+    <section class="end-signature">
+        <div class="star">✦</div>
+        <h2>That's it.</h2>
+        <div class="line"></div>
+        <div class="star">✦</div>
+    </section>
+
+    <footer>
+        <div style="max-width:1200px;margin:auto;">
+            <p style="color:#64748B;">© 2026 DSA Learning Platform</p>
+        </div>
+    </footer>
+
     <script>
-        function filterRoadmapTree() {
-            let val = document.getElementById("roadmap-filter").value.toLowerCase();
-            let stations = document.querySelectorAll(".roadmap-station");
-            stations.forEach(st => {
-                let textBlock = st.querySelector(".node-wrapper").innerText.toLowerCase();
-                st.style.display = textBlock.includes(val) ? "flex" : "none";
+        // Folder routing maps cleanly updated to isolate modules inside dedicated folders[cite: 1, 3]
+        const nodeMetadata = {
+            Iterable: { type: "interface", desc: "The foundational parent interface root. Allows objects to be target definitions of enhanced for-each traversal blocks loop mechanics.", url: "iterable.html" },
+            Collection: { type: "interface", desc: "The core interface structure abstraction gathering list, sets, and queues variables rules under standard operational paradigms.", url: "collectiontheory.html" },
+            List: { type: "interface", desc: "Ordered structural sequences mapping target values directly to explicit zero-indexed block locations supporting fast positional lookups.", url: "List/index.html" },
+            Queue: { type: "interface", desc: "A linear processing terminal structural buffer designed around traditional First-In-First-Out sequences or customized heap sorting structures.", url: "Queue/index.html" },
+            Set: { type: "interface", desc: "A clean mathematical collections set representation strictly rejecting duplicate value parameters inputs configurations.", url: "Set/index.html" },
+            ArrayList: { type: "class", desc: "Dynamic arrays backed storage layouts offering ultra-fast constant time ($O(1)$) reference query speeds but linear cost compaction shifts on updates.", url: "ArrayList/index.html" },
+            Vector: { type: "class", desc: "Legacy dynamic sync implementation vectors block. Features hardcoded thread safe synchronized locks introducing high execution costs.", url: "Vector/index.html" },
+            LinkedList: { type: "class", desc: "Doubly linked list configurations mapping dual node reference vectors pointers. Implements both List and Deque rules cleanly.", url: "LinkedList/index.html" },
+            Stack: { type: "class", desc: "Traditional Last-In-First-Out array abstraction vectors mapping stack modifications via explicit pushes and pops operations routines.", url: "Stack/index.html" },
+            Deque: { type: "interface", desc: "Double-ended queues rules blocks. Allows bidirectional insertion extraction modifications directly over extreme endpoints paths.", url: "Deque/index.html" },
+            PriorityQueue: { type: "class", desc: "Heap implementation sort trees ordering structural contents dynamically via native algorithms selectors values parameters.", url: "PriorityQueue/index.html" },
+            ArrayDeque: { type: "class", desc: "High efficiency cyclical resizable array implementation deque outclassing vector stacks configurations for modern lightweight routines loops.", url: "ArrayDeque/index.html" },
+            SortedSet: { type: "interface", desc: "An architectural extension of Set forcing active elements values parameters into natural sorted scales on insertion events.", url: "SortedSet/index.html" },
+            NavigableSet: { type: "interface", desc: "Adds boundary traversal tracking operations routines to find proximate lower/higher items boundaries relative to search filters.", url: "NavigableSet/index.html" },
+            TreeSet: { type: "class", desc: "Balanced Self-sorting Red-Black Tree models guaranteeing logarithmic step execution profiles ($O(\\log n)$) across sets lookup mutations.", url: "TreeSet/index.html" },
+            HashSet: { type: "class", desc: "A hash table-based mathematical allocation blocking matching values patterns instantly under constant profiles ($O(1)$).", url: "HashSet/index.html" },
+            LinkedHashSet: { type: "class", desc: "Hash storage configurations layered over linear historical linkage pointers to cleanly preserve insertion tracking chronologies sequential structures.", url: "LinkedHashSet/index.html" },
+            
+            Map: { type: "interface", desc: "An object that maps unique keys to values. A Map cannot contain duplicate keys; each key can map to at most one value.", url: "Map/index.html" },
+            SortedMap: { type: "interface", desc: "A Map that guarantees its entries are maintained in an ascending key order, sorted according to natural ordering or a custom Comparator.", url: "SortedMap/index.html" },
+            NavigableMap: { type: "interface", desc: "An extension of SortedMap providing navigation methods like lowerEntry(), floorKey(), ceilingKey(), and higherEntry().", url: "NavigableMap/index.html" },
+            TreeMap: { type: "class", desc: "A Red-Black tree based implementation of the NavigableMap interface. Key lookup, insertion, and deletion run at $O(\\log n)$ performance.", url: "TreeMap/index.html" },
+            HashMap: { type: "class", desc: "A HashTable based implementation of the Map interface. Provides near constant-time ($O(1)$) performance for standard get and put actions.", url: "HashMap/index.html" },
+            LinkedHashMap: { type: "class", desc: "Hash table and linked list implementation of the Map interface, preserving a predictable iteration order by chaining elements sequentially.", url: "LinkedHashMap/index.html" }
+        };
+
+        function resetFocus() {
+            document.querySelectorAll('.node').forEach(node => {
+                node.classList.remove('dimmed', 'highlighted');
             });
+        }
+
+        document.querySelector('.tree-wrapper').addEventListener('click', (e) => {
+            if(e.target === document.querySelector('.tree-wrapper') || e.target.classList.contains('tree-svg')) {
+                resetFocus();
+            }
+        });
+
+        function isolateTreeSection(activeArray) {
+            document.querySelectorAll('.node').forEach(node => {
+                if(activeArray.includes(node.id)) {
+                    if(["List", "Queue", "Set", "Map"].includes(node.id)) {
+                        node.classList.add('highlighted');
+                    }
+                } else {
+                    node.classList.add('dimmed');
+                }
+            });
+        }
+
+        function handleListSubtree(e) {
+            e.stopPropagation(); resetFocus();
+            isolateTreeSection(["Iterable", "Collection", "List", "ArrayList", "Vector", "LinkedList", "Stack"]);
+        }
+
+        function handleQueueSubtree(e) {
+            e.stopPropagation(); resetFocus();
+            isolateTreeSection(["Iterable", "Collection", "Queue", "Deque", "PriorityQueue", "ArrayDeque", "LinkedList"]);
+        }
+
+        function handleSetSubtree(e) {
+            e.stopPropagation(); resetFocus();
+            isolateTreeSection(["Iterable", "Collection", "Set", "SortedSet", "NavigableSet", "TreeSet", "HashSet", "LinkedHashSet"]);
+        }
+
+        function handleMapSubtree(e) {
+            e.stopPropagation(); resetFocus();
+            isolateTreeSection(["Map", "SortedMap", "NavigableMap", "TreeMap", "HashMap", "LinkedHashMap"]);
+        }
+
+        function handleNodeClick(nodeId) {
+            const meta = nodeMetadata[nodeId];
+            if(!meta) return;
+
+            document.getElementById('m-title').innerText = nodeId;
+            const targetBadge = document.getElementById('m-type');
+            targetBadge.innerText = meta.type;
+
+            if(meta.type === 'interface') {
+                targetBadge.style.background = '#D1FAE5'; targetBadge.style.color = '#065F46';
+            } else {
+                targetBadge.style.background = '#E5E7EB'; targetBadge.style.color = '#1F2937';
+            }
+
+            document.getElementById('m-desc').innerHTML = meta.desc;
+            
+            const linkRoute = document.getElementById('m-link');
+            linkRoute.href = meta.url;
+            linkRoute.innerText = `Explore ${nodeId} Content Module \u2192`;
+
+            document.getElementById('modal-container').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').classList.remove('open');
         }
     </script>
 </body>

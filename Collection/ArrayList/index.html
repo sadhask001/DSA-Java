@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering ArrayList in Java | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Ambient Cyber Glow Backgrounds */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        /* Navbar Layout Router */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            color: #C4B5FD;
+        }
+
+        /* Floating Action Trigger Badge */
+        .visualizer-float-btn {
+            position: fixed;
+            right: 40px;
+            bottom: 40px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            text-decoration: none;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 20px 40px rgba(167, 139, 250, .4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .visualizer-float-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(167, 139, 250, .55);
+        }
+
+        /* Layout Grid Columns Architecture Map */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1600px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        /* Sidebar Navigation Menu Blueprint */
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar a:hover {
+            color: #A78BFA;
+            padding-left: 5px;
+        }
+
+        /* Content Area Setup */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .module-section {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 40px;
+        }
+
+        .module-section h1 {
+            font-size: 38px;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Card Panels Components */
+        .card {
+            background: rgba(20, 18, 40, .65);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .2);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #D8B4FE;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p {
+            color: #CBD5E1;
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Grid Columns Blocks */
+        .op-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .op-block {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .op-block h4 {
+            font-size: 13px;
+            color: #A78BFA;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Interactive Split Memory Canvas */
+        .interactive-memory-wrapper {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .memory-interactive-canvas {
+            background: #0B1120;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #CBD5E1;
+            user-select: none;
+        }
+
+        .mem-interactive-node {
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+            border: 1px solid transparent;
+        }
+        .mem-interactive-node:hover {
+            background: rgba(167, 139, 250, 0.15);
+            border-color: rgba(167, 139, 250, 0.4);
+            transform: scale(1.02);
+        }
+        .mem-interactive-node.active-focus {
+            background: #7C3AED !important;
+            color: white !important;
+            border-color: #C4B5FD !important;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        .memory-diagnostic-feed {
+            background: rgba(10, 8, 25, 0.8);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .feed-heading { font-size: 11px; color: #A78BFA; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .feed-body { font-size: 13.5px; color: #94A3B8; line-height: 1.6; }
+
+        /* Tables Data Format */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 13.5px;
+            text-align: left;
+            color: #CBD5E1;
+        }
+        th, td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
+        th { background: #1C1936; color: #C4B5FD; font-weight: 600; }
+
+        pre {
+            background: #0B1120 !important;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            color: #A5F3FC;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.03);
+            margin: 10px 0;
+        }
+
+        .terminal-box {
+            background: #05050a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            color: #34D399;
+            border-left: 3px solid #10B981;
+            line-height: 1.6;
+        }
+
+        .complexity-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #F59E0B;
+            background: rgba(245, 158, 11, 0.08);
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            margin-right: 6px;
+            display: inline-block;
+        }
+
+        .tip-callout {
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 4px solid #3B82F6;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #93C5FD;
+        }
+
+        ul.bullet-list { padding-left: 20px; line-height: 1.8; color: #CBD5E1; font-size: 14px; }
+        
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid rgba(255, 255, 255, .08);
+            color: #cbd5e1;
+            font-weight: 500;
+            background: rgba(10, 8, 25, .4);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 1100px) {
+            .layout-grid { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .interactive-memory-wrapper { grid-template-columns: 1fr; }
+            .op-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA Learning Platform</a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Back to Collection</a>
+        </div>
+    </header>
+
+    <!-- Floating Action Visualizer Canvas Trigger -->
+    <a href="visualizer_arraylist.html" class="visualizer-float-btn">
+        <i class="fa-solid fa-play"></i> (Visualizer)
+    </a>
+
+    <main class="layout-grid">
+        
+        <!-- Sidebar Navigation Roadmap Menu Map -->
+        <aside class="sidebar">
+            <h3>📑 ArrayList Roadmap</h3>
+            <ul>
+                <li><a href="#intro-specs"><i class="fa-solid fa-book"></i> Core Introduction</a></li>
+                <li><a href="#memory-representation"><i class="fa-solid fa-brain"></i> Memory Simulator</a></li>
+                <li><a href="#internal-mechanics"><i class="fa-solid fa-gears"></i> Internal Growth</a></li>
+                <li><a href="#constructors-section"><i class="fa-solid fa-cubes"></i> Constructors API</a></li>
+                <li><a href="#code-playground"><i class="fa-solid fa-laptop-code"></i> Code Playground</a></li>
+                <li><a href="#complexity-matrix"><i class="fa-solid fa-chart-line"></i> Complexity Bounds</a></li>
+                <li><a href="#interview-metrics"><i class="fa-solid fa-circle-question"></i> Interview Guide</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Workspace Content Area -->
+        <div class="content-area">
+            
+            <!-- SECTION 1: INTRODUCTION & SPECIFICATIONS -->
+            <section id="intro-specs" class="module-section">
+                <h1>ArrayList in Java</h1>
+                
+                <div class="card">
+                    <h2>Introduction</h2>
+                    <p>ArrayList is one of the most commonly used classes in the Java Collection Framework. It is a dynamic array that automatically grows or shrinks as elements are added or removed. Unlike a normal array, an ArrayList does not have a fixed size, making it flexible and easy to use.</p>
+                    <p>ArrayList implements the List interface and stores elements in insertion order. It allows duplicate elements, supports null values, and provides fast random access using indexes. Internally, an ArrayList stores its elements in a resizable array. When the array becomes full, Java automatically creates a larger array and copies the existing elements into it.</p>
+                    
+                    <div class="tip-callout">
+                        <strong>🌍 Real-Life Example:</strong> Imagine a student attendance list containing variables tracks (John &rarr; David &rarr; Emma &rarr; Sophia). Students may join or leave at any time. Instead of initializing an entire new hardware segment every single time, we simply add a student, remove an entry, or execute a fast query scan. This is exactly how an ArrayList functions.
+                    </div>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>Declaration Signature</h4>
+                            <ul class="bullet-list" style="margin-bottom:10px;">
+                                <li><strong>Package:</strong> `java.util`</li>
+                                <li><strong>Introduced In:</strong> JDK 1.2</li>
+                            </ul>
+                            <pre>public class ArrayList&lt;E&gt;
+       extends AbstractList&lt;E&gt;
+       implements List&lt;E&gt;, RandomAccess, 
+                  Cloneable, Serializable</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>Hierarchy Map Trace</h4>
+<pre style="font-size:12px; line-height:1.3;">
+               Iterable
+                   │
+             Collection
+                   │
+                 List
+                   │
+             AbstractList
+                   │
+              ArrayList
+</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Features of ArrayList</h2>
+                    <ul class="bullet-list">
+                        <li><strong>Dynamic Sizing:</strong> Automatically expands and downscales its backing array footprints.</li>
+                        <li><strong>Order Preservation:</strong> Safely maintains absolute elements insertion sequences order.</li>
+                        <li><strong>Duplicates & Nulls:</strong> Permits duplicate values and logs multiple null values cleanly.</li>
+                        <li><strong>Fast Random Access:</strong> Direct lookup algorithms fetch array cells instantly via position integer indexes.</li>
+                        <li><strong>Thread Safety Notice:</strong> ArrayList is not synchronized (not thread-safe).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SECTION 2: INTERACTIVE MEMORY REPRESENTATION -->
+            <section id="memory-representation" class="module-section">
+                <h1>Memory Representation</h1>
+                <div class="card">
+                    <h2>JVM Memory Allocations Interactive Simulator</h2>
+                    <p>Explore how local stack frame references bind to dynamic resizable instances inside Heap memory.</p>
+<pre>
+ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+list.add(10); list.add(20); list.add(30);
+</pre>
+
+                    <!-- INTERACTIVE DATA MAP MODULE -->
+                    <div class="interactive-memory-wrapper">
+                        <div class="memory-interactive-canvas">
+                            <div>STACK MEMORY</div>
+                            <div style="margin: 5px 0 15px 0;">
+                                <div class="mem-interactive-node" id="node-stack" onclick="traceArrayListMemory('stack')">ArrayList&lt;Integer&gt; list ──&gt; [ 0x500C ]</div>
+                            </div>
+                            
+                            <div>HEAP MEMORY</div>
+                            <div style="color: #A78BFA; font-size:11px; margin-bottom:4px;">ArrayList Object Instance (0x500C) [Size = 3 | Capacity = 10]</div>
+                            <div style="background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px; display: inline-block; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div class="mem-interactive-node" id="node-el0" onclick="traceArrayListMemory('el')">[0] &rarr; 10</div> | 
+                                <div class="mem-interactive-node" id="node-el1" onclick="traceArrayListMemory('el')">[1] &rarr; 20</div> | 
+                                <div class="mem-interactive-node" id="node-el2" onclick="traceArrayListMemory('el')">[2] &rarr; 30</div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 8px; font-size:11px; color:#64748b;">
+                                <div style="padding: 4px 8px; background: rgba(255,255,255,0.02); border-radius: 4px;">[3] &rarr; Empty</div>
+                                <div style="padding: 4px 8px; background: rgba(255,255,255,0.02); border-radius: 4px;">[4] &rarr; Empty</div>
+                                <div style="padding: 4px 8px; background: rgba(255,255,255,0.02); border-radius: 4px;">[...] &rarr; Empty</div>
+                            </div>
+                        </div>
+
+                        <!-- DIAGNOSTIC FEED RADAR -->
+                        <div class="memory-diagnostic-feed">
+                            <div class="feed-heading" id="feed-header">Heap Monitor Feed</div>
+                            <div class="feed-body" id="feed-text">Click any computational block component inside the canvas engine to parse JVM variable memory allocations records.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: INTERNAL MECHANICS -->
+            <section id="internal-mechanics" class="module-section">
+                <h1>Internal Working & Growth</h1>
+                <div class="card">
+                    <h2>How Dynamic Resizing Works Internally</h2>
+                    <p>An empty instantiation statement creates a raw default structure container. When the active element volume matches the allocated array length boundaries, a resizing event updates structural capacities:</p>
+                    
+                    <div class="terminal-box" style="color: #F59E0B; border-left-color: #F59E0B; background: rgba(245, 158, 11, 0.02);">
+                        <strong>Resizing Equation Threshold:</strong> New Capacity = Old Capacity + (Old Capacity &gt;&gt; 1) <br>
+                        Old Capacity Limit: 10 Cells &rarr; Scales up 1.5x &rarr; New Capacity Boundary: 15 Cells
+                    </div>
+                    <p style="margin-top: 15px; font-size: 14px; color: #CBD5E1;">Java allocates an entirely fresh continuous backing array in heap matching the computed New Capacity parameters, seamlessly clones the historical indices items sequence over into it, and changes the internal object reference pointer address.</p>
+                </div>
+            </section>
+
+            <!-- SECTION 4: CONSTRUCTORS API -->
+            <section id="constructors-section" class="module-section">
+                <h1>Constructors API Registry</h1>
+                <div class="card">
+                    <h2>Available Constructor Variants</h2>
+                    
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>1. Default Constructor</h4>
+                            <p style="font-size:13px; color:#94A3B8; margin-bottom:8px;">Constructs an empty internal backing structural layout canvas.</p>
+                            <pre>ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();</pre>
+                        </div>
+                        <div class="op-block">
+                            <h4>2. Initial Capacity Constructor</h4>
+                            <p style="font-size:13px; color:#94A3B8; margin-bottom:8px;">Pre-allocates an array mapping matching specified dimensions size bounds.</p>
+                            <pre>ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;(20);</pre>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
+                        <h4 style="font-size:14px; color:#A78BFA; margin-bottom:6px;">3. Collection Subclass Constructor</h4>
+                        <p style="font-size:13px; color:#CBD5E1; margin-bottom:8px;">Instantiates an autonomous dynamic array containing elements duplicated from any alternate source collection framework container.</p>
+                        <pre>Collection&lt;Integer&gt; c = List.of(10, 20, 30);
+ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;(c);</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: EXAMPLE PROGRAM WORKSPACE -->
+            <section id="code-playground" class="module-section">
+                <h1>Algorithmic Code Sandbox</h1>
+                <div class="card">
+                    <h2>Java Executable Program Trace</h2>
+<pre>
+import java.util.*;
+
+public class ArrayListExample {
+    public static void main(String[] args) {
+        ArrayList&lt;String&gt; fruits = new ArrayList&lt;&gt;();
+
+        fruits.add("Apple");   // Adds Apple at index 0
+        fruits.add("Banana");  // Adds Banana at index 1
+        fruits.add("Orange");  // Adds Orange at index 2
+
+        System.out.println("ArrayList : " + fruits);
+        System.out.println("Size : " + fruits.size());
+        System.out.println("Contains Banana : " + fruits.contains("Banana"));
+
+        fruits.remove("Banana"); // Removes element and shifts trailing values left
+        System.out.println("After Remove : " + fruits);
+
+        for(String fruit : fruits){
+            System.out.println(fruit);
+        }
+    }
+}</pre>
+                    <h4>Terminal Render Log Profile:</h4>
+                    <div class="terminal-box">
+                        ArrayList : [Apple, Banana, Orange]<br>
+                        Size : 3<br>
+                        Contains Banana : true<br>
+                        After Remove : [Apple, Orange]<br>
+                        Apple<br>
+                        Orange
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: COMPLEXITY FRAMEWORKS MATRIX -->
+            <section id="complexity-matrix" class="module-section">
+                <h1>Performance Bounds Complexity Analysis</h1>
+                <div class="card">
+                    <h2>Operational Asymptotic Costs</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Operational Signature Target</th>
+                                <th>Time Complexity Performance</th>
+                                <th>Space Complexity Footprint</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>add() (Appending at the absolute tail boundary)</td><td style="color:#34D399;">O(1) Average Amortized</td><td style="color:#F59E0B;">O(1)</td></tr>
+                            <tr><td>add(int index, E element) (Positional Insertion Shifting)</td><td style="color:#F59E0B;">O(n)</td><td style="color:#F59E0B;">O(1)</td></tr>
+                            <tr><td>get(int index) / set(int index, E element)</td><td style="color:#34D399;">O(1) Constant Fast Retrieval</td><td style="color:#F59E0B;">O(1)</td></tr>
+                            <tr><td>remove(int index) / remove(Object o)</td><td style="color:#F59E0B;">O(n)</td><td style="color:#F59E0B;">O(1)</td></tr>
+                            <tr><td>contains() / indexOf()</td><td style="color:#F59E0B;">O(n) Linear Scanning Search</td><td style="color:#F59E0B;">O(1)</td></tr>
+                            <tr><td>size() / isEmpty()</td><td style="color:#34D399;">O(1)</td><td style="color:#F59E0B;">O(1)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>Ideal Structural Contexts</h4>
+                            <ul class="bullet-list" style="font-size:12.5px;">
+                                <li>Read-intensive applications demanding lightning-fast lookup operations.</li>
+                                <li>Dynamic workflows where insertions and removals occur primarily at the end of the collection sequence.</li>
+                                <li>Scenarios requiring exact duplication tracking and rigid insertion-order preservation mapping.</li>
+                            </ul>
+                        </div>
+                        <div class="op-block">
+                            <h4>Scenarios to Avoid</h4>
+                            <p style="font-size:13px; color:#CBD5E1;">Avoid using an ArrayList if your application requires frequent intermediate data insertions or removals in the middle of the structure sequence. Shifting trailing indices parameters left or right incurs performance costs ($O(n)$); use a `LinkedList` container configuration in those cases instead.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: RECRUITMENT INTERVIEW QUESTIONS PREP -->
+            <section id="interview-metrics" class="module-section">
+                <h1>Technical Interview Prep</h1>
+                <div class="card">
+                    <h2>High-Frequency Assessment Q&A</h2>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color:#C4B5FD; font-size:15px; margin-bottom:4px;">1. What is the default initial capacity of an ArrayList container?</h4>
+                        <p style="font-size:14px; color:#cbd5e1;">An ArrayList initiates empty without claiming heavy early hardware footprints. When the first element is added, Java sets the default backing internal array storage threshold capacity to **10 cells**.</p>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color:#C4B5FD; font-size:15px; margin-bottom:4px;">2. Outline the explicit performance variance between arrays and ArrayList.</h4>
+                        <p style="font-size:14px; color:#cbd5e1;">Standard arrays possess absolute static sizing locks and accept raw primitive primitives data fields directly. An ArrayList manages dynamic scaling properties automatically but works only with object references, relying on automatic wrapper type autoboxing transformations for primitive entries.</p>
+                    </div>
+
+                    <div style="margin-bottom: 5px;">
+                        <h4 style="color:#C4B5FD; font-size:15px; margin-bottom:4px;">3. Explain how the capacity expands once the backing array grid is entirely full.</h4>
+                        <p style="font-size:14px; color:#cbd5e1;">The system triggers an internal automatic expansion routine. It calculates a new structural size parameter bound to **1.5 times the current capacity**. It then allocates a fresh continuous memory block array object on the heap and copies existing elements into the updated indexes sequence layout blocks.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        That's it.<br>
+        © 2026 DSA Learning Platform
+    </footer>
+
+    <!-- INTERACTIVE EVENT TRIGGERS SCRIPTS ROUTINES -->
+    <script>
+        function traceArrayListMemory(layer) {
+            document.querySelectorAll('.mem-interactive-node').forEach(el => el.classList.remove('active-focus'));
+            
+            const header = document.getElementById('feed-header');
+            const text = document.getElementById('feed-text');
+            
+            if (layer === 'stack') {
+                document.getElementById('node-stack').classList.add('active-focus');
+                header.innerText = "Stack Reference Variable Allocation";
+                text.innerText = "The execution Stack area allocates space for variable symbol 'list'. This handle holds a direct raw memory address pointer targeting the object's base header on the heap (0x500C).";
+            } 
+            else {
+                document.getElementById('node-el0').classList.add('active-focus');
+                document.getElementById('node-el1').classList.add('active-focus');
+                document.getElementById('node-el2').classList.add('active-focus');
+                header.innerText = "Heap Object Element Storage Array";
+                text.innerText = "The active integer data payloads (10, 20, 30) sit stored in continuous indices locations at the front of a resizable 10-cell raw object array block, allowing fast lookups.";
+            }
+        }
+    </script>
+</body>
+</html>
