@@ -187,7 +187,6 @@
             border: 2px solid #9CA3AF;
         }
 
-        /* Node Hover/Focus states animation blocks */
         .node:hover {
             transform: translateY(-4px) scale(1.04);
             box-shadow: 0 10px 20px rgba(167, 139, 250, 0.3);
@@ -218,7 +217,6 @@
             color: #A78BFA;
         }
 
-        /* Signatures Layout System matching main page */
         .end-signature {
             padding: 100px 20px 60px;
             text-align: center;
@@ -448,33 +446,32 @@
     </footer>
 
     <script>
-        // Expanded metadata mapping block to cover Maps implementation modules natively
+        // Folder routing maps cleanly updated to isolate modules inside dedicated folders[cite: 1, 3]
         const nodeMetadata = {
             Iterable: { type: "interface", desc: "The foundational parent interface root. Allows objects to be target definitions of enhanced for-each traversal blocks loop mechanics.", url: "iterable.html" },
-            Collection: { type: "interface", desc: "The core interface structure abstraction gathering list, sets, and queues variables rules under standard operational paradigms.", url: "collection.html" },
-            List: { type: "interface", desc: "Ordered structural sequences mapping target values directly to explicit zero-indexed block locations supporting fast positional lookups.", url: "list.html" },
-            Queue: { type: "interface", desc: "A linear processing terminal structural buffer designed around traditional First-In-First-Out sequences or customized heap sorting structures.", url: "queue.html" },
-            Set: { type: "interface", desc: "A clean mathematical collections set representation strictly rejecting duplicate value parameters inputs configurations.", url: "set.html" },
-            ArrayList: { type: "class", desc: "Dynamic arrays backed storage layouts offering ultra-fast constant time ($O(1)$) reference query speeds but linear cost compaction shifts on updates.", url: "arraylist.html" },
-            Vector: { type: "class", desc: "Legacy dynamic sync implementation vectors block. Features hardcoded thread safe synchronized locks introducing high execution costs.", url: "vector.html" },
-            LinkedList: { type: "class", desc: "Doubly linked list configurations mapping dual node reference vectors pointers. Implements both List and Deque rules cleanly.", url: "linkedlist.html" },
-            Stack: { type: "class", desc: "Traditional Last-In-First-Out array abstraction vectors mapping stack modifications via explicit pushes and pops operations routines.", url: "stack.html" },
-            Deque: { type: "interface", desc: "Double-ended queues rules blocks. Allows bidirectional insertion extraction modifications directly over extreme endpoints paths.", url: "deque.html" },
-            PriorityQueue: { type: "class", desc: "Heap implementation sort trees ordering structural contents dynamically via native algorithms selectors values parameters.", url: "priorityqueue.html" },
-            ArrayDeque: { type: "class", desc: "High efficiency cyclical resizable array implementation deque outclassing vector stacks configurations for modern lightweight routines loops.", url: "arraydeque.html" },
-            SortedSet: { type: "interface", desc: "An architectural extension of Set forcing active elements values parameters into natural sorted scales on insertion events.", url: "sortedset.html" },
-            NavigableSet: { type: "interface", desc: "Adds boundary traversal tracking operations routines to find proximate lower/higher items boundaries relative to search filters.", url: "navigableset.html" },
-            TreeSet: { type: "class", desc: "Balanced Self-sorting Red-Black Tree models guaranteeing logarithmic step execution profiles ($O(\\log n)$) across sets lookup mutations.", url: "treeset.html" },
-            HashSet: { type: "class", desc: "A hash table-based mathematical allocation blocking matching values patterns instantly under constant profiles ($O(1)$).", url: "hashset.html" },
-            LinkedHashSet: { type: "class", desc: "Hash storage configurations layered over linear historical linkage pointers to cleanly preserve insertion tracking chronologies sequential structures.", url: "linkedhashset.html" },
+            Collection: { type: "interface", desc: "The core interface structure abstraction gathering list, sets, and queues variables rules under standard operational paradigms.", url: "collectiontheory.html" },
+            List: { type: "interface", desc: "Ordered structural sequences mapping target values directly to explicit zero-indexed block locations supporting fast positional lookups.", url: "List/index.html" },
+            Queue: { type: "interface", desc: "A linear processing terminal structural buffer designed around traditional First-In-First-Out sequences or customized heap sorting structures.", url: "Queue/index.html" },
+            Set: { type: "interface", desc: "A clean mathematical collections set representation strictly rejecting duplicate value parameters inputs configurations.", url: "Set/index.html" },
+            ArrayList: { type: "class", desc: "Dynamic arrays backed storage layouts offering ultra-fast constant time ($O(1)$) reference query speeds but linear cost compaction shifts on updates.", url: "ArrayList/index.html" },
+            Vector: { type: "class", desc: "Legacy dynamic sync implementation vectors block. Features hardcoded thread safe synchronized locks introducing high execution costs.", url: "Vector/index.html" },
+            LinkedList: { type: "class", desc: "Doubly linked list configurations mapping dual node reference vectors pointers. Implements both List and Deque rules cleanly.", url: "LinkedList/index.html" },
+            Stack: { type: "class", desc: "Traditional Last-In-First-Out array abstraction vectors mapping stack modifications via explicit pushes and pops operations routines.", url: "Stack/index.html" },
+            Deque: { type: "interface", desc: "Double-ended queues rules blocks. Allows bidirectional insertion extraction modifications directly over extreme endpoints paths.", url: "Deque/index.html" },
+            PriorityQueue: { type: "class", desc: "Heap implementation sort trees ordering structural contents dynamically via native algorithms selectors values parameters.", url: "PriorityQueue/index.html" },
+            ArrayDeque: { type: "class", desc: "High efficiency cyclical resizable array implementation deque outclassing vector stacks configurations for modern lightweight routines loops.", url: "ArrayDeque/index.html" },
+            SortedSet: { type: "interface", desc: "An architectural extension of Set forcing active elements values parameters into natural sorted scales on insertion events.", url: "SortedSet/index.html" },
+            NavigableSet: { type: "interface", desc: "Adds boundary traversal tracking operations routines to find proximate lower/higher items boundaries relative to search filters.", url: "NavigableSet/index.html" },
+            TreeSet: { type: "class", desc: "Balanced Self-sorting Red-Black Tree models guaranteeing logarithmic step execution profiles ($O(\\log n)$) across sets lookup mutations.", url: "TreeSet/index.html" },
+            HashSet: { type: "class", desc: "A hash table-based mathematical allocation blocking matching values patterns instantly under constant profiles ($O(1)$).", url: "HashSet/index.html" },
+            LinkedHashSet: { type: "class", desc: "Hash storage configurations layered over linear historical linkage pointers to cleanly preserve insertion tracking chronologies sequential structures.", url: "LinkedHashSet/index.html" },
             
-            // Map components document metadata contexts
-            Map: { type: "interface", desc: "An object that maps unique keys to values. A Map cannot contain duplicate keys; each key can map to at most one value.", url: "map.html" },
-            SortedMap: { type: "interface", desc: "A Map that guarantees its entries are maintained in an ascending key order, sorted according to natural ordering or a custom Comparator.", url: "sortedmap.html" },
-            NavigableMap: { type: "interface", desc: "An extension of SortedMap providing navigation methods like lowerEntry(), floorKey(), ceilingKey(), and higherEntry().", url: "navigablesmap.html" },
-            TreeMap: { type: "class", desc: "A Red-Black tree based implementation of the NavigableMap interface. Key lookup, insertion, and deletion run at $O(\\log n)$ performance.", url: "treemap.html" },
-            HashMap: { type: "class", desc: "A HashTable based implementation of the Map interface. Provides near constant-time ($O(1)$) performance for standard get and put actions.", url: "hashmap.html" },
-            LinkedHashMap: { type: "class", desc: "Hash table and linked list implementation of the Map interface, preserving a predictable iteration order by chaining elements sequentially.", url: "linkedhashmap.html" }
+            Map: { type: "interface", desc: "An object that maps unique keys to values. A Map cannot contain duplicate keys; each key can map to at most one value.", url: "Map/index.html" },
+            SortedMap: { type: "interface", desc: "A Map that guarantees its entries are maintained in an ascending key order, sorted according to natural ordering or a custom Comparator.", url: "SortedMap/index.html" },
+            NavigableMap: { type: "interface", desc: "An extension of SortedMap providing navigation methods like lowerEntry(), floorKey(), ceilingKey(), and higherEntry().", url: "NavigableMap/index.html" },
+            TreeMap: { type: "class", desc: "A Red-Black tree based implementation of the NavigableMap interface. Key lookup, insertion, and deletion run at $O(\\log n)$ performance.", url: "TreeMap/index.html" },
+            HashMap: { type: "class", desc: "A HashTable based implementation of the Map interface. Provides near constant-time ($O(1)$) performance for standard get and put actions.", url: "HashMap/index.html" },
+            LinkedHashMap: { type: "class", desc: "Hash table and linked list implementation of the Map interface, preserving a predictable iteration order by chaining elements sequentially.", url: "LinkedHashMap/index.html" }
         };
 
         function resetFocus() {
@@ -483,7 +480,6 @@
             });
         }
 
-        // Catch canvas background clicks to clear highlights 
         document.querySelector('.tree-wrapper').addEventListener('click', (e) => {
             if(e.target === document.querySelector('.tree-wrapper') || e.target.classList.contains('tree-svg')) {
                 resetFocus();
