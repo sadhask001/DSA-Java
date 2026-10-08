@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Preparation & Curated Sheets | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px 30px 80px 30px;
+            width: 100%;
+            flex: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 110px;
+            height: calc(100vh - 140px);
+            background: rgba(20, 18, 40, .6);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(15px);
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #A78BFA;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toc-link {
+            color: #94A3B8;
+            text-decoration: none;
+            font-size: 13.5px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toc-link:hover, .toc-link.active {
+            color: white;
+            background: rgba(139, 92, 246, .15);
+            border-left: 3px solid #A78BFA;
+        }
+
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 45px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(49, 46, 129, 0.4));
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #FFFFFF, #E9D5FF);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-banner p {
+            color: #CBD5E1;
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 850px;
+        }
+
+        .action-banner {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+            transition: all .2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(139, 92, 246, 0.5);
+        }
+
+        .completion-toggle-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #E2E8F0;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .completion-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #A78BFA;
+        }
+
+        .completion-toggle-btn.is-completed {
+            background: rgba(52, 211, 153, 0.2);
+            border-color: #34D399;
+            color: #34D399;
+        }
+
+        .content-card {
+            background: rgba(20, 18, 40, .6);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 35px;
+            backdrop-filter: blur(15px);
+        }
+
+        .content-card h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #F8FAFC;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 12px;
+        }
+
+        .content-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #E2E8F0;
+            margin: 25px 0 12px 0;
+        }
+
+        .content-card p {
+            color: #94A3B8;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        /* Curated Sheets Grid */
+        .sheets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 22px;
+            margin: 20px 0;
+        }
+
+        .sheet-card {
+            background: rgba(30, 27, 60, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 26px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sheet-card:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+            transform: translateY(-4px);
+            background: rgba(36, 32, 72, 0.7);
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .sheet-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: #F8FAFC;
+        }
+
+        .sheet-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 6px;
+            background: rgba(139, 92, 246, 0.2);
+            color: #C4B5FD;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sheet-desc {
+            font-size: 13.5px;
+            color: #94A3B8;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .sheet-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .sheet-tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #CBD5E1;
+        }
+
+        /* Company Tracks Grid */
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .company-card {
+            background: rgba(25, 22, 50, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .company-card:hover {
+            border-color: rgba(167, 139, 250, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .company-icon-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #F1F5F9;
+            margin-bottom: 12px;
+        }
+
+        .company-icon-title i {
+            font-size: 22px;
+        }
+
+        .company-meta {
+            font-size: 13px;
+            color: #94A3B8;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .company-focus-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .company-focus-list li {
+            font-size: 12.5px;
+            color: #CBD5E1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .company-focus-list li i {
+            font-size: 10px;
+            color: #A78BFA;
+        }
+
+        /* Visualizers Hub Grid */
+        .vis-hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+            margin: 20px 0;
+        }
+
+        .vis-hub-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            padding: 16px;
+            text-decoration: none;
+            color: #E2E8F0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .vis-hub-card:hover {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(167, 139, 250, 0.4);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .vis-hub-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #C4B5FD;
+            font-size: 14px;
+        }
+
+        /* Mock Interview Checklist */
+        .checklist-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .checklist-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .checklist-item.checked {
+            border-color: rgba(52, 211, 153, 0.3);
+            background: rgba(52, 211, 153, 0.06);
+        }
+
+        .checklist-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #E2E8F0;
+        }
+
+        .checklist-chk {
+            width: 17px;
+            height: 17px;
+            accent-color: #10B981;
+            cursor: pointer;
+        }
+
+        .score-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 22px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../index.html" class="logo">
+            <i class="fa-solid fa-shapes"></i>
+            <span>DSA-Java</span>
+        </a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="../Patterns/index.html" class="nav-btn"><i class="fa-solid fa-shapes"></i> Patterns</a>
+            <a href="../ProblemSolving/index.html" class="nav-btn"><i class="fa-solid fa-lightbulb"></i> Problem Solving</a>
+            <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="nav-btn" style="background:none; border:none; cursor:pointer;">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+        </div>
+    </header>
+
+    <div class="layout-grid">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-title">
+                <i class="fa-solid fa-briefcase"></i> Interview Index
+            </div>
+            <ul class="toc-list">
+                <li><a href="#overview" class="toc-link"><i class="fa-solid fa-compass"></i> Prep Strategy</a></li>
+                <li><a href="#curated-sheets" class="toc-link"><i class="fa-solid fa-layer-group"></i> Curated Problem Sheets</a></li>
+                <li><a href="#company-tracks" class="toc-link"><i class="fa-solid fa-building"></i> Company Specific Tracks</a></li>
+                <li><a href="#checklist" class="toc-link"><i class="fa-solid fa-clipboard-check"></i> Readiness Rubric</a></li>
+                <li><a href="#visualizers-hub" class="toc-link"><i class="fa-solid fa-display"></i> Complete Visualizers Hub</a></li>
+            </ul>
+
+            <div style="margin-top:auto; padding-top:15px; border-top:1px solid rgba(255,255,255,0.08);">
+                <button class="completion-toggle-btn" id="interview-complete-btn" onclick="handleInterviewCompleteToggle()" style="width:100%; justify-content:center;">
+                    <i class="fa-regular fa-circle-check"></i> <span id="interview-complete-txt">Mark Complete</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <!-- Hero Banner -->
+            <section class="hero-banner" id="overview">
+                <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#A78BFA; font-weight:600; text-transform:uppercase; margin-bottom:12px;">
+                    <i class="fa-solid fa-trophy"></i> Culmination & Execution · Phase 26
+                </div>
+                <h1>Interview Preparation & Curated Sheets</h1>
+                <p>
+                    Transition from theoretical mastery to interview-ready execution. This module consolidates the industry’s standard problem sheets (Blind 75, NeetCode 150, Striver SDE), matches company-specific interview archetypes, and provides an interactive technical evaluation checklist.
+                </p>
+                <div class="action-banner">
+                    <a href="#curated-sheets" class="cta-btn">
+                        <i class="fa-solid fa-table-list"></i> Explore Curated Sheets
+                    </a>
+                    <button class="completion-toggle-btn" id="footer-complete-btn" onclick="handleInterviewCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Curated Problem Sheets -->
+            <section class="content-card" id="curated-sheets">
+                <h2><i class="fa-solid fa-layer-group" style="color:#A78BFA;"></i> Standard Industry Problem Sheets</h2>
+                <p>
+                    Rather than solving 1,000 random problems, focus on verified curated sheets that maximize concept coverage with minimal redundancy:
+                </p>
+
+                <div class="sheets-grid">
+                    <!-- Blind 75 -->
+                    <div class="sheet-card">
+                        <div>
+                            <div class="sheet-header">
+                                <div class="sheet-title">Blind 75</div>
+                                <span class="sheet-badge">75 Essential Problems</span>
+                            </div>
+                            <div class="sheet-desc">
+                                The timeless standard compiled by a Facebook Tech Lead. Covers the minimum necessary foundation across arrays, strings, trees, linked lists, dynamic programming, and graphs.
+                            </div>
+                            <div class="sheet-topics">
+                                <span class="sheet-tag">Arrays (10)</span>
+                                <span class="sheet-tag">Binary (5)</span>
+                                <span class="sheet-tag">DP (15)</span>
+                                <span class="sheet-tag">Graphs (8)</span>
+                                <span class="sheet-tag">Trees (14)</span>
+                                <span class="sheet-tag">Heaps (3)</span>
+                            </div>
+                        </div>
+                        <a href="https://leetcode.com/discuss/general-discussion/460599/blind-75-leetcode-questions" target="_blank" rel="noopener noreferrer" class="cta-btn" style="width:100%; justify-content:center;">
+                            <span>Open Blind 75 Track</span> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;"></i>
+                        </a>
+                    </div>
+
+                    <!-- NeetCode 150 -->
+                    <div class="sheet-card">
+                        <div>
+                            <div class="sheet-header">
+                                <div class="sheet-title">NeetCode 150</div>
+                                <span class="sheet-badge">150 Pattern Questions</span>
+                            </div>
+                            <div class="sheet-desc">
+                                The expanded modern evolution of Blind 75. Organizes problems strictly by algorithmic patterns (Sliding Window, Two Pointers, Monotonic Stack, Backtracking, 2D DP).
+                            </div>
+                            <div class="sheet-topics">
+                                <span class="sheet-tag">Two Pointers</span>
+                                <span class="sheet-tag">Sliding Window</span>
+                                <span class="sheet-tag">Tries</span>
+                                <span class="sheet-tag">Intervals</span>
+                                <span class="sheet-tag">Greedy</span>
+                                <span class="sheet-tag">Advanced Graphs</span>
+                            </div>
+                        </div>
+                        <a href="https://neetcode.io/practice" target="_blank" rel="noopener noreferrer" class="cta-btn" style="width:100%; justify-content:center;">
+                            <span>Open NeetCode 150</span> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;"></i>
+                        </a>
+                    </div>
+
+                    <!-- Striver SDE Sheet -->
+                    <div class="sheet-card">
+                        <div>
+                            <div class="sheet-header">
+                                <div class="sheet-title">Striver SDE Sheet</div>
+                                <span class="sheet-badge">191 Curated Problems</span>
+                            </div>
+                            <div class="sheet-desc">
+                                Designed specifically for Tier-1 Product Companies and Indian/Global Service-to-Product SDE interviews. Deep emphasis on recursion, BST, graph algorithms, and DP.
+                            </div>
+                            <div class="sheet-topics">
+                                <span class="sheet-tag">Matrix</span>
+                                <span class="sheet-tag">Binary Trees</span>
+                                <span class="sheet-tag">BST</span>
+                                <span class="sheet-tag">Recursion</span>
+                                <span class="sheet-tag">Trie</span>
+                                <span class="sheet-tag">String Match</span>
+                            </div>
+                        </div>
+                        <a href="https://takeuforward.org/interviews/strivers-sde-sheet-top-coding-interview-problems/" target="_blank" rel="noopener noreferrer" class="cta-btn" style="width:100%; justify-content:center;">
+                            <span>Open Striver Sheet</span> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Company Tracks -->
+            <section class="content-card" id="company-tracks">
+                <h2><i class="fa-solid fa-building" style="color:#38BDF8;"></i> Company Specific Interview Profiles</h2>
+                <p>
+                    Each Tier-1 tech company emphasizes distinct problem types, interview styles, and evaluation criteria:
+                </p>
+
+                <div class="company-grid">
+                    <!-- Google -->
+                    <div class="company-card">
+                        <div class="company-icon-title">
+                            <i class="fa-brands fa-google" style="color:#EA4335;"></i> Google
+                        </div>
+                        <div class="company-meta">
+                            Focuses on original, unseen graph modeling, Union-Find, Segment Trees, and complex DP state spaces. Expects scalable algorithmic purity without brute-forcing.
+                        </div>
+                        <ul class="company-focus-list">
+                            <li><i class="fa-solid fa-chevron-right"></i> Topological Sort & Dijkstra</li>
+                            <li><i class="fa-solid fa-chevron-right"></i> Tree DP & State Machine DP</li>
+                            <li><i class="fa-solid fa-chevron-right"></i> Strict Asymptotic Correctness</li>
+                        </ul>
+                    </div>
+
+                    <!-- Amazon -->
+                    <div class="company-card">
+                        <div class="company-icon-title">
+                            <i class="fa-brands fa-amazon" style="color:#FF9900;"></i> Amazon
+                        </div>
+                        <div class="company-meta">
+                            Focuses heavily on Trees, Heaps/PriorityQueues, BFS/DFS 2D Grids, and customer-facing scenarios. Equal 50/50 weight placed on 16 Leadership Principles (STAR method).
+                        </div>
+                        <ul class="company-focus-list">
+                            <li><i class="fa-solid fa-chevron-right"></i> 2D Grid BFS / Island Problems</li>
+                            <li><i class="fa-solid fa-chevron-right"></i> PriorityQueue (Top K / Median)</li>
+                            <li><i class="fa-solid fa-chevron-right"></i> Leadership Principle Alignment</li>
+                        </ul>
+                    </div>
+
+                    <!-- Meta -->
+                    <div class="company-card">
+                        <div class="company-icon-title">
+                            <i class="fa-brands fa-meta" style="color:#0668E1;"></i> Meta
+                        </div>
+                        <div class="company-meta">
+                            Extreme emphasis on coding speed and syntactic correctness. Typically requires completing <strong>two Medium problems in 40 minutes</strong> with clean edge-case handling.
+                        </div>
+                        <ul class="company-focus-list">
+                            <li><i class="fa-solid fa-chevron-right"></i> Two Pointers & Sliding Window</li>
+                            <li><i class="fa-solid fa-chevron-right"></i> Lowest Common Ancestor (LCA)</li>
+                            <li><i class="fa-solid fa-chevron-right"></i> Rapid Bug-Free Execution</li>
+                        </ul>
+                    </div>
+
+                    <!-- Microsoft -->
+                    <div class="company-card">
+                        <div class="company-icon-title">
+                            <i class="fa-brands fa-microsoft" style="color:#00A4EF;"></i> Microsoft
+                        </div>
+                        <div class="company-meta">
+                            Emphasizes fundamental data structures: Linked Lists, BSTs, String manipulations, and defensive engineering practices against null and memory hazards.
+                        </div>
+                        <ul class="company-focus-list">
+                            <li><i class="fa-solid fa-chevron-right"></i> Linked List manipulation in-place</li>
+                            <li><i class="fa-solid fa-chevron-right"></i> BST Traversals & Validations</li>
+                            <li><i class="fa-solid fa-chevron-right"></i> High defensive coding standards</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Complete Visualizers Hub -->
+            <section class="content-card" id="visualizers-hub">
+                <h2><i class="fa-solid fa-display" style="color:#10B981;"></i> Complete Platform Visualizers Hub</h2>
+                <p>
+                    Revisit any data structure or algorithmic engine with real-time step-by-step animations:
+                </p>
+
+                <div class="vis-hub-grid">
+                    <a href="../Complexity/visualizer.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-chart-line"></i></div>
+                        <div><strong>Complexity</strong><div style="font-size:11px; color:#94A3B8;">Big-O Curves</div></div>
+                    </a>
+                    <a href="../Array/visualizer_array1D.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-table-cells"></i></div>
+                        <div><strong>1D Array</strong><div style="font-size:11px; color:#94A3B8;">RAM & Indices</div></div>
+                    </a>
+                    <a href="../Array/visualizer_array2D.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-border-all"></i></div>
+                        <div><strong>2D Matrix</strong><div style="font-size:11px; color:#94A3B8;">Row-Major Order</div></div>
+                    </a>
+                    <a href="../Collection/ArrayList/visualizer_arraylist.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-list-ol"></i></div>
+                        <div><strong>ArrayList</strong><div style="font-size:11px; color:#94A3B8;">Capacity Growth</div></div>
+                    </a>
+                    <a href="../Collection/LinkedList/visualizer_linkedlist.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-link"></i></div>
+                        <div><strong>Linked List</strong><div style="font-size:11px; color:#94A3B8;">Pointers SLL/DLL</div></div>
+                    </a>
+                    <a href="../Collection/Stack/visualizer_stack.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-layer-group"></i></div>
+                        <div><strong>Stack</strong><div style="font-size:11px; color:#94A3B8;">LIFO Mechanics</div></div>
+                    </a>
+                    <a href="../Collection/Queue/visualizer_queue.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
+                        <div><strong>Queue & Deque</strong><div style="font-size:11px; color:#94A3B8;">Circular Buffers</div></div>
+                    </a>
+                    <a href="../Trees/visualizer_tree.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-network-wired"></i></div>
+                        <div><strong>Trees & BST</strong><div style="font-size:11px; color:#94A3B8;">Rotations & Traversal</div></div>
+                    </a>
+                    <a href="../Heap/visualizer_heap.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-cubes"></i></div>
+                        <div><strong>Heap</strong><div style="font-size:11px; color:#94A3B8;">Heapify & Priority</div></div>
+                    </a>
+                    <a href="../Graph/visualizer_graph.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+                        <div><strong>Graph</strong><div style="font-size:11px; color:#94A3B8;">BFS / DFS / Dijkstra</div></div>
+                    </a>
+                    <a href="../Hashing/visualizer_hashmap.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-hashtag"></i></div>
+                        <div><strong>HashMap</strong><div style="font-size:11px; color:#94A3B8;">Buckets & Collisions</div></div>
+                    </a>
+                    <a href="../Sorting/visualizer_sorting.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-arrow-down-a-z"></i></div>
+                        <div><strong>Sorting</strong><div style="font-size:11px; color:#94A3B8;">Merge, Quick, Heap</div></div>
+                    </a>
+                    <a href="../Searching/visualizer_searching.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div><strong>Searching</strong><div style="font-size:11px; color:#94A3B8;">Binary & Bounds</div></div>
+                    </a>
+                    <a href="../Recursion/visualizer_recursion.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-arrows-spin"></i></div>
+                        <div><strong>Recursion</strong><div style="font-size:11px; color:#94A3B8;">Call Stack Simulation</div></div>
+                    </a>
+                    <a href="../DP/visualizer_dp.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-table"></i></div>
+                        <div><strong>Dynamic Prog.</strong><div style="font-size:11px; color:#94A3B8;">Memoization Grid</div></div>
+                    </a>
+                    <a href="../Greedy/visualizer_greedy.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                        <div><strong>Greedy</strong><div style="font-size:11px; color:#94A3B8;">Interval Scheduling</div></div>
+                    </a>
+                    <a href="../Strings/visualizer_strings.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-font"></i></div>
+                        <div><strong>Strings</strong><div style="font-size:11px; color:#94A3B8;">KMP & Rolling Hash</div></div>
+                    </a>
+                    <a href="../BitManipulation/visualizer_bits.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-microchip"></i></div>
+                        <div><strong>Bit Manipulation</strong><div style="font-size:11px; color:#94A3B8;">Bitwise Gates & Masks</div></div>
+                    </a>
+                    <a href="../Patterns/visualizer_patterns.html" class="vis-hub-card">
+                        <div class="vis-hub-icon"><i class="fa-solid fa-shapes"></i></div>
+                        <div><strong>Patterns</strong><div style="font-size:11px; color:#94A3B8;">Two Pointers & Window</div></div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Mock Interview Checklist -->
+            <section class="content-card" id="checklist">
+                <h2><i class="fa-solid fa-clipboard-check" style="color:#FBBF24;"></i> Technical Readiness Checklist</h2>
+                <p>
+                    Evaluate your readiness before your next live coding interview. These criteria match the rubrics used by senior engineers:
+                </p>
+
+                <div class="checklist-group" id="mock-checklist">
+                    <div class="checklist-item" onclick="toggleCheck('chk1')">
+                        <label class="checklist-label">
+                            <input type="checkbox" id="chk1" class="checklist-chk" onchange="updateReadiness()">
+                            <span><strong>Clarification Protocol:</strong> Always ask about data scale (N), duplicate handling, and negative values before coding.</span>
+                        </label>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck('chk2')">
+                        <label class="checklist-label">
+                            <input type="checkbox" id="chk2" class="checklist-chk" onchange="updateReadiness()">
+                            <span><strong>Brute Force & Pattern Matching:</strong> State the brute force time/space baseline and the target optimal algorithmic pattern.</span>
+                        </label>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck('chk3')">
+                        <label class="checklist-label">
+                            <input type="checkbox" id="chk3" class="checklist-chk" onchange="updateReadiness()">
+                            <span><strong>Clean Idiomatic Java:</strong> Used meaningful variable names, avoided unnecessary global variables, and handled null/empty guards.</span>
+                        </label>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck('chk4')">
+                        <label class="checklist-label">
+                            <input type="checkbox" id="chk4" class="checklist-chk" onchange="updateReadiness()">
+                            <span><strong>Active Dry-Run:</strong> Traced code line-by-line with a sample test case using a visible state table before claiming completion.</span>
+                        </label>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck('chk5')">
+                        <label class="checklist-label">
+                            <input type="checkbox" id="chk5" class="checklist-chk" onchange="updateReadiness()">
+                            <span><strong>Edge Case Defense:</strong> Proactively verified empty inputs, single-element collections, duplicate values, and integer overflow.</span>
+                        </label>
+                    </div>
+                    <div class="checklist-item" onclick="toggleCheck('chk6')">
+                        <label class="checklist-label">
+                            <input type="checkbox" id="chk6" class="checklist-chk" onchange="updateReadiness()">
+                            <span><strong>Complexity Justification:</strong> Clearly stated both Time and Space complexity including recursion stack overhead.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="score-banner">
+                    <div>
+                        <div style="font-size:12px; color:#CBD5E1; text-transform:uppercase; font-weight:600;">Interview Readiness Score</div>
+                        <div style="font-size:22px; font-weight:700; color:#F8FAFC;" id="score-text">0 / 6 Passed</div>
+                    </div>
+                    <div style="font-size:13px; font-weight:600; color:#A78BFA;" id="score-status">Needs Review</div>
+                </div>
+            </section>
+
+            <!-- Navigation Links -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-top:20px;">
+                <a href="../ProblemSolving/index.html" class="nav-btn" style="background:rgba(255,255,255,0.05); padding:12px 20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    <i class="fa-solid fa-arrow-left"></i> Previous Topic: Problem Solving Strategies
+                </a>
+                <a href="../index.html" class="cta-btn">
+                    Return to Interactive Roadmap Homepage <i class="fa-solid fa-house"></i>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
+    </footer>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function toggleCheck(id) {
+            const chk = document.getElementById(id);
+            if (chk && event.target !== chk) {
+                chk.checked = !chk.checked;
+                updateReadiness();
+            }
+        }
+
+        function updateReadiness() {
+            const ids = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+            let passed = 0;
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const item = el.closest('.checklist-item');
+                    if (el.checked) {
+                        passed++;
+                        if (item) item.classList.add('checked');
+                        localStorage.setItem('dsa_interview_' + id, 'true');
+                    } else {
+                        if (item) item.classList.remove('checked');
+                        localStorage.removeItem('dsa_interview_' + id);
+                    }
+                }
+            });
+
+            document.getElementById('score-text').innerText = `${passed} / ${ids.length} Passed`;
+            const statusEl = document.getElementById('score-status');
+            if (passed === 6) {
+                statusEl.innerText = "★ Interview Ready!";
+                statusEl.style.color = "#34D399";
+            } else if (passed >= 4) {
+                statusEl.innerText = "Good Foundation";
+                statusEl.style.color = "#FBBF24";
+            } else {
+                statusEl.innerText = "Needs Review";
+                statusEl.style.color = "#A78BFA";
+            }
+        }
+
+        function loadSavedChecklist() {
+            const ids = ['chk1', 'chk2', 'chk3', 'chk4', 'chk5', 'chk6'];
+            ids.forEach(id => {
+                const isChecked = localStorage.getItem('dsa_interview_' + id) === 'true';
+                const el = document.getElementById(id);
+                if (el) {
+                    el.checked = isChecked;
+                    const item = el.closest('.checklist-item');
+                    if (isChecked && item) item.classList.add('checked');
+                }
+            });
+            updateReadiness();
+        }
+
+        function updateInterviewButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('interviewprep') === 'COMPLETED';
+            const sBtn = document.getElementById('interview-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const sTxt = document.getElementById('interview-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (sBtn) sBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (sTxt) sTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (sBtn) sBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (sTxt) sTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleInterviewCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('interviewprep');
+                updateInterviewButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateInterviewButtonsState();
+            loadSavedChecklist();
+        });
+    </script>
+</body>
+</html>

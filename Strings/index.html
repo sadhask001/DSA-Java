@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering String Algorithms & Tries | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(167, 139, 250, .15);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 27, 55, 0.9), rgba(15, 12, 35, 0.9));
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #FFFFFF, #C4B5FD);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .hero-banner p {
+            color: #CBD5E1;
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #E9D5FF;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p, .card li {
+            color: #CBD5E1;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .code-container {
+            background: #0B0A17;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 18px 0;
+            overflow-x: auto;
+        }
+
+        .code-container pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            color: #E2E8F0;
+            line-height: 1.6;
+        }
+
+        .keyword { color: #F43F5E; }
+        .type { color: #38BDF8; }
+        .func { color: #A78BFA; }
+        .comment { color: #64748B; font-style: italic; }
+        .string { color: #34D399; }
+        .number { color: #FBBF24; }
+
+        .algo-subcard {
+            background: rgba(10, 8, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="visualizer_strings.html" class="nav-btn"><i class="fa-solid fa-play"></i> Visualizer</a>
+            <a href="../Greedy/index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Greedy</a>
+            <a href="../BitManipulation/index.html" class="nav-btn"><i class="fa-solid fa-arrow-right"></i> Bit Manipulation</a>
+            <button id="strings-complete-btn" class="topic-complete-toggle-btn" onclick="handleStringsCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="strings-complete-txt">Mark Complete</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="layout-grid">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-i-cursor"></i> String Guide</h3>
+            <ul>
+                <li><a href="#sec-intro"><i class="fa-solid fa-book-open"></i> Java String Internals</a></li>
+                <li><a href="#sec-kmp"><i class="fa-solid fa-arrows-split-up-and-left"></i> Knuth-Morris-Pratt (KMP)</a></li>
+                <li><a href="#sec-rabin"><i class="fa-solid fa-calculator"></i> Rabin-Karp Rolling Hash</a></li>
+                <li><a href="#sec-trie"><i class="fa-solid fa-tree"></i> Trie (Prefix Tree)</a></li>
+                <li><a href="#sec-code"><i class="fa-solid fa-code"></i> Java Implementations</a></li>
+                <li><a href="#sec-problems"><i class="fa-solid fa-trophy"></i> Practice Problems</a></li>
+            </ul>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+                <a href="visualizer_strings.html" style="background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; color: #E9D5FF; text-decoration: none; font-weight: 500;">
+                    <i class="fa-solid fa-play" style="color: #A78BFA;"></i> Open String Visualizer
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+
+            <!-- HERO BANNER -->
+            <section class="hero-banner" id="sec-intro">
+                <span class="badge-tag"><i class="fa-solid fa-font"></i> Text Processing Engine</span>
+                <h1>Mastering String Algorithms & Tries</h1>
+                <p>
+                    Strings are the primary format of digital communication. Deep-dive into Java's String Constant Pool (SCP), the mathematical elegance of the Knuth-Morris-Pratt (KMP) LPS table, Rabin-Karp polynomial rolling hashes, and 26-way Trie prefix trees.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="visualizer_strings.html" class="dsa-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-play"></i> Launch Pattern Matching Visualizer
+                    </a>
+                    <a href="#sec-kmp" class="dsa-btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-arrows-split-up-and-left"></i> KMP Algorithm
+                    </a>
+                </div>
+            </section>
+
+            <!-- SECTION 1: JAVA STRING INTERNALS -->
+            <section class="card">
+                <h2><i class="fa-solid fa-memory"></i> Java String Architecture & Immutability</h2>
+                <p>
+                    In Java, <code>java.lang.String</code> is <strong>immutable</strong>. Once a String object is instantiated on the heap, its byte/char sequence can never be altered.
+                </p>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-top:15px;">
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#A78BFA; font-size:16px; margin-bottom:8px;"><i class="fa-solid fa-shield-halved"></i> Why Immutability?</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            <strong>Security:</strong> Strings represent database URLs, network sockets, and passwords.<br>
+                            <strong>Thread-Safety:</strong> Immutable objects are intrinsically thread-safe without synchronization locks.<br>
+                            <strong>Hashcode Caching:</strong> Hash code is computed once and cached in <code>private int hash</code>.
+                        </p>
+                    </div>
+
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#34D399; font-size:16px; margin-bottom:8px;"><i class="fa-solid fa-layer-group"></i> String Constant Pool (SCP)</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            Literal strings like <code>"apple"</code> reside in the String Pool inside Java Heap. If another literal <code>"apple"</code> is declared, the JVM reuses the existing pointer instead of creating duplicates. Calling <code>str.intern()</code> forces pooling.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: KMP ALGORITHM -->
+            <section class="card" id="sec-kmp">
+                <h2><i class="fa-solid fa-arrows-split-up-and-left"></i> Knuth-Morris-Pratt (KMP) Algorithm</h2>
+                <p>
+                    Naive pattern matching takes \(O(n \cdot m)\) because every mismatch rewinds the text pointer <code>i</code> back to <code>i - j + 1</code>. KMP achieves guaranteed <strong>linear \(O(n + m)\)</strong> time by <strong>never rewinding text pointer <code>i</code></strong>!
+                </p>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#FBBF24;">The LPS (Longest Prefix Suffix) Table</h3>
+                    <p>
+                        <code>lps[j]</code> stores the length of the longest proper prefix of <code>pattern[0..j]</code> that is also a suffix of <code>pattern[0..j]</code>. When mismatch happens at <code>pattern[j]</code>, the pattern pointer skips directly to <code>j = lps[j - 1]</code>.
+                    </p>
+                </div>
+
+                <div class="code-container">
+                    <pre><code><span class="keyword">public static int</span> <span class="func">kmpSearch</span>(<span class="type">String</span> text, <span class="type">String</span> pat) {
+    <span class="type">int</span> n = text.length(), m = pat.length();
+    <span class="keyword">if</span> (m == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;
+
+    <span class="type">int</span>[] lps = computeLPS(pat);
+    <span class="type">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;
+
+    <span class="keyword">while</span> (i &lt; n) {
+        <span class="keyword">if</span> (text.charAt(i) == pat.charAt(j)) {
+            i++; j++;
+            <span class="keyword">if</span> (j == m) <span class="keyword">return</span> i - j; <span class="comment">// Match found!</span>
+        } <span class="keyword">else</span> {
+            <span class="keyword">if</span> (j != <span class="number">0</span>) j = lps[j - <span class="number">1</span>]; <span class="comment">// Fallback without rewinding i</span>
+            <span class="keyword">else</span> i++;
+        }
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+
+<span class="keyword">private static int</span>[] <span class="func">computeLPS</span>(<span class="type">String</span> pat) {
+    <span class="type">int</span>[] lps = <span class="keyword">new int</span>[pat.length()];
+    <span class="type">int</span> len = <span class="number">0</span>, i = <span class="number">1</span>;
+    <span class="keyword">while</span> (i &lt; pat.length()) {
+        <span class="keyword">if</span> (pat.charAt(i) == pat.charAt(len)) {
+            len++;
+            lps[i++] = len;
+        } <span class="keyword">else</span> {
+            <span class="keyword">if</span> (len != <span class="number">0</span>) len = lps[len - <span class="number">1</span>];
+            <span class="keyword">else</span> lps[i++] = <span class="number">0</span>;
+        }
+    }
+    <span class="keyword">return</span> lps;
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 3: RABIN-KARP -->
+            <section class="card" id="sec-rabin">
+                <h2><i class="fa-solid fa-calculator"></i> Rabin-Karp Rolling Hash</h2>
+                <p>
+                    Computes a polynomial hash for pattern and a sliding window of text of size \(m\). In \(O(1)\), shifts the window by subtracting the outgoing leftmost character and appending the incoming rightmost character modulo a prime \(Q\).
+                </p>
+                <div style="background:rgba(139,92,246,0.1); border-left:4px solid #A78BFA; padding:15px; border-radius:8px; margin:15px 0;">
+                    <p style="margin:0; font-family:'JetBrains Mono'; font-size:13px; color:#E9D5FF;">
+                        newHash = (oldHash - text[i] * d^(m-1)) * d + text[i + m] (mod Q)
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 4: TRIE DATA STRUCTURE -->
+            <section class="card" id="sec-trie">
+                <h2><i class="fa-solid fa-tree"></i> Trie (Prefix Tree)</h2>
+                <p>
+                    A tree-based structure specifically engineered for dictionary storage, auto-completion, and prefix queries.
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="keyword">public class</span> <span class="type">Trie</span> {
+    <span class="keyword">private static class</span> <span class="type">TrieNode</span> {
+        <span class="type">TrieNode</span>[] children = <span class="keyword">new</span> <span class="type">TrieNode</span>[<span class="number">26</span>];
+        <span class="type">boolean</span> isWord = <span class="keyword">false</span>;
+    }
+
+    <span class="keyword">private final</span> <span class="type">TrieNode</span> root = <span class="keyword">new</span> <span class="type">TrieNode</span>();
+
+    <span class="keyword">public void</span> <span class="func">insert</span>(<span class="type">String</span> word) {
+        <span class="type">TrieNode</span> curr = root;
+        <span class="keyword">for</span> (<span class="type">char</span> c : word.toCharArray()) {
+            <span class="type">int</span> idx = c - <span class="string">'a'</span>;
+            <span class="keyword">if</span> (curr.children[idx] == <span class="keyword">null</span>) curr.children[idx] = <span class="keyword">new</span> <span class="type">TrieNode</span>();
+            curr = curr.children[idx];
+        }
+        curr.isWord = <span class="keyword">true</span>;
+    }
+
+    <span class="keyword">public boolean</span> <span class="func">startsWith</span>(<span class="type">String</span> prefix) {
+        <span class="type">TrieNode</span> curr = root;
+        <span class="keyword">for</span> (<span class="type">char</span> c : prefix.toCharArray()) {
+            <span class="type">int</span> idx = c - <span class="string">'a'</span>;
+            <span class="keyword">if</span> (curr.children[idx] == <span class="keyword">null</span>) <span class="keyword">return false</span>;
+            curr = curr.children[idx];
+        }
+        <span class="keyword">return true</span>;
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 5: PRACTICE PROBLEMS -->
+            <section class="card" id="sec-problems">
+                <h2><i class="fa-solid fa-trophy"></i> Top 10 String LeetCode Problems</h2>
+                <p style="margin-bottom:20px;">
+                    These 10 verified problems test sliding windows, centers expansion, KMP pattern matching, Trie prefix queries, and rolling hashes. Check "Mark Solved" to track your real progress.
+                </p>
+                <div id="strings-problems-grid" class="dsa-problems-grid">
+                    <!-- Populated dynamically via problem-db.js -->
+                </div>
+            </section>
+
+            <!-- COMPLETION BAR -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered String Algorithms?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to update your overall roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleStringsCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_strings.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open String Visualizer
+                    </a>
+                </div>
+            </div>
+
+            <!-- NEXT TOPIC CARD -->
+            <div style="background:linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9)); border:1px solid rgba(167, 139, 250, 0.25); border-radius:20px; padding:35px; text-align:right; margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:13px; color:#A78BFA; text-transform:uppercase; letter-spacing:1px;">Next in Curriculum:</span>
+                <h2 style="font-size:24px; margin:5px 0 10px; color:#FFF;">Explore Bit Manipulation</h2>
+                <p style="margin-bottom:0; text-align:right; max-width:600px; color:#CBD5E1;">Master bitwise AND, OR, XOR, NOT, Brian Kernighan's bit-clearing algorithm, bit masking, and subsets generation.</p>
+                <a href="../BitManipulation/index.html" class="dsa-btn-primary" style="margin-top:15px; display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+                    Next Topic: Bit Manipulation <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
+    </footer>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function updateStringsButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('strings') === 'COMPLETED';
+            const sBtn = document.getElementById('strings-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const sTxt = document.getElementById('strings-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (sBtn) sBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (sTxt) sTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (sBtn) sBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (sTxt) sTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleStringsCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('strings');
+                updateStringsButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('strings-problems-grid', 'Strings');
+            }
+            updateStringsButtonsState();
+        });
+    </script>
+</body>
+</html>

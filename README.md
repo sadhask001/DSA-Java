@@ -1,236 +1,108 @@
-# 🚀 Data Structures & Algorithms using Java & Python
+# 🚀 DSA-Java — Interactive Data Structures & Algorithms Learning Platform
 
-> **Complete 180 Hours Master Course**
+> A comprehensive, interactive, production-grade learning platform for mastering **Data Structures & Algorithms** using **Pure Java**, featuring an interactive learning roadmap inspired by [roadmap.sh](https://roadmap.sh/), 19 live step-by-step visualizers, 190+ verified LeetCode problems with progress tracking, and battle-tested interview frameworks.
 
-This README is structured according to the uploaded daily course plan.
-
----
-
-# 📚 Course Flow
-
-## Phase 1 – Revision & Foundation
-- Revision (Core Java up to Multithreading)
-- Introduction to Data Structures
-- Introduction to Algorithms
-- Types of Algorithms
-- Performance Analysis
-- Time Complexity
-- Space Complexity
-- Big O, Big Omega, Big Theta
-- Counting Sort
-- Practice Questions
+[![Platform Status](https://img.shields.io/badge/Status-100%25%20Complete-brightgreen?style=for-the-badge)](index.html)
+[![Visualizers](https://img.shields.io/badge/Visualizers-19%20Live%20Engines-blueviolet?style=for-the-badge)](InterviewPrep/index.html#visualizers-hub)
+[![Verified Problems](https://img.shields.io/badge/Problems-190%2B%20LeetCode-amber?style=for-the-badge)](shared/js/problem-db.js)
+[![Zero Dependency](https://img.shields.io/badge/Stack-Vanilla%20JS%20%7C%20CSS3%20%7C%20HTML5-cyan?style=for-the-badge)](index.html)
 
 ---
 
-## Phase 2 – Sorting
-- Bubble Sort
-- Selection Sort
-- Insertion Sort
-- Time & Space Complexity
-- Interview Questions
-- Practice Problems
+## 🌟 Platform Highlights
+
+1. **Interactive Roadmap Homepage (`index.html`)**:
+   - Visual step-by-step learning path connecting 20 sequential curriculum stations.
+   - Real-time analytics dashboard tracking overall progress, Data Structures %, Algorithms %, and solved problems via `localStorage`.
+   - Milestone checkpoints (Foundations, Linear Structures, Hierarchical, Algorithmic Mastery, Placement Ready).
+
+2. **19 Live Interactive Algorithm Visualizers**:
+   - Real animated executions with **Step Forward**, **Play/Pause**, **Reset**, **Custom Data Input**, and **Speed Control** sliders.
+   - Synchronized line-by-line Java code highlighting and real-time state variable monitors.
+
+3. **Curated Problem Database (`shared/js/problem-db.js`)**:
+   - 190+ verified LeetCode problems categorized by topic, difficulty (Easy, Medium, Hard), algorithmic pattern, time/space complexity, and direct platform links.
+   - Interactive checkboxes allowing students to mark problems solved and retain progress across browser sessions.
+
+4. **Global Spotlight Search (`Ctrl + K`)**:
+   - Instant fuzzy search modal indexing all platform topics, visualizers, and LeetCode problems with keyboard arrow navigation.
+
+5. **Engineering Problem Solving Framework (`ProblemSolving/index.html`)**:
+   - The industry-standard **UMPIRE Method** (Understand, Match, Plan, Implement, Review, Evaluate).
+   - Universal Edge Case Diagnostic Matrix with an interactive real-time test vector audit tool.
+
+6. **Interview Preparation Hub (`InterviewPrep/index.html`)**:
+   - Curated problem tracks: **Blind 75**, **NeetCode 150**, and **Striver SDE Sheet**.
+   - Company-specific interview playbooks for **Google**, **Amazon**, **Meta**, and **Microsoft**.
+   - Interactive 6-point Technical Mock Interview Readiness Rubric.
 
 ---
 
-## Phase 3 – Searching
-- Linear Search
-- Binary Search
-- Jump Search
-- Binary Search Applications
-- Complexity Comparison
-- Practice Problems
+## 🗺️ Master Curriculum & Interactive Modules
+
+| # | Topic / Module | Theory & Implementation | Interactive Visualizer | Key Algorithmic Mechanics |
+|---|----------------|--------------------------|------------------------|---------------------------|
+| **01** | **Time & Space Complexity** | [Complexity Guide](Complexity/index.html) | [Complexity Simulator](Complexity/visualizer.html) | Asymptotic bounds ($O, \Omega, \Theta$), growth ladder, memory models |
+| **02** | **1D & 2D Arrays** | [Array Theory](Array/index.html) & [2D Matrix](Array/array2D_theory.html) | [1D Visualizer](Array/visualizer_array1D.html) / [2D Visualizer](Array/visualizer_array2D.html) | Physical contiguous RAM addresses, cache locality, row-major offset |
+| **03** | **ArrayList & Hierarchy** | [ArrayList Guide](Collection/ArrayList/index.html) | [ArrayList Engine](Collection/ArrayList/visualizer_arraylist.html) | Dynamic capacity doubling (1.5x), element shift overhead, memory allocations |
+| **04** | **Linked Lists (SLL, DLL, CLL)** | [Linked List Notes](Collection/LinkedList/index.html) | [Linked List Engine](Collection/LinkedList/visualizer_linkedlist.html) | Pointer rewiring, in-place reversal, Floyd's cycle detection |
+| **05** | **Stack Architecture** | [Stack Notes](Collection/Stack/index.html) | [Stack Visualizer](Collection/Stack/visualizer_stack.html) | LIFO semantics, recursion call stack frame push/pop, parentheses validation |
+| **06** | **Queue & Deque Systems** | [Queue Notes](Collection/Queue/index.html) | [Queue Visualizer](Collection/Queue/visualizer_queue.html) | FIFO semantics, circular buffer wrap-around, sliding window deque |
+| **07** | **Trees & BST** | [Tree Notes](Trees/index.html) | [Tree Visualizer](Trees/visualizer_tree.html) | Binary Tree traversals (Inorder, Preorder, Postorder, BFS), BST balancing |
+| **08** | **Heap & PriorityQueue** | [Heap Notes](Heap/index.html) | [Heap Visualizer](Heap/visualizer_heap.html) | Complete binary tree in array, sift-up/down heapify in $O(N)$, HeapSort |
+| **09** | **Graphs & Topologies** | [Graph Notes](Graph/index.html) | [Graph Visualizer](Graph/visualizer_graph.html) | Adjacency List/Matrix, BFS queue traversal, DFS recursive, Dijkstra |
+| **10** | **Hashing & HashMaps** | [Hashing Notes](Hashing/index.html) | [HashMap Visualizer](Hashing/visualizer_hashmap.html) | Hash codes, bucket arrays, collision chaining, load factor rehashing |
+| **11** | **Sorting Algorithms** | [Sorting Notes](Sorting/index.html) | [Sorting Engine](Sorting/visualizer_sorting.html) | Merge Sort, Quick Sort (partitioning), HeapSort, Insertion, Selection, Bubble |
+| **12** | **Searching Routines** | [Searching Notes](Searching/index.html) | [Searching Engine](Searching/visualizer_searching.html) | Linear vs Binary Search, lower_bound, upper_bound, answer range search |
+| **13** | **Recursion & Backtracking** | [Recursion Notes](Recursion/index.html) | [Recursion Visualizer](Recursion/visualizer_recursion.html) | Call stack frames, State Space Trees, N-Queens, Subsets, Permutations |
+| **14** | **Dynamic Programming** | [DP Notes](DP/index.html) | [DP Grid Visualizer](DP/visualizer_dp.html) | Memoization vs Tabulation, Knapsack, Longest Common Subsequence (LCS) |
+| **15** | **Greedy Algorithms** | [Greedy Notes](Greedy/index.html) | [Greedy Visualizer](Greedy/visualizer_greedy.html) | Exchange argument, Activity Selection, Interval Scheduling, Huffman Coding |
+| **16** | **String Algorithms** | [Strings Notes](Strings/index.html) | [Strings Visualizer](Strings/visualizer_strings.html) | KMP prefix function (LPS array), Rabin-Karp polynomial rolling hash |
+| **17** | **Bit Manipulation** | [Bits Notes](BitManipulation/index.html) | [Bits Visualizer](BitManipulation/visualizer_bits.html) | Bitwise gates, shifts, Brian Kernighan bit counter, bitmasks |
+| **18** | **Algorithmic Patterns** | [Patterns Guide](Patterns/index.html) | [Patterns Visualizer](Patterns/visualizer_patterns.html) | 10 Canonical models (Two Pointers, Sliding Window, Prefix Sum, Fast/Slow) |
+| **19** | **Problem Solving Frameworks** | [Framework Notes](ProblemSolving/index.html) | [Edge Case Diagnostic Tool](ProblemSolving/index.html#checker) | UMPIRE method, Edge Case Diagnostic Matrix, 45-min interview timeline |
+| **20** | **Interview Prep & Curated Sheets** | [Interview Prep Hub](InterviewPrep/index.html) | [Visualizers Directory](InterviewPrep/index.html#visualizers-hub) | Blind 75, NeetCode 150, Striver SDE, Company Tracks (Google, Amazon, Meta) |
 
 ---
 
-## Phase 4 – Java Collections Framework
-### Collection Hierarchy
-- Collection
-- List
-- Set
-- Queue
-- Map
+## 💻 Tech Stack & Architecture
 
-### ArrayList
-- Introduction
-- Internal Working
-- Runtime Input
-- CRUD Operations
-- Functions
-- 2D ArrayList
-- Practice Questions
+- **Frontend:** Pure HTML5, Modern CSS3 (CSS Variables, Flexbox, CSS Grid, Glassmorphism, Cyber Dark Glow Theme `#06050f`), Vanilla ES6+ JavaScript.
+- **State Management:** Browser `localStorage` via [`shared/js/progress-manager.js`](shared/js/progress-manager.js).
+- **Typography & Icons:** Google Fonts (`Poppins`, `JetBrains Mono`), FontAwesome 6.6.0.
+- **Portability:** Zero runtime dependencies, zero build step. Fully compatible with **GitHub Pages** or direct local offline browsing by double-clicking `index.html`.
 
 ---
 
-## Phase 5 – Linked List
+## 🏃 Quick Start / How to Run
 
-### Singly Linked List
-- Insert Beginning
-- Insert End
-- Insert Position
-- Delete Beginning
-- Delete End
-- Delete Position
-- Search
-- Count
-- Reverse
-- Merge
-- Merge Two Sorted Lists
-- Rotate
-- Sort
-- Remove Duplicates
+### Method 1: Local Offline Browsing
+Simply double click `index.html` in any modern web browser (Chrome, Firefox, Safari, Edge).
 
-### Doubly Linked List
-- Insert
-- Delete
-- Display Forward
-- Display Backward
+### Method 2: Local HTTP Server (Optional)
+```bash
+# Using Python
+python -m http.server 8000
 
-### Circular Linked List
-- Insert
-- Delete
-- Traversal
-
-### Circular Doubly Linked List
-- Insert
-- Delete
-- Traversal
-
----
-
-## Phase 6 – Stack
-
-### Array Implementation
-- Push
-- Pop
-- Peek
-- IsEmpty
-- IsFull
-- Size
-- Display
-
-### ArrayList Implementation
-
-### Linked List Implementation
-
-### Applications
-- Decimal to Binary
-- Balanced Parentheses
-- String Reverse
-- Number Reverse
-- Palindrome
-- Tower of Hanoi
-
-### Expression Conversion
-- Infix → Postfix
-- Infix → Prefix
-- Prefix → Infix
-- Prefix → Postfix
-- Postfix → Infix
-- Postfix → Prefix
-
----
-
-## Phase 7 – Queue
-
-### Array
-- Simple Queue
-- Circular Queue
-- Priority Queue
-- Deque
-
-### Linked List
-- Simple Queue
-- Circular Queue
-- Priority Queue
-- Deque
-
-### Java Collections
-- ArrayDeque
-- Queue Interface
-
----
-
-## Phase 8 – Trees
-
-### Binary Tree
-- Terminology
-- Applications
-- Representation
-- Preorder
-- Inorder
-- Postorder
-- Level Order (BFS)
-- Expression Tree
-
-### Binary Search Tree
-- Introduction
-- Properties
-- Insertion
-- Traversal
-- Searching
-- Deletion
-
----
-
-## Phase 9 – Future Modules (180 Hours)
-
-- Graphs
-- AVL Tree
-- Red Black Tree
-- Hashing
-- Heap
-- Dynamic Programming
-- Greedy Algorithms
-- Backtracking
-- Trie
-- Segment Tree
-- Fenwick Tree
-- Disjoint Set Union
-- Projects
-- Mock Interviews
-
----
-
-# 📂 Repository Structure
-
-```text
-DSA/
-├── 01-Revision/
-├── 02-Complexity/
-├── 03-Sorting/
-├── 04-Searching/
-├── 05-Collections/
-├── 06-ArrayList/
-├── 07-LinkedList/
-├── 08-Stack/
-├── 09-Queue/
-├── 10-Trees/
-├── 11-BST/
-├── 12-Graphs/
-├── 13-AVL/
-├── 14-RedBlackTree/
-├── 15-Hashing/
-├── 16-Heap/
-├── 17-DynamicProgramming/
-├── 18-Projects/
-└── README.md
+# Using Node.js
+npx serve .
 ```
+Then open `http://localhost:8000` in your browser.
 
 ---
 
-# 🎯 Learning Outcomes
+## 🚀 GitHub Pages Deployment
 
-- Strong DSA fundamentals
-- Efficient problem solving
-- Placement preparation
-- Competitive programming readiness
-- Java & Python implementations
-- Interview-focused practice
+This repository is pre-configured for GitHub Pages:
+1. Push this repository to GitHub.
+2. In your repository settings, navigate to **Settings** &rarr; **Pages**.
+3. Under **Build and deployment**, select **Source: Deploy from a branch**.
+4. Choose branch `main` (or `master`) and folder `/(root)`.
+5. Click **Save**. The interactive platform will be live globally in seconds!
 
 ---
 
-# ⭐ Support
+## 👨‍💻 Author & Credits
 
-If this repository helps you, please ⭐ Star the repository.
-
-Happy Coding 🚀
+- **Curriculum Architecture & Engineering:** Built with precision for aspiring and senior software engineers preparing for Tier-1 and FAANG technical interviews.
+- © 2026 DSA-Java Platform. All rights reserved.

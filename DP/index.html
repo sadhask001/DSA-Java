@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Dynamic Programming | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(167, 139, 250, .15);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 27, 55, 0.9), rgba(15, 12, 35, 0.9));
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #FFFFFF, #C4B5FD);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .hero-banner p {
+            color: #CBD5E1;
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #E9D5FF;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p, .card li {
+            color: #CBD5E1;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .code-container {
+            background: #0B0A17;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 18px 0;
+            overflow-x: auto;
+        }
+
+        .code-container pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            color: #E2E8F0;
+            line-height: 1.6;
+        }
+
+        .keyword { color: #F43F5E; }
+        .type { color: #38BDF8; }
+        .func { color: #A78BFA; }
+        .comment { color: #64748B; font-style: italic; }
+        .string { color: #34D399; }
+        .number { color: #FBBF24; }
+
+        .algo-subcard {
+            background: rgba(10, 8, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="visualizer_dp.html" class="nav-btn"><i class="fa-solid fa-play"></i> Visualizer</a>
+            <a href="../Recursion/index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Recursion</a>
+            <a href="../Greedy/index.html" class="nav-btn"><i class="fa-solid fa-arrow-right"></i> Greedy</a>
+            <button id="dp-complete-btn" class="topic-complete-toggle-btn" onclick="handleDPCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="dp-complete-txt">Mark Complete</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="layout-grid">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-table-cells-large"></i> DP Guide</h3>
+            <ul>
+                <li><a href="#sec-intro"><i class="fa-solid fa-book-open"></i> Core Principles</a></li>
+                <li><a href="#sec-paradigms"><i class="fa-solid fa-arrows-split-up-and-left"></i> Top-Down vs Bottom-Up</a></li>
+                <li><a href="#sec-1d"><i class="fa-solid fa-bars"></i> 1D DP Patterns</a></li>
+                <li><a href="#sec-2d"><i class="fa-solid fa-table"></i> 2D Grid & Knapsack</a></li>
+                <li><a href="#sec-space"><i class="fa-solid fa-compress"></i> Space Optimization</a></li>
+                <li><a href="#sec-code"><i class="fa-solid fa-code"></i> Java Implementations</a></li>
+                <li><a href="#sec-problems"><i class="fa-solid fa-trophy"></i> Practice Problems</a></li>
+            </ul>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+                <a href="visualizer_dp.html" style="background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; color: #E9D5FF; text-decoration: none; font-weight: 500;">
+                    <i class="fa-solid fa-play" style="color: #A78BFA;"></i> Open DP Table Visualizer
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+
+            <!-- HERO BANNER -->
+            <section class="hero-banner" id="sec-intro">
+                <span class="badge-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> Optimal Substructure</span>
+                <h1>Mastering Dynamic Programming</h1>
+                <p>
+                    Dynamic Programming is the art of solving complex optimization problems by caching subproblem solutions to prevent exponential recomputations. Turn \(O(2^n)\) brute force recursions into blazing \(O(n)\) polynomial algorithms through memoization, tabulation, and rolling array compression.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="visualizer_dp.html" class="dsa-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-play"></i> Launch DP Table Visualizer
+                    </a>
+                    <a href="#sec-paradigms" class="dsa-btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-arrows-split-up-and-left"></i> Compare Paradigms
+                    </a>
+                </div>
+            </section>
+
+            <!-- SECTION 1: THE TWO PILLARS -->
+            <section class="card">
+                <h2><i class="fa-solid fa-landmark"></i> The Two Mandatory Pillars of Dynamic Programming</h2>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-top:15px;">
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#A78BFA; font-size:16px; margin-bottom:8px;"><i class="fa-solid fa-clone"></i> 1. Overlapping Subproblems</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            A problem exhibits overlapping subproblems when a recursive algorithm visits the exact same subproblem repeatedly instead of generating fresh subproblems (unlike Divide and Conquer, which partitions into disjoint subsets like Merge Sort).
+                        </p>
+                    </div>
+
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#34D399; font-size:16px; margin-bottom:8px;"><i class="fa-solid fa-sitemap"></i> 2. Optimal Substructure</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            An optimal solution to the overall problem can be constructed from optimal solutions to its constituent subproblems. For example, the shortest path from \(A\) to \(C\) via \(B\) is the shortest path \(A \to B\) combined with \(B \to C\).
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: TOP-DOWN VS BOTTOM-UP -->
+            <section class="card" id="sec-paradigms">
+                <h2><i class="fa-solid fa-arrows-split-up-and-left"></i> Top-Down (Memoization) vs Bottom-Up (Tabulation)</h2>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+                    <div class="algo-subcard" style="margin-top:0;">
+                        <h3 style="color:#FBBF24;">Top-Down Memoization</h3>
+                        <p style="font-size:13.5px;">
+                            Preserves intuitive natural recursive thinking. Checks if <code>memo[n] != null</code> before solving. Solves only strictly required subproblems, but consumes \(O(n)\) call stack space.
+                        </p>
+                    </div>
+
+                    <div class="algo-subcard" style="margin-top:0;">
+                        <h3 style="color:#38BDF8;">Bottom-Up Tabulation</h3>
+                        <p style="font-size:13.5px;">
+                            Iteratively fills an array from smallest subproblem (base cases) upward. Zero call stack overhead, better CPU cache locality, and unlocks dramatic space optimizations.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: 1D DP PATTERNS -->
+            <section class="card" id="sec-1d">
+                <h2><i class="fa-solid fa-bars"></i> Essential 1D DP Patterns</h2>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#C4B5FD;">1. Include / Exclude (House Robber)</h3>
+                    <p>
+                        At house \(i\), choose whether to rob house \(i\) (prohibiting house \(i-1\)) or skip it:
+                        \[dp[i] = \max(dp[i-1], nums[i] + dp[i-2])\]
+                    </p>
+                </div>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#C4B5FD;">2. Unbounded Optimization (Coin Change)</h3>
+                    <p>
+                        Finding minimum coins to form amount \(a\). Subproblem: take any denomination \(c\) and add 1 to \(dp[a - c]\):
+                        \[dp[a] = \min_{c \in coins} (dp[a - c] + 1)\]
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 4: 2D GRID & KNAPSACK -->
+            <section class="card" id="sec-2d">
+                <h2><i class="fa-solid fa-table"></i> 2D Grid, String, & Knapsack DP</h2>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#A78BFA;">0/1 Knapsack Problem</h3>
+                    <p>
+                        Given \(n\) items with values \(v\) and weights \(w\), maximize total value within capacity \(W\):
+                        \[dp[i][w] = \begin{cases} dp[i-1][w] & \text{if } w_i > w \\ \max(dp[i-1][w], v_i + dp[i-1][w - w_i]) & \text{if } w_i \le w \end{cases}\]
+                    </p>
+                </div>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#34D399;">Longest Common Subsequence (LCS)</h3>
+                    <p>
+                        Matches characters between two strings \(s_1\) and \(s_2\):
+                        \[dp[i][j] = \begin{cases} 1 + dp[i-1][j-1] & \text{if } s_1[i-1] == s_2[j-1] \\ \max(dp[i-1][j], dp[i][j-1]) & \text{otherwise} \end{cases}\]
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 5: SPACE OPTIMIZATION -->
+            <section class="card" id="sec-space">
+                <h2><i class="fa-solid fa-compress"></i> Space Optimization: 2D to 1D</h2>
+                <p>
+                    Because 0/1 Knapsack only references the previous row \(i-1\), we can compress the \(n \times W\) 2D table into a single 1D array of size \(W\) by <strong>iterating backwards</strong> from \(W\) down to \(w_i\):
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="comment">// 0/1 Knapsack in O(W) auxiliary space:</span>
+<span class="type">int</span>[] dp = <span class="keyword">new</span> <span class="type">int</span>[W + <span class="number">1</span>];
+<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) {
+    <span class="keyword">for</span> (<span class="type">int</span> w = W; w &gt;= weights[i]; w--) { <span class="comment">// REVERSE traversal prevents reusing same item</span>
+        dp[w] = Math.max(dp[w], values[i] + dp[w - weights[i]]);
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 6: IMPORTANT CODING PROBLEMS -->
+            <section class="card" id="sec-problems">
+                <h2><i class="fa-solid fa-trophy"></i> Top 10 Dynamic Programming LeetCode Problems</h2>
+                <p style="margin-bottom:20px;">
+                    These 10 verified LeetCode problems cover 1D linear DP, 0/1 knapsack, unbounded knapsack, 2D string matrices, and patience sorting. Check "Mark Solved" to track your real progress.
+                </p>
+                <div id="dp-problems-grid" class="dsa-problems-grid">
+                    <!-- Loaded dynamically via problem-db.js -->
+                </div>
+            </section>
+
+            <!-- COMPLETION BAR -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered Dynamic Programming?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to update your overall roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleDPCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_dp.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open DP Table Visualizer
+                    </a>
+                </div>
+            </div>
+
+            <!-- NEXT TOPIC CARD -->
+            <div style="background:linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9)); border:1px solid rgba(167, 139, 250, 0.25); border-radius:20px; padding:35px; text-align:right; margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:13px; color:#A78BFA; text-transform:uppercase; letter-spacing:1px;">Next in Curriculum:</span>
+                <h2 style="font-size:24px; margin:5px 0 10px; color:#FFF;">Explore Greedy Algorithms</h2>
+                <p style="margin-bottom:0; text-align:right; max-width:600px; color:#CBD5E1;">Make locally optimal choices to achieve global optimality: Activity Selection, Huffman Coding, Fractional Knapsack, Jump Game, and Gas Station.</p>
+                <a href="../Greedy/index.html" class="dsa-btn-primary" style="margin-top:15px; display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+                    Next Topic: Greedy Algorithms <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
+    </footer>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function updateDPButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('dp') === 'COMPLETED';
+            const dBtn = document.getElementById('dp-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const dTxt = document.getElementById('dp-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (dBtn) dBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (dTxt) dTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (dBtn) dBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (dTxt) dTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleDPCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('dp');
+                updateDPButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('dp-problems-grid', 'DP');
+            }
+            updateDPButtonsState();
+        });
+    </script>
+</body>
+</html>

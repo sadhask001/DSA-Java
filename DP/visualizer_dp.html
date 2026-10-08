@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Programming Matrix & Table Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        select, input[type="text"], input[type="number"], input[type="range"] {
+            background: #0D0B1C;
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus, input[type="text"]:focus {
+            border-color: #A78BFA;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            background: #231C4D;
+            color: #E9D5FF;
+            border: 1px solid rgba(167, 139, 250, .2);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn:hover:not(:disabled) {
+            background: #3B2E7E;
+            color: white;
+            border-color: #A78BFA;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            border: none;
+        }
+        .btn.primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        }
+
+        .btn.accent {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
+            border: 1px solid rgba(52, 211, 153, 0.4);
+        }
+
+        /* DP Table Viewport */
+        .dp-viewport {
+            background: #0B1120;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            padding: 25px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            position: relative;
+        }
+
+        .dp-grid-table {
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .dp-grid-table th, .dp-grid-table td {
+            width: 48px;
+            height: 48px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 13.5px;
+            transition: all 0.2s ease;
+        }
+
+        .dp-grid-table th {
+            background: rgba(30, 27, 55, 0.9);
+            color: #C4B5FD;
+            font-weight: 600;
+        }
+
+        .dp-grid-table td {
+            background: rgba(20, 18, 40, 0.6);
+            color: #94A3B8;
+        }
+
+        /* Highlighting Classes */
+        .dp-grid-table td.filled {
+            color: #F8FAFC;
+            background: rgba(20, 18, 40, 0.9);
+        }
+
+        .dp-grid-table td.active-cell {
+            background: rgba(245, 158, 11, 0.25) !important;
+            border: 2px solid #FBBF24 !important;
+            color: #FBBF24 !important;
+            box-shadow: 0 0 18px rgba(245, 158, 11, 0.5);
+            font-weight: 700;
+            transform: scale(1.08);
+            z-index: 2;
+        }
+
+        .dp-grid-table td.dependency-cell {
+            background: rgba(56, 189, 248, 0.2) !important;
+            border: 1px solid #38BDF8 !important;
+            color: #38BDF8 !important;
+        }
+
+        .dp-grid-table td.optimal-path {
+            background: rgba(16, 185, 129, 0.25) !important;
+            border: 1px solid #34D399 !important;
+            color: #34D399 !important;
+        }
+
+        /* 1D Strip View */
+        .dp-1d-strip {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .dp-1d-cell {
+            width: 55px;
+            height: 60px;
+            background: rgba(20, 18, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s;
+        }
+
+        .dp-1d-cell .cell-idx { font-size: 10px; color: #64748B; }
+        .dp-1d-cell .cell-val { font-size: 16px; font-weight: 600; color: #CBD5E1; }
+        .dp-1d-cell.active-cell {
+            border-color: #FBBF24;
+            background: rgba(245, 158, 11, 0.25);
+            transform: translateY(-4px);
+        }
+        .dp-1d-cell.dependency-cell {
+            border-color: #38BDF8;
+            background: rgba(56, 189, 248, 0.2);
+        }
+
+        .log-box {
+            background: #090814;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #A78BFA;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            line-height: 1.5;
+        }
+
+        .legend-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 8px 12px;
+            background: rgba(10, 8, 25, 0.5);
+            border-radius: 8px;
+            font-size: 11.5px;
+            color: #94A3B8;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> DP Notes</a>
+            <a href="../Recursion/index.html" class="back-btn"><i class="fa-solid fa-tree"></i> Recursion</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>DP Algorithm Selector</span>
+                    <i class="fa-solid fa-table"></i>
+                </div>
+
+                <div class="form-group">
+                    <label>Classic DP Problem</label>
+                    <select id="dp-algo-select" onchange="handleAlgoChange()">
+                        <option value="LCS" selected>Longest Common Subsequence (2D Table)</option>
+                        <option value="KNAPSACK">0/1 Knapsack Problem (2D Table)</option>
+                        <option value="COIN">Coin Change Minimum Coins (1D Array)</option>
+                        <option value="CLIMB">Climbing Stairs / Fibonacci (1D Array)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="input-row-1">
+                    <label id="input-label-1">String 1 (S1)</label>
+                    <input type="text" id="dp-input-1" value="STONE">
+                </div>
+
+                <div class="form-group" id="input-row-2">
+                    <label id="input-label-2">String 2 (S2)</label>
+                    <input type="text" id="dp-input-2" value="LONEST">
+                </div>
+
+                <div class="btn-grid">
+                    <button class="btn primary" id="play-pause-btn" onclick="togglePlayPause()">
+                        <i class="fa-solid fa-play" id="play-icon"></i> <span id="play-text">Start DP</span>
+                    </button>
+                    <button class="btn" id="step-btn" onclick="stepForward()">
+                        <i class="fa-solid fa-forward-step"></i> Step
+                    </button>
+                    <button class="btn" onclick="resetDP()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button class="btn accent" onclick="loadDefaultPreset()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Preset
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTROLS & DIAGNOSTICS -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Animation Speed</span>
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between;">
+                        <label>Cell Transition Delay</label>
+                        <span id="speed-display" style="font-size:12px; color:#A78BFA; font-family:'JetBrains Mono';">350ms</span>
+                    </div>
+                    <input type="range" id="speed-slider" min="50" max="1000" value="350" oninput="handleSpeedChange()">
+                </div>
+
+                <div style="font-size:12px; color:#94A3B8; line-height:1.6;">
+                    <strong style="color:#C4B5FD;">Tabulation (Bottom-Up):</strong> Watch each subproblem solve exactly once and store results in constant time lookup cells.
+                </div>
+            </div>
+
+            <!-- METRICS PANEL -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>DP Table Metrics</span>
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; text-align:center;">
+                    <div style="background:#090814; padding:8px; border-radius:8px;">
+                        <div style="font-size:10px; color:#94A3B8;">FILLED CELLS</div>
+                        <div id="stat-filled" style="font-family:'JetBrains Mono'; font-size:16px; font-weight:700; color:#34D399;">0</div>
+                    </div>
+                    <div style="background:#090814; padding:8px; border-radius:8px;">
+                        <div style="font-size:10px; color:#94A3B8;">TOTAL CELLS</div>
+                        <div id="stat-total" style="font-family:'JetBrains Mono'; font-size:16px; font-weight:700; color:#38BDF8;">0</div>
+                    </div>
+                    <div style="background:#090814; padding:8px; border-radius:8px;">
+                        <div style="font-size:10px; color:#94A3B8;">OPTIMAL VAL</div>
+                        <div id="stat-opt" style="font-family:'JetBrains Mono'; font-size:16px; font-weight:700; color:#FBBF24;">-</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT VIEWPORT -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- MAIN CANVAS -->
+            <div class="dp-viewport" id="dp-canvas">
+                <!-- 2D Table or 1D Strip -->
+            </div>
+
+            <!-- LEGEND -->
+            <div class="legend-row">
+                <span style="display:flex; align-items:center; gap:6px;">
+                    <span class="legend-dot" style="background:#FBBF24;"></span> Current Subproblem
+                </span>
+                <span style="display:flex; align-items:center; gap:6px;">
+                    <span class="legend-dot" style="background:#38BDF8;"></span> Dependent Subproblems
+                </span>
+                <span style="display:flex; align-items:center; gap:6px;">
+                    <span class="legend-dot" style="background:#10B981;"></span> Final Optimal Solution
+                </span>
+            </div>
+
+            <!-- LIVE STEP LOG -->
+            <div class="log-box" id="step-log">
+                Select an algorithm and click "Start DP" or "Step" to observe bottom-up tabulation.
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        let animationSteps = [];
+        let currentStepIndex = 0;
+        let isRunning = false;
+        let animationTimer = null;
+        let delayMs = 350;
+
+        function init() {
+            renderInitialTable();
+        }
+
+        function handleAlgoChange() {
+            stopAnimation();
+            const algo = document.getElementById('dp-algo-select').value;
+            const l1 = document.getElementById('input-label-1');
+            const l2 = document.getElementById('input-label-2');
+            const i1 = document.getElementById('dp-input-1');
+            const i2 = document.getElementById('dp-input-2');
+            const row2 = document.getElementById('input-row-2');
+
+            if (algo === 'LCS') {
+                l1.innerText = 'String 1 (S1)';
+                l2.innerText = 'String 2 (S2)';
+                i1.value = 'STONE';
+                i2.value = 'LONEST';
+                row2.style.display = 'flex';
+            } else if (algo === 'KNAPSACK') {
+                l1.innerText = 'Item Values (v1,v2..)';
+                l2.innerText = 'Item Weights (w1,w2..)';
+                i1.value = '60, 100, 120';
+                i2.value = '10, 20, 30';
+                row2.style.display = 'flex';
+            } else if (algo === 'COIN') {
+                l1.innerText = 'Target Amount';
+                l2.innerText = 'Coin Denominations';
+                i1.value = '11';
+                i2.value = '1, 2, 5';
+                row2.style.display = 'flex';
+            } else if (algo === 'CLIMB') {
+                l1.innerText = 'Number of Stairs (N)';
+                i1.value = '8';
+                row2.style.display = 'none';
+            }
+
+            resetDP();
+        }
+
+        function handleSpeedChange() {
+            const val = parseInt(document.getElementById('speed-slider').value);
+            delayMs = val;
+            document.getElementById('speed-display').innerText = val + 'ms';
+        }
+
+        function loadDefaultPreset() {
+            handleAlgoChange();
+        }
+
+        function resetDP() {
+            stopAnimation();
+            currentStepIndex = 0;
+            animationSteps = [];
+            document.getElementById('stat-filled').innerText = "0";
+            document.getElementById('stat-opt').innerText = "-";
+            renderInitialTable();
+            document.getElementById('step-log').innerText = "Table reset.";
+        }
+
+        function renderInitialTable() {
+            const algo = document.getElementById('dp-algo-select').value;
+            const canvas = document.getElementById('dp-canvas');
+
+            if (algo === 'LCS') {
+                const s1 = document.getElementById('dp-input-1').value.trim() || 'STONE';
+                const s2 = document.getElementById('dp-input-2').value.trim() || 'LONEST';
+                const m = s1.length;
+                const n = s2.length;
+                document.getElementById('stat-total').innerText = (m + 1) * (n + 1);
+
+                let html = `<table class="dp-grid-table"><tr><th></th><th>\u2205</th>`;
+                for (let j = 0; j < n; j++) html += `<th>${s2[j]}</th>`;
+                html += `</tr>`;
+
+                for (let i = 0; i <= m; i++) {
+                    const rowLabel = i === 0 ? '\u2205' : s1[i - 1];
+                    html += `<tr><th>${rowLabel}</th>`;
+                    for (let j = 0; j <= n; j++) {
+                        html += `<td id="cell-${i}-${j}">-</td>`;
+                    }
+                    html += `</tr>`;
+                }
+                html += `</table>`;
+                canvas.innerHTML = html;
+
+            } else if (algo === 'KNAPSACK') {
+                const W = 50;
+                document.getElementById('stat-total').innerText = 4 * 6;
+                canvas.innerHTML = `<div style="color:#CBD5E1; font-size:13px; text-align:center;">Click "Start DP" to generate 0/1 Knapsack matrix.</div>`;
+            } else {
+                canvas.innerHTML = `<div style="color:#CBD5E1; font-size:13px; text-align:center;">Click "Start DP" to initialize 1D array.</div>`;
+            }
+        }
+
+        // ================= STEP GENERATORS =================
+        function generateSteps() {
+            const algo = document.getElementById('dp-algo-select').value;
+            animationSteps = [];
+
+            if (algo === 'LCS') buildLCSSteps();
+            else if (algo === 'KNAPSACK') buildKnapsackSteps();
+            else if (algo === 'COIN') buildCoinChangeSteps();
+            else if (algo === 'CLIMB') buildClimbSteps();
+        }
+
+        function buildLCSSteps() {
+            const s1 = document.getElementById('dp-input-1').value.trim() || 'STONE';
+            const s2 = document.getElementById('dp-input-2').value.trim() || 'LONEST';
+            const m = s1.length;
+            const n = s2.length;
+            const dp = Array.from({length: m + 1}, () => Array(n + 1).fill(0));
+
+            for (let i = 0; i <= m; i++) {
+                for (let j = 0; j <= n; j++) {
+                    if (i === 0 || j === 0) {
+                        dp[i][j] = 0;
+                        animationSteps.push({
+                            active: [i, j],
+                            val: 0,
+                            filledCount: i * (n + 1) + j + 1,
+                            log: `Base case: empty string prefix at dp[${i}][${j}] = 0.`
+                        });
+                    } else if (s1[i - 1] === s2[j - 1]) {
+                        dp[i][j] = 1 + dp[i - 1][j - 1];
+                        animationSteps.push({
+                            active: [i, j],
+                            deps: [[i - 1, j - 1]],
+                            val: dp[i][j],
+                            filledCount: i * (n + 1) + j + 1,
+                            log: `Match '${s1[i - 1]}' == '${s2[j - 1]}'! dp[${i}][${j}] = 1 + dp[${i - 1}][${j - 1}] (${dp[i - 1][j - 1]}) = ${dp[i][j]}.`
+                        });
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                        animationSteps.push({
+                            active: [i, j],
+                            deps: [[i - 1, j], [i, j - 1]],
+                            val: dp[i][j],
+                            filledCount: i * (n + 1) + j + 1,
+                            log: `Mismatch '${s1[i - 1]}' != '${s2[j - 1]}'. dp[${i}][${j}] = max(top=${dp[i - 1][j]}, left=${dp[i][j - 1]}) = ${dp[i][j]}.`
+                        });
+                    }
+                }
+            }
+
+            // Final optimal step
+            animationSteps.push({
+                active: [m, n],
+                optimal: [m, n],
+                val: dp[m][n],
+                optVal: dp[m][n],
+                log: `Finished! LCS length = ${dp[m][n]}.`
+            });
+        }
+
+        function buildKnapsackSteps() {
+            const vals = [60, 100, 120];
+            const wts = [10, 20, 30];
+            const W = 50;
+            const n = vals.length;
+            const dp = Array.from({length: n + 1}, () => Array(6).fill(0)); // scale W by /10
+            
+            // Build simple 4x6 grid
+            let html = `<table class="dp-grid-table"><tr><th>Item\\Cap</th>`;
+            for (let c = 0; c <= 50; c += 10) html += `<th>${c}</th>`;
+            html += `</tr>`;
+            for (let i = 0; i <= n; i++) {
+                html += `<tr><th>i=${i}</th>`;
+                for (let j = 0; j <= 5; j++) html += `<td id="cell-${i}-${j}">-</td>`;
+                html += `</tr>`;
+            }
+            html += `</table>`;
+            document.getElementById('dp-canvas').innerHTML = html;
+            document.getElementById('stat-total').innerText = (n + 1) * 6;
+
+            for (let i = 0; i <= n; i++) {
+                for (let w = 0; w <= 5; w++) {
+                    const realW = w * 10;
+                    if (i === 0 || w === 0) {
+                        dp[i][w] = 0;
+                        animationSteps.push({ active: [i, w], val: 0, log: `Base capacity 0 or 0 items: dp[${i}][${w}] = 0.` });
+                    } else if (wts[i - 1] <= realW) {
+                        const takeW = (realW - wts[i - 1]) / 10;
+                        const take = vals[i - 1] + dp[i - 1][takeW];
+                        const skip = dp[i - 1][w];
+                        dp[i][w] = Math.max(take, skip);
+                        animationSteps.push({
+                            active: [i, w],
+                            deps: [[i - 1, w], [i - 1, takeW]],
+                            val: dp[i][w],
+                            log: `Item ${i} (wt=${wts[i-1]}, val=${vals[i-1]}): max(skip=${skip}, take=${take}) = ${dp[i][w]}.`
+                        });
+                    } else {
+                        dp[i][w] = dp[i - 1][w];
+                        animationSteps.push({
+                            active: [i, w],
+                            deps: [[i - 1, w]],
+                            val: dp[i][w],
+                            log: `Item wt ${wts[i - 1]} > capacity ${realW}. Must skip: dp[${i}][${w}] = ${dp[i][w]}.`
+                        });
+                    }
+                }
+            }
+            animationSteps.push({ optimal: [n, 5], val: dp[n][5], optVal: dp[n][5], log: `Optimal max knapsack profit: ${dp[n][5]}.` });
+        }
+
+        function buildCoinChangeSteps() {
+            const amount = 11;
+            const coins = [1, 2, 5];
+            const dp = Array(amount + 1).fill(Infinity);
+            dp[0] = 0;
+
+            let html = `<div class="dp-1d-strip">`;
+            for (let i = 0; i <= amount; i++) {
+                html += `<div class="dp-1d-cell" id="c1d-${i}"><span class="cell-idx">amt ${i}</span><span class="cell-val">-</span></div>`;
+            }
+            html += `</div>`;
+            document.getElementById('dp-canvas').innerHTML = html;
+            document.getElementById('stat-total').innerText = amount + 1;
+
+            animationSteps.push({ is1D: true, active: 0, val: 0, log: `Base case: 0 coins needed for amount 0.` });
+
+            for (let a = 1; a <= amount; a++) {
+                let best = Infinity;
+                let usedCoin = -1;
+                for (let c of coins) {
+                    if (a - c >= 0 && dp[a - c] + 1 < best) {
+                        best = dp[a - c] + 1;
+                        usedCoin = c;
+                    }
+                }
+                dp[a] = best;
+                animationSteps.push({
+                    is1D: true,
+                    active: a,
+                    deps: usedCoin !== -1 ? [a - usedCoin] : [],
+                    val: best,
+                    log: `Amount ${a}: best subproblem dp[${a - usedCoin}] + 1 = ${best} coins.`
+                });
+            }
+            animationSteps.push({ is1D: true, active: amount, optVal: dp[amount], log: `Minimum coins for amount ${amount} is ${dp[amount]}.` });
+        }
+
+        function buildClimbSteps() {
+            const n = 8;
+            const dp = [1, 1];
+            let html = `<div class="dp-1d-strip">`;
+            for (let i = 0; i <= n; i++) {
+                html += `<div class="dp-1d-cell" id="c1d-${i}"><span class="cell-idx">step ${i}</span><span class="cell-val">-</span></div>`;
+            }
+            html += `</div>`;
+            document.getElementById('dp-canvas').innerHTML = html;
+            document.getElementById('stat-total').innerText = n + 1;
+
+            animationSteps.push({ is1D: true, active: 0, val: 1, log: `dp[0] = 1 (1 way to stay at ground).` });
+            animationSteps.push({ is1D: true, active: 1, val: 1, log: `dp[1] = 1 (1 way to step on stair 1).` });
+
+            for (let i = 2; i <= n; i++) {
+                dp[i] = dp[i - 1] + dp[i - 2];
+                animationSteps.push({
+                    is1D: true,
+                    active: i,
+                    deps: [i - 1, i - 2],
+                    val: dp[i],
+                    log: `dp[${i}] = dp[${i - 1}] (${dp[i - 1]}) + dp[${i - 2}] (${dp[i - 2]}) = ${dp[i]} ways.`
+                });
+            }
+            animationSteps.push({ is1D: true, active: n, optVal: dp[n], log: `Total distinct ways to climb ${n} stairs: ${dp[n]}.` });
+        }
+
+        // ================= PLAYBACK CONTROLLER =================
+        function togglePlayPause() {
+            if (isRunning) stopAnimation();
+            else startAnimation();
+        }
+
+        function startAnimation() {
+            if (animationSteps.length === 0 || currentStepIndex >= animationSteps.length) {
+                generateSteps();
+                currentStepIndex = 0;
+            }
+            isRunning = true;
+            document.getElementById('play-icon').className = "fa-solid fa-pause";
+            document.getElementById('play-text').innerText = "Pause";
+            playNextStep();
+        }
+
+        function stopAnimation() {
+            isRunning = false;
+            if (animationTimer) clearTimeout(animationTimer);
+            document.getElementById('play-icon').className = "fa-solid fa-play";
+            document.getElementById('play-text').innerText = "Resume";
+        }
+
+        function playNextStep() {
+            if (!isRunning) return;
+            if (currentStepIndex >= animationSteps.length) {
+                isRunning = false;
+                document.getElementById('play-icon').className = "fa-solid fa-play";
+                document.getElementById('play-text').innerText = "Start DP";
+                return;
+            }
+
+            executeStep(currentStepIndex);
+            currentStepIndex++;
+            animationTimer = setTimeout(playNextStep, delayMs);
+        }
+
+        function stepForward() {
+            stopAnimation();
+            if (animationSteps.length === 0 || currentStepIndex >= animationSteps.length) {
+                generateSteps();
+                currentStepIndex = 0;
+            }
+            if (currentStepIndex < animationSteps.length) {
+                executeStep(currentStepIndex);
+                currentStepIndex++;
+            }
+        }
+
+        function executeStep(idx) {
+            const step = animationSteps[idx];
+
+            // Clear previous active highlights
+            document.querySelectorAll('.active-cell, .dependency-cell').forEach(el => {
+                el.classList.remove('active-cell', 'dependency-cell');
+            });
+
+            if (step.is1D) {
+                const cell = document.getElementById(`c1d-${step.active}`);
+                if (cell) {
+                    cell.classList.add('active-cell');
+                    cell.querySelector('.cell-val').innerText = step.val;
+                }
+                if (step.deps) {
+                    step.deps.forEach(d => {
+                        const dep = document.getElementById(`c1d-${d}`);
+                        if (dep) dep.classList.add('dependency-cell');
+                    });
+                }
+            } else {
+                if (step.active) {
+                    const [r, c] = step.active;
+                    const cell = document.getElementById(`cell-${r}-${c}`);
+                    if (cell) {
+                        cell.classList.add('active-cell', 'filled');
+                        cell.innerText = step.val;
+                    }
+                }
+                if (step.deps) {
+                    step.deps.forEach(([dr, dc]) => {
+                        const dep = document.getElementById(`cell-${dr}-${dc}`);
+                        if (dep) dep.classList.add('dependency-cell');
+                    });
+                }
+                if (step.optimal) {
+                    const [or, oc] = step.optimal;
+                    const optCell = document.getElementById(`cell-${or}-${oc}`);
+                    if (optCell) optCell.classList.add('optimal-path');
+                }
+            }
+
+            if (step.filledCount) document.getElementById('stat-filled').innerText = step.filledCount;
+            if (step.optVal !== undefined) document.getElementById('stat-opt').innerText = step.optVal;
+            if (step.log) document.getElementById('step-log').innerText = step.log;
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

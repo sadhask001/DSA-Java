@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Heap & Priority Queue Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .form-group label { font-size: 11px; color: #94A3B8; }
+
+        input, select {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+        input:focus { border-color: #A78BFA; }
+
+        button {
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: .2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(167, 139, 250, .2); }
+        button:disabled { background: #2B214E !important; color: #64748B !important; cursor: not-allowed; transform: none !important; }
+
+        /* Visualization Viewports */
+        .visualization-viewport {
+            background: #0B1120;
+            border-radius: 16px;
+            min-height: 380px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            position: relative;
+            overflow: auto;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #heap-svg {
+            width: 100%;
+            height: 340px;
+            min-width: 600px;
+        }
+
+        .heap-node-circle {
+            fill: #1E1B37;
+            stroke: #8B5CF6;
+            stroke-width: 2.5;
+            transition: all 0.3s ease;
+        }
+        .heap-node-circle.active {
+            fill: #7C3AED;
+            stroke: #FBBF24;
+            stroke-width: 4;
+            filter: drop-shadow(0 0 10px #FBBF24);
+        }
+        .heap-node-circle.sorted {
+            fill: #065F46;
+            stroke: #34D399;
+            stroke-width: 3;
+        }
+
+        .heap-node-text {
+            fill: #FFF;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .heap-edge-line {
+            stroke: #4C3D77;
+            stroke-width: 2;
+        }
+
+        /* Array Memory Strip Representation */
+        .array-memory-strip {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 12px;
+            background: #090814;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            align-items: center;
+        }
+
+        .array-cell-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .array-cell-box {
+            width: 48px;
+            height: 48px;
+            background: #15112c;
+            border: 2px solid #8B5CF6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFF;
+            transition: all 0.3s;
+        }
+        .array-cell-box.active {
+            border-color: #FBBF24;
+            background: #7C3AED;
+            box-shadow: 0 0 12px #FBBF24;
+        }
+        .array-cell-box.sorted {
+            border-color: #34D399;
+            background: #065F46;
+        }
+
+        .array-cell-idx {
+            font-size: 10px;
+            color: #94A3B8;
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 4px;
+        }
+
+        @media(max-width: 1050px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> Heap Notes</a>
+            <a href="../Trees/index.html" class="back-btn"><i class="fa-solid fa-tree"></i> Trees</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Heap Controller</span>
+                    <select id="heap-type-select" style="padding:2px 8px; font-size:11px;" onchange="handleHeapTypeChange()">
+                        <option value="MIN" selected>Min-Heap (Default)</option>
+                        <option value="MAX">Max-Heap</option>
+                    </select>
+                </div>
+
+                <div class="controls-row">
+                    <div class="form-group" style="grid-column:span 2;">
+                        <label>Element Value</label>
+                        <input type="number" id="heap-val-input" value="15" placeholder="Value">
+                    </div>
+                </div>
+
+                <div class="controls-row">
+                    <button onclick="insertHeapAction()"><i class="fa-solid fa-plus"></i> Insert (Sift-Up)</button>
+                    <button onclick="extractRootAction()" style="background:linear-gradient(135deg,#EF4444,#DC2626);"><i class="fa-solid fa-arrow-up-from-bracket"></i> Extract Root</button>
+                </div>
+
+                <div class="panel-heading" style="margin-top:5px;"><span>Algorithms</span></div>
+                <div class="controls-row">
+                    <button onclick="runHeapSortAction()" style="background:linear-gradient(135deg,#10B981,#059669);"><i class="fa-solid fa-arrow-down-1-9"></i> Heap Sort</button>
+                    <button onclick="buildRandomHeap()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);"><i class="fa-solid fa-shuffle"></i> Random Heap</button>
+                    <button onclick="resetHeap()" style="background:#374151;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Playback Speed -->
+            <div class="panel">
+                <div class="panel-heading"><span>Animation Speed</span></div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <label style="font-size:11px; color:#94A3B8;">Delay:</label>
+                    <input type="range" id="speed-slider" min="200" max="1500" value="500" style="flex:1; accent-color:#8B5CF6;" onchange="updateSpeed(this.value)">
+                    <span id="speed-lbl" style="font-size:11px; font-family:'JetBrains Mono'; color:#A78BFA;">500ms</span>
+                </div>
+            </div>
+
+            <!-- Execution Trace Window -->
+            <div class="panel">
+                <div class="panel-heading"><span>Heap Index Math & Formulas</span></div>
+                <div style="background:#090814; padding:12px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:12px; color:#CBD5E1; line-height:1.8;">
+                    Parent(i) &nbsp;&nbsp;&nbsp;&nbsp;= <span style="color:#A78BFA;">(i - 1) / 2</span><br>
+                    LeftChild(i) &nbsp;= <span style="color:#34D399;">2 * i + 1</span><br>
+                    RightChild(i) = <span style="color:#FBBF24;">2 * i + 2</span>
+                </div>
+                <div id="heap-step-log" style="font-size:12px; color:#CBD5E1; line-height:1.5; background:#090814; padding:10px; border-radius:6px; border-left:3px solid #8B5CF6;">
+                    Heap engine ready. Insert values or trigger Heap Sort.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT VIEWPORT -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- Complete Binary Tree Visualizer -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>1. Complete Binary Tree Representation</span>
+                    <span id="heap-status-tag" style="color:#34D399; font-size:11px;"><i class="fa-solid fa-check"></i> Valid Heap</span>
+                </div>
+                <div class="visualization-viewport">
+                    <svg id="heap-svg"></svg>
+                </div>
+            </div>
+
+            <!-- Underlying 1D Array Visualizer -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>2. Physical Array Representation (Contiguous RAM)</span>
+                    <span style="font-size:11px; color:#94A3B8;">0-indexed</span>
+                </div>
+                <div class="array-memory-strip" id="array-strip-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        let heap = [10, 25, 18, 40, 32, 22, 19];
+        let heapType = 'MIN'; // 'MIN' or 'MAX'
+        let stepDelay = 500;
+
+        function updateSpeed(val) {
+            stepDelay = parseInt(val);
+            document.getElementById('speed-lbl').innerText = `${stepDelay}ms`;
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function handleHeapTypeChange() {
+            heapType = document.getElementById('heap-type-select').value;
+            buildHeap();
+        }
+
+        function compare(a, b) {
+            return heapType === 'MIN' ? a < b : a > b;
+        }
+
+        function render() {
+            renderTree();
+            renderArray();
+        }
+
+        function renderArray(highlightIdx = -1, sortedUpTo = -1) {
+            const container = document.getElementById('array-strip-container');
+            container.innerHTML = '';
+            if (heap.length === 0) {
+                container.innerHTML = '<span style="color:#64748B; font-size:12px;">Array buffer is empty</span>';
+                return;
+            }
+
+            heap.forEach((val, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'array-cell-block';
+
+                const box = document.createElement('div');
+                box.className = 'array-cell-box';
+                if (i === highlightIdx) box.classList.add('active');
+                if (i >= sortedUpTo && sortedUpTo !== -1) box.classList.add('sorted');
+                box.innerText = val;
+
+                const lbl = document.createElement('div');
+                lbl.className = 'array-cell-idx';
+                lbl.innerText = `[${i}]`;
+
+                cell.appendChild(box);
+                cell.appendChild(lbl);
+                container.appendChild(cell);
+            });
+        }
+
+        function renderTree(highlightIdx = -1) {
+            const svg = document.getElementById('heap-svg');
+            const width = 600;
+            svg.setAttribute('viewBox', `0 0 ${width} 320`);
+            svg.innerHTML = '';
+
+            if (heap.length === 0) {
+                svg.innerHTML = `<text x="${width/2}" y="160" fill="#64748B" font-size="14" text-anchor="middle" font-family="Poppins">Heap is empty.</text>`;
+                return;
+            }
+
+            // Calculate coordinates for Complete Binary Tree
+            const positions = [];
+            for (let i = 0; i < heap.length; i++) {
+                const depth = Math.floor(Math.log2(i + 1));
+                const levelIndex = i - (Math.pow(2, depth) - 1);
+                const nodesOnLevel = Math.pow(2, depth);
+                const step = width / (nodesOnLevel + 1);
+                const x = step * (levelIndex + 1);
+                const y = 40 + depth * 70;
+                positions.push({ x, y });
+            }
+
+            // Draw Edges
+            for (let i = 0; i < heap.length; i++) {
+                const left = 2 * i + 1;
+                const right = 2 * i + 2;
+                if (left < heap.length) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', positions[i].x);
+                    line.setAttribute('y1', positions[i].y);
+                    line.setAttribute('x2', positions[left].x);
+                    line.setAttribute('y2', positions[left].y);
+                    line.setAttribute('class', 'heap-edge-line');
+                    svg.appendChild(line);
+                }
+                if (right < heap.length) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', positions[i].x);
+                    line.setAttribute('y1', positions[i].y);
+                    line.setAttribute('x2', positions[right].x);
+                    line.setAttribute('y2', positions[right].y);
+                    line.setAttribute('class', 'heap-edge-line');
+                    svg.appendChild(line);
+                }
+            }
+
+            // Draw Nodes
+            for (let i = 0; i < heap.length; i++) {
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', positions[i].x);
+                circle.setAttribute('cy', positions[i].y);
+                circle.setAttribute('r', 18);
+                let cClass = 'heap-node-circle';
+                if (i === highlightIdx) cClass += ' active';
+                circle.setAttribute('class', cClass);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', positions[i].x);
+                text.setAttribute('y', positions[i].y);
+                text.setAttribute('class', 'heap-node-text');
+                text.textContent = heap[i];
+
+                g.appendChild(circle);
+                g.appendChild(text);
+                svg.appendChild(g);
+            }
+        }
+
+        // Insert Action with Sift-Up
+        async function insertHeapAction() {
+            const valInput = document.getElementById('heap-val-input');
+            const val = parseInt(valInput.value);
+            if (isNaN(val)) return;
+
+            heap.push(val);
+            let idx = heap.length - 1;
+            renderTree(idx);
+            renderArray(idx);
+            document.getElementById('heap-step-log').innerText = `Appended ${val} at index ${idx}. Now sifting up...`;
+            await delay(stepDelay);
+
+            // Sift-Up
+            while (idx > 0) {
+                const parentIdx = Math.floor((idx - 1) / 2);
+                if (compare(heap[idx], heap[parentIdx])) {
+                    document.getElementById('heap-step-log').innerText = `Element ${heap[idx]} violates heap property with parent ${heap[parentIdx]}. Swapping!`;
+                    let temp = heap[idx];
+                    heap[idx] = heap[parentIdx];
+                    heap[parentIdx] = temp;
+                    idx = parentIdx;
+                    renderTree(idx);
+                    renderArray(idx);
+                    await delay(stepDelay);
+                } else {
+                    break;
+                }
+            }
+
+            render();
+            document.getElementById('heap-step-log').innerText = `Element ${val} settled into correct heap position.`;
+            valInput.value = Math.floor(Math.random() * 50) + 5;
+        }
+
+        // Extract Root with Sift-Down
+        async function extractRootAction() {
+            if (heap.length === 0) return;
+            const rootVal = heap[0];
+            document.getElementById('heap-step-log').innerText = `Extracting root ${rootVal}. Swapping with last element...`;
+
+            if (heap.length === 1) {
+                heap.pop();
+                render();
+                return;
+            }
+
+            heap[0] = heap.pop();
+            let idx = 0;
+            renderTree(idx);
+            renderArray(idx);
+            await delay(stepDelay);
+
+            // Sift-Down
+            while (2 * idx + 1 < heap.length) {
+                let target = 2 * idx + 1; // Left child
+                const right = 2 * idx + 2;
+                if (right < heap.length && compare(heap[right], heap[target])) {
+                    target = right;
+                }
+
+                if (compare(heap[target], heap[idx])) {
+                    document.getElementById('heap-step-log').innerText = `Swapping index ${idx} (${heap[idx]}) with index ${target} (${heap[target]}).`;
+                    let temp = heap[idx];
+                    heap[idx] = heap[target];
+                    heap[target] = temp;
+                    idx = target;
+                    renderTree(idx);
+                    renderArray(idx);
+                    await delay(stepDelay);
+                } else {
+                    break;
+                }
+            }
+
+            render();
+            document.getElementById('heap-step-log').innerText = `Extracted root ${rootVal}. Heap restored.`;
+        }
+
+        // Heap Sort Action
+        async function runHeapSortAction() {
+            document.getElementById('heap-step-log').innerText = `Starting Heap Sort...`;
+            // Build Max Heap first for ascending sort
+            heapType = 'MAX';
+            document.getElementById('heap-type-select').value = 'MAX';
+            buildHeap();
+            render();
+            await delay(stepDelay);
+
+            const originalLength = heap.length;
+            for (let i = originalLength - 1; i > 0; i--) {
+                // Swap root with end
+                let temp = heap[0];
+                heap[0] = heap[i];
+                heap[i] = temp;
+                renderArray(0, i);
+                renderTree(0);
+                document.getElementById('heap-step-log').innerText = `Max element ${temp} placed at locked sorted index ${i}.`;
+                await delay(stepDelay);
+
+                // Sift down root in reduced heap size
+                let idx = 0;
+                while (2 * idx + 1 < i) {
+                    let largest = 2 * idx + 1;
+                    let r = 2 * idx + 2;
+                    if (r < i && heap[r] > heap[largest]) {
+                        largest = r;
+                    }
+                    if (heap[largest] > heap[idx]) {
+                        let t = heap[idx];
+                        heap[idx] = heap[largest];
+                        heap[largest] = t;
+                        idx = largest;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            renderArray(-1, 0);
+            renderTree();
+            document.getElementById('heap-step-log').innerText = `Heap Sort Complete! Array is now fully sorted in O(n log n) time.`;
+        }
+
+        function buildHeap() {
+            // Sift-down from last non-leaf node down to 0
+            for (let i = Math.floor(heap.length / 2) - 1; i >= 0; i--) {
+                let idx = i;
+                while (2 * idx + 1 < heap.length) {
+                    let target = 2 * idx + 1;
+                    let right = 2 * idx + 2;
+                    if (right < heap.length && compare(heap[right], heap[target])) target = right;
+                    if (compare(heap[target], heap[idx])) {
+                        let temp = heap[idx];
+                        heap[idx] = heap[target];
+                        heap[target] = temp;
+                        idx = target;
+                    } else break;
+                }
+            }
+            render();
+        }
+
+        function buildRandomHeap() {
+            heap = Array.from({ length: 7 }, () => Math.floor(Math.random() * 60) + 10);
+            buildHeap();
+            document.getElementById('heap-step-log').innerText = `Generated new randomized heap.`;
+        }
+
+        function resetHeap() {
+            heap = [];
+            render();
+            document.getElementById('heap-step-log').innerText = `Heap reset.`;
+        }
+
+        window.onload = () => {
+            buildHeap();
+        };
+    </script>
+</body>
+</html>

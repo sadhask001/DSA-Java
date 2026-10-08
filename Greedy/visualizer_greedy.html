@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greedy Algorithms Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        select, input[type="text"], input[type="number"], input[type="range"] {
+            background: #0D0B1C;
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus { border-color: #A78BFA; }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            background: #231C4D;
+            color: #E9D5FF;
+            border: 1px solid rgba(167, 139, 250, .2);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn:hover:not(:disabled) {
+            background: #3B2E7E;
+            color: white;
+            border-color: #A78BFA;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            border: none;
+        }
+        .btn.primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        }
+
+        .btn.accent {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
+            border: 1px solid rgba(52, 211, 153, 0.4);
+        }
+
+        /* Viewport Canvas */
+        .greedy-viewport {
+            background: #0B1120;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            padding: 25px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        /* Timeline Intervals */
+        .timeline-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        .timeline-axis {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #94A3B8;
+        }
+
+        .interval-row {
+            height: 36px;
+            background: rgba(20, 18, 40, 0.4);
+            border-radius: 6px;
+            position: relative;
+            width: 100%;
+        }
+
+        .interval-bar {
+            position: absolute;
+            height: 28px;
+            top: 4px;
+            border-radius: 6px;
+            background: #6366F1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .interval-bar.evaluating {
+            background: #FBBF24 !important;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+        }
+        .interval-bar.accepted {
+            background: #10B981 !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+        }
+        .interval-bar.rejected {
+            background: #F43F5E !important;
+            opacity: 0.35;
+        }
+
+        /* Knapsack Ratio Items */
+        .knapsack-deck {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .item-card {
+            background: rgba(20, 18, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            width: 130px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.25s;
+        }
+        .item-card.taken-full {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.2);
+            transform: translateY(-6px);
+        }
+        .item-card.taken-frac {
+            border-color: #FBBF24;
+            background: rgba(245, 158, 11, 0.2);
+            transform: translateY(-6px);
+        }
+
+        .log-box {
+            background: #090814;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #A78BFA;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> Greedy Notes</a>
+            <a href="../DP/index.html" class="back-btn"><i class="fa-solid fa-table-cells-large"></i> Dynamic Programming</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Algorithm Selector</span>
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+
+                <div class="form-group">
+                    <label>Greedy Strategy</label>
+                    <select id="greedy-algo-select" onchange="handleAlgoChange()">
+                        <option value="INTERVAL" selected>Activity Selection (Earliest Finish Time)</option>
+                        <option value="KNAPSACK">Fractional Knapsack (Max Value/Weight Ratio)</option>
+                        <option value="JUMP">Jump Game (Max Reach Expansion)</option>
+                    </select>
+                </div>
+
+                <div class="btn-grid">
+                    <button class="btn primary" id="play-pause-btn" onclick="togglePlayPause()">
+                        <i class="fa-solid fa-play" id="play-icon"></i> <span id="play-text">Start Greedy</span>
+                    </button>
+                    <button class="btn" id="step-btn" onclick="stepForward()">
+                        <i class="fa-solid fa-forward-step"></i> Step
+                    </button>
+                    <button class="btn" onclick="resetGreedy()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button class="btn accent" onclick="generateNewPreset()">
+                        <i class="fa-solid fa-shuffle"></i> Shuffle
+                    </button>
+                </div>
+            </div>
+
+            <!-- ANIMATION DELAY -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Animation Speed</span>
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between;">
+                        <label>Decision Delay</label>
+                        <span id="speed-display" style="font-size:12px; color:#A78BFA; font-family:'JetBrains Mono';">450ms</span>
+                    </div>
+                    <input type="range" id="speed-slider" min="50" max="1200" value="450" oninput="handleSpeedChange()">
+                </div>
+
+                <div style="font-size:12px; color:#94A3B8; line-height:1.6;">
+                    <strong style="color:#C4B5FD;">Greedy Choice Property:</strong> Demonstrates that making locally optimal decisions without backtracking yields global optimality.
+                </div>
+            </div>
+
+            <!-- METRICS PANEL -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Greedy Metrics</span>
+                    <i class="fa-solid fa-chart-simple"></i>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; text-align:center;">
+                    <div style="background:#090814; padding:10px; border-radius:8px;">
+                        <div style="font-size:10px; color:#94A3B8;">DECISIONS MADE</div>
+                        <div id="stat-decisions" style="font-family:'JetBrains Mono'; font-size:18px; font-weight:700; color:#38BDF8;">0</div>
+                    </div>
+                    <div style="background:#090814; padding:10px; border-radius:8px;">
+                        <div style="font-size:10px; color:#94A3B8;">OPTIMAL RESULT</div>
+                        <div id="stat-result" style="font-family:'JetBrains Mono'; font-size:18px; font-weight:700; color:#34D399;">-</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT VIEWPORT -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="greedy-viewport" id="greedy-canvas">
+                <!-- Timeline or Knapsack cards -->
+            </div>
+
+            <!-- LIVE STEP LOG -->
+            <div class="log-box" id="step-log">
+                Select a greedy strategy and click "Start Greedy" or "Step" to observe decisions.
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        let animationSteps = [];
+        let currentStepIndex = 0;
+        let isRunning = false;
+        let animationTimer = null;
+        let delayMs = 450;
+
+        function init() {
+            renderInitialCanvas();
+        }
+
+        function handleAlgoChange() {
+            stopAnimation();
+            resetGreedy();
+        }
+
+        function handleSpeedChange() {
+            const val = parseInt(document.getElementById('speed-slider').value);
+            delayMs = val;
+            document.getElementById('speed-display').innerText = val + 'ms';
+        }
+
+        function generateNewPreset() {
+            stopAnimation();
+            resetGreedy();
+        }
+
+        function resetGreedy() {
+            stopAnimation();
+            currentStepIndex = 0;
+            animationSteps = [];
+            document.getElementById('stat-decisions').innerText = "0";
+            document.getElementById('stat-result').innerText = "-";
+            renderInitialCanvas();
+            document.getElementById('step-log').innerText = "Visualizer reset.";
+        }
+
+        function renderInitialCanvas() {
+            const algo = document.getElementById('greedy-algo-select').value;
+            const canvas = document.getElementById('greedy-canvas');
+
+            if (algo === 'INTERVAL') {
+                const intervals = [
+                    { id: 1, start: 1, end: 4 },
+                    { id: 2, start: 3, end: 5 },
+                    { id: 3, start: 0, end: 6 },
+                    { id: 4, start: 5, end: 7 },
+                    { id: 5, start: 3, end: 9 },
+                    { id: 6, start: 5, end: 9 },
+                    { id: 7, start: 6, end: 10 },
+                    { id: 8, start: 8, end: 11 },
+                    { id: 9, start: 8, end: 12 },
+                    { id: 10, start: 2, end: 14 },
+                    { id: 11, start: 12, end: 16 }
+                ];
+
+                let html = `<div class="timeline-container">`;
+                html += `<div class="timeline-axis"><span>0h</span><span>4h</span><span>8h</span><span>12h</span><span>16h</span></div>`;
+                intervals.forEach(act => {
+                    const leftPct = (act.start / 16) * 100;
+                    const widthPct = ((act.end - act.start) / 16) * 100;
+                    html += `
+                        <div class="interval-row">
+                            <div class="interval-bar" id="bar-${act.id}" style="left:${leftPct}%; width:${widthPct}%;">
+                                Act ${act.id} [${act.start}–${act.end}]
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                canvas.innerHTML = html;
+
+            } else if (algo === 'KNAPSACK') {
+                const items = [
+                    { id: 1, val: 60, wt: 10, ratio: 6.0 },
+                    { id: 2, val: 100, wt: 20, ratio: 5.0 },
+                    { id: 3, val: 120, wt: 30, ratio: 4.0 },
+                    { id: 4, val: 70, wt: 14, ratio: 5.0 },
+                    { id: 5, val: 24, wt: 8, ratio: 3.0 }
+                ];
+                let html = `<div style="text-align:center; margin-bottom:15px; color:#A78BFA; font-size:13px;">Knapsack Capacity = 50kg (Sorted by v/w ratio)</div>`;
+                html += `<div class="knapsack-deck">`;
+                items.forEach(it => {
+                    html += `
+                        <div class="item-card" id="k-item-${it.id}">
+                            <span style="font-weight:700; color:#E2E8F0;">Item ${it.id}</span>
+                            <span style="font-size:11px; color:#34D399;">$${it.val}</span>
+                            <span style="font-size:11px; color:#38BDF8;">${it.wt} kg</span>
+                            <span style="font-size:11px; color:#FBBF24;">Ratio: ${it.ratio}</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                canvas.innerHTML = html;
+
+            } else {
+                const arr = [2, 3, 1, 1, 4];
+                let html = `<div style="display:flex; gap:10px; align-items:center;">`;
+                arr.forEach((v, idx) => {
+                    html += `
+                        <div style="background:#1E1B37; border:2px solid #A78BFA; border-radius:10px; padding:15px 20px; text-align:center;" id="j-cell-${idx}">
+                            <div style="font-size:11px; color:#94A3B8;">idx ${idx}</div>
+                            <div style="font-size:22px; font-weight:700; color:#F8FAFC;">${v}</div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                canvas.innerHTML = html;
+            }
+        }
+
+        // ================= STEP GENERATORS =================
+        function generateSteps() {
+            const algo = document.getElementById('greedy-algo-select').value;
+            animationSteps = [];
+
+            if (algo === 'INTERVAL') buildIntervalSteps();
+            else if (algo === 'KNAPSACK') buildKnapsackSteps();
+            else if (algo === 'JUMP') buildJumpSteps();
+        }
+
+        function buildIntervalSteps() {
+            const intervals = [
+                { id: 1, start: 1, end: 4 },
+                { id: 2, start: 3, end: 5 },
+                { id: 3, start: 0, end: 6 },
+                { id: 4, start: 5, end: 7 },
+                { id: 5, start: 3, end: 9 },
+                { id: 6, start: 5, end: 9 },
+                { id: 7, start: 6, end: 10 },
+                { id: 8, start: 8, end: 11 },
+                { id: 9, start: 8, end: 12 },
+                { id: 10, start: 2, end: 14 },
+                { id: 11, start: 12, end: 16 }
+            ];
+
+            // Sort greedily by earliest finish time
+            intervals.sort((a, b) => a.end - b.end);
+
+            let lastEnd = -1;
+            let count = 0;
+
+            intervals.forEach((act, idx) => {
+                animationSteps.push({
+                    evalId: act.id,
+                    log: `Inspecting Activity ${act.id} [${act.start}–${act.end}]. Earliest finish time in remaining set.`
+                });
+
+                if (act.start >= lastEnd) {
+                    lastEnd = act.end;
+                    count++;
+                    animationSteps.push({
+                        acceptId: act.id,
+                        decisions: idx + 1,
+                        result: `${count} Selected`,
+                        log: `ACCEPTED Activity ${act.id}! Starts at ${act.start} >= previous finish ${lastEnd}.`
+                    });
+                } else {
+                    animationSteps.push({
+                        rejectId: act.id,
+                        decisions: idx + 1,
+                        result: `${count} Selected`,
+                        log: `REJECTED Activity ${act.id}! Overlaps with previous activity (starts at ${act.start} < ${lastEnd}).`
+                    });
+                }
+            });
+        }
+
+        function buildKnapsackSteps() {
+            const items = [
+                { id: 1, val: 60, wt: 10, ratio: 6.0 },
+                { id: 2, val: 100, wt: 20, ratio: 5.0 },
+                { id: 4, val: 70, wt: 14, ratio: 5.0 },
+                { id: 3, val: 120, wt: 30, ratio: 4.0 },
+                { id: 5, val: 24, wt: 8, ratio: 3.0 }
+            ];
+
+            let cap = 50;
+            let totalVal = 0;
+
+            items.forEach((it, idx) => {
+                if (cap >= it.wt) {
+                    cap -= it.wt;
+                    totalVal += it.val;
+                    animationSteps.push({
+                        fullId: it.id,
+                        decisions: idx + 1,
+                        result: `$${totalVal}`,
+                        log: `Greedily took entire Item ${it.id} (${it.wt}kg for $${it.val}). Remaining capacity: ${cap}kg.`
+                    });
+                } else if (cap > 0) {
+                    const frac = cap / it.wt;
+                    totalVal += it.val * frac;
+                    const takenKg = cap;
+                    cap = 0;
+                    animationSteps.push({
+                        fracId: it.id,
+                        decisions: idx + 1,
+                        result: `$${totalVal}`,
+                        log: `Capacity ${takenKg}kg remaining < ${it.wt}kg. Took fraction (${(frac*100).toFixed(0)}%) of Item ${it.id} for $${(it.val * frac).toFixed(0)}. Knapsack full!`
+                    });
+                }
+            });
+        }
+
+        function buildJumpSteps() {
+            const nums = [2, 3, 1, 1, 4];
+            let maxReach = 0;
+
+            for (let i = 0; i < nums.length; i++) {
+                if (i > maxReach) {
+                    animationSteps.push({
+                        failIdx: i,
+                        log: `Cannot reach index ${i}! Max reachable is ${maxReach}. Destination unreachable.`
+                    });
+                    return;
+                }
+                const oldReach = maxReach;
+                maxReach = Math.max(maxReach, i + nums[i]);
+                animationSteps.push({
+                    currIdx: i,
+                    maxReach: maxReach,
+                    decisions: i + 1,
+                    result: `Reach idx ${maxReach}`,
+                    log: `At index ${i} (jump=${nums[i]}): maxReach = max(${oldReach}, ${i} + ${nums[i]}) = ${maxReach}.`
+                });
+                if (maxReach >= nums.length - 1) {
+                    animationSteps.push({
+                        success: true,
+                        result: "REACHABLE",
+                        log: `Success! maxReach (${maxReach}) >= last index (${nums.length - 1}). Last index is guaranteed reachable!`
+                    });
+                    return;
+                }
+            }
+        }
+
+        // ================= PLAYBACK CONTROLLER =================
+        function togglePlayPause() {
+            if (isRunning) stopAnimation();
+            else startAnimation();
+        }
+
+        function startAnimation() {
+            if (animationSteps.length === 0 || currentStepIndex >= animationSteps.length) {
+                generateSteps();
+                currentStepIndex = 0;
+            }
+            isRunning = true;
+            document.getElementById('play-icon').className = "fa-solid fa-pause";
+            document.getElementById('play-text').innerText = "Pause";
+            playNextStep();
+        }
+
+        function stopAnimation() {
+            isRunning = false;
+            if (animationTimer) clearTimeout(animationTimer);
+            document.getElementById('play-icon').className = "fa-solid fa-play";
+            document.getElementById('play-text').innerText = "Resume";
+        }
+
+        function playNextStep() {
+            if (!isRunning) return;
+            if (currentStepIndex >= animationSteps.length) {
+                isRunning = false;
+                document.getElementById('play-icon').className = "fa-solid fa-play";
+                document.getElementById('play-text').innerText = "Start Greedy";
+                return;
+            }
+
+            executeStep(currentStepIndex);
+            currentStepIndex++;
+            animationTimer = setTimeout(playNextStep, delayMs);
+        }
+
+        function stepForward() {
+            stopAnimation();
+            if (animationSteps.length === 0 || currentStepIndex >= animationSteps.length) {
+                generateSteps();
+                currentStepIndex = 0;
+            }
+            if (currentStepIndex < animationSteps.length) {
+                executeStep(currentStepIndex);
+                currentStepIndex++;
+            }
+        }
+
+        function executeStep(idx) {
+            const step = animationSteps[idx];
+
+            if (step.evalId) {
+                document.querySelectorAll('.interval-bar').forEach(b => b.classList.remove('evaluating'));
+                const bar = document.getElementById(`bar-${step.evalId}`);
+                if (bar) bar.classList.add('evaluating');
+            }
+            if (step.acceptId) {
+                const bar = document.getElementById(`bar-${step.acceptId}`);
+                if (bar) {
+                    bar.classList.remove('evaluating');
+                    bar.classList.add('accepted');
+                }
+            }
+            if (step.rejectId) {
+                const bar = document.getElementById(`bar-${step.rejectId}`);
+                if (bar) {
+                    bar.classList.remove('evaluating');
+                    bar.classList.add('rejected');
+                }
+            }
+
+            if (step.fullId) {
+                const card = document.getElementById(`k-item-${step.fullId}`);
+                if (card) card.classList.add('taken-full');
+            }
+            if (step.fracId) {
+                const card = document.getElementById(`k-item-${step.fracId}`);
+                if (card) card.classList.add('taken-frac');
+            }
+
+            if (step.currIdx !== undefined) {
+                document.querySelectorAll('[id^="j-cell-"]').forEach(c => c.style.borderColor = '#A78BFA');
+                const cell = document.getElementById(`j-cell-${step.currIdx}`);
+                if (cell) cell.style.borderColor = '#34D399';
+            }
+
+            if (step.decisions) document.getElementById('stat-decisions').innerText = step.decisions;
+            if (step.result) document.getElementById('stat-result').innerText = step.result;
+            if (step.log) document.getElementById('step-log').innerText = step.log;
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

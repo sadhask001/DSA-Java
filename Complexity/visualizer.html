@@ -3,475 +3,806 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Asymptotic Complexity Visualizer</title>
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js for rendering graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-:root{--bg:#0b0718;--bg2:#16102d;--card:rgba(255,255,255,.06);--border:rgba(196,181,253,.18)}
-body{background:linear-gradient(135deg,var(--bg),var(--bg2),#23174a)!important}
-.max-w-6xl>header{background:rgba(255,255,255,.04);backdrop-filter:blur(10px);border:1px solid var(--border)!important;border-radius:20px;padding:24px!important}
-.max-w-6xl>header h1{background:linear-gradient(90deg,#f5d0fe,#c4b5fd,#8b5cf6);-webkit-background-clip:text;color:transparent!important}
-.max-w-6xl>header p{color:#cbd5e1!important}
-.bg-gray-800{background:var(--card)!important;backdrop-filter:blur(14px);border:1px solid var(--border)!important}
-.bg-gray-900,.bg-gray-950{background:#0d0a1d!important}
-.border-gray-700,.border-gray-800,.border-gray-900{border-color:var(--border)!important}
-.text-indigo-400,.text-indigo-300{color:#d8b4fe!important}
-.bg-indigo-600{background:#8b5cf6!important}
-button{transition:.25s}button:hover{transform:translateY(-2px)}
-select,input,textarea{background:#100d20!important;border-color:#5b21b6!important;color:#fff!important}
-</style></head>
-<body class="bg-gray-900 text-gray-100 min-h-screen p-4 md:p-8">
+    <title>Asymptotic Complexity Simulator | DSA-Java Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
 
-    <div class="max-w-6xl mx-auto space-y-6">
-        <!-- Header -->
-        <header class="border-b border-gray-800 pb-4">
-            <h1 class="text-3xl font-bold text-indigo-400">Asymptotic Complexity Visualizer</h1>
-            <p class="text-gray-400 mt-1">Analyze algorithm scalability parameters relative to notation boundaries and runtime scenarios.</p>
-        </header>
+    <style>
+        .visualizer-workspace {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 25px;
+            max-width: 1700px;
+            margin: 0 auto;
+            padding: 100px 4% 60px;
+        }
 
-        <!-- Main Layout Split Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        .panel-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 18px;
+            padding: 22px;
+            backdrop-filter: blur(25px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-primary-light);
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Mode Selector */
+        .mode-toggle-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #0f0d22;
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--color-text-sub);
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .mode-btn.active {
+            background: var(--color-primary);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Controls Form Items */
+        .ctrl-row {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .ctrl-row label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ctrl-select, .ctrl-input {
+            background: #0c0a1e;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            font-family: var(--font-main);
+        }
+
+        .ctrl-select:focus, .ctrl-input:focus {
+            border-color: var(--color-primary-glow);
+        }
+
+        /* Buttons Grid */
+        .btn-action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .act-btn {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .act-btn.primary { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: #fff; }
+        .act-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35); }
+
+        .act-btn.secondary { background: #191636; color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.25); }
+        .act-btn.secondary:hover { background: rgba(167, 139, 250, 0.2); }
+
+        .act-btn.danger { background: #33141e; color: #f87171; border: 1px solid rgba(248, 113, 113, 0.25); }
+        .act-btn.danger:hover { background: #4a1c2a; }
+
+        .act-btn:disabled {
+            background: #1e1b33 !important;
+            color: #64748b !important;
+            border-color: transparent !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+        }
+
+        /* Visualization Screen Canvas */
+        .viewport-canvas {
+            background: #090818;
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 30px;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .canvas-badge {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Array Elements Visual Styling */
+        .array-track {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            padding: 30px 10px;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .elem-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .elem-box {
+            width: 50px;
+            height: 50px;
+            background: rgba(30, 27, 55, 0.85);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 600;
+            color: #e9d5ff;
+            transition: all 0.25s ease;
+        }
+
+        .elem-node.active .elem-box {
+            background: #7c3aed;
+            border-color: #c4b5fd;
+            transform: scale(1.08);
+            box-shadow: 0 0 16px rgba(167, 139, 250, 0.6);
+        }
+
+        .elem-node.found .elem-box {
+            background: #10b981;
+            border-color: #34d399;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+        }
+
+        .elem-node.discarded .elem-box {
+            opacity: 0.25;
+            background: #1a162e;
+            border-color: #475569;
+        }
+
+        .elem-idx {
+            margin-top: 6px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: #64748b;
+        }
+
+        .pointer-marker {
+            position: absolute;
+            top: -24px;
+            font-size: 13px;
+            color: #f59e0b;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .elem-node.has-pointer .pointer-marker { opacity: 1; }
+
+        /* Metric Pill Displays */
+        .metrics-quad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .m-card {
+            background: #110e28;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+        .m-card-label { font-size: 10.5px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+        .m-card-val { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: #f1f5f9; }
+
+        /* Code View Frame */
+        .code-trace-frame {
+            background: #06050f;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            max-height: 190px;
+            overflow-y: auto;
+        }
+
+        .code-trace-frame .highlight-line {
+            background: rgba(139, 92, 246, 0.25);
+            border-left: 3px solid #a78bfa;
+            color: #fff;
+            padding-left: 6px;
+        }
+
+        @media (max-width: 1000px) {
+            .visualizer-workspace { grid-template-columns: 1fr; }
+            .metrics-quad { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body class="ambient-glow">
+
+    <!-- PLATFORM HEADER -->
+    <header class="platform-header">
+        <a href="../index.html" class="platform-logo-wrap">
+            <i class="fa-solid fa-network-wired platform-logo-icon"></i>
+            <span class="platform-logo-text">DSA-Java Platform</span>
+        </a>
+
+        <nav class="platform-nav-links">
+            <a href="../index.html" class="platform-nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="platform-nav-btn"><i class="fa-solid fa-book"></i> Notes & Theory</a>
+            <a href="visualizer.html" class="platform-nav-btn active"><i class="fa-solid fa-play"></i> Visualizer</a>
+        </nav>
+    </header>
+
+    <!-- MAIN INTERACTIVE WORKSPACE -->
+    <main class="visualizer-workspace">
+        
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
             
-            <!-- Controls Sidebar (4 Cols) -->
-            <div class="lg:col-span-4 space-y-6 bg-gray-800 p-6 rounded-xl border border-gray-700">
-                <!-- Perspective Toggle -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-400 mb-2">Metric Type</label>
-                    <div class="flex rounded-md bg-gray-900 p-1">
-                        <button id="btnTime" class="flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" onclick="setMetric('time')">Time (Ops)</button>
-                        <button id="btnSpace" class="flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition" onclick="setMetric('space')">Space (Memory)</button>
-                    </div>
+            <div class="panel-box">
+                <div class="panel-title">
+                    <span><i class="fa-solid fa-sliders"></i> Execution Controller</span>
+                    <span id="live-status-pill" style="font-size:10px; color:#10B981; background:rgba(16,185,129,0.12); padding:2px 6px; border-radius:4px;">Ready</span>
                 </div>
 
-                <!-- Asymptotic Notation Type -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-400 mb-2">Asymptotic Notation Bound</label>
-                    <div class="flex rounded-md bg-gray-900 p-1">
-                        <button id="btnBigO" class="flex-1 py-1.5 text-xs font-mono font-bold rounded bg-indigo-600 text-white transition" onclick="setNotationType('O')">O (Upper)</button>
-                        <button id="btnTheta" class="flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition" onclick="setNotationType('Theta')">Θ (Tight)</button>
-                        <button id="btnOmega" class="flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition" onclick="setNotationType('Omega')">Ω (Lower)</button>
-                    </div>
+                <!-- Mode Selection -->
+                <div class="mode-toggle-group">
+                    <button class="mode-btn active" id="btn-mode-time" onclick="setVisualizerMode('time')">
+                        <i class="fa-solid fa-clock"></i> Time Complexity
+                    </button>
+                    <button class="mode-btn" id="btn-mode-space" onclick="setVisualizerMode('space')">
+                        <i class="fa-solid fa-memory"></i> Space & Stack
+                    </button>
                 </div>
 
-                <!-- Scenario Case Scenario Selection -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-400 mb-2">Runtime Case Scenario</label>
-                    <div class="flex rounded-md bg-gray-900 p-1">
-                        <button id="btnBest" class="flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition" onclick="setCaseScenario('best')">Best</button>
-                        <button id="btnAverage" class="flex-1 py-1.5 text-xs font-semibold rounded bg-indigo-600 text-white transition" onclick="setCaseScenario('average')">Average</button>
-                        <button id="btnWorst" class="flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition" onclick="setCaseScenario('worst')">Worst</button>
-                    </div>
-                </div>
-
-                <!-- Notation Target Selection -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-400 mb-2">Select Target Algorithm Profile</label>
-                    <select id="notationSelect" class="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white text-sm focus:outline-none focus:border-indigo-500" onchange="handleNotationChange()">
-                        <option value="O(1)">Constant Baseline Structure</option>
-                        <option value="O(log n)">Logarithmic Tracking (e.g. Binary Search)</option>
-                        <option value="O(n)" selected>Linear Evaluation (e.g. Linear Search)</option>
-                        <option value="O(n log n)">Linearithmic Sorts (e.g. Merge Sort)</option>
-                        <option value="O(n^2)">Quadratic Sorts (e.g. Bubble Sort)</option>
-                        <option value="O(2^n)">Exponential Scaling (e.g. Fibonacci)</option>
+                <!-- Algorithm Selector -->
+                <div class="ctrl-row">
+                    <label>Algorithm / Complexity Class</label>
+                    <select id="algo-select" class="ctrl-select" onchange="handleAlgorithmSelect()">
+                        <option value="ologn">Binary Search — O(log n)</option>
+                        <option value="on" selected>Linear Search — O(n)</option>
+                        <option value="on2">Bubble Sort — O(n²)</option>
+                        <option value="o1">Constant Lookup — O(1)</option>
                     </select>
                 </div>
 
-                <!-- Input Size Slider -->
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="text-sm font-semibold text-gray-400">Input Size (n)</label>
-                        <span id="nValue" class="text-indigo-400 font-mono text-lg font-bold">16</span>
+                <!-- Input Size (n) -->
+                <div class="ctrl-row">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#94A3B8;">
+                        <label>Input Size ($n$)</label>
+                        <span id="slider-n-display" style="font-family:var(--font-mono); color:#FFF; font-weight:600;">10</span>
                     </div>
-                    <input id="nSlider" type="range" min="2" max="50" value="16" class="w-full accent-indigo-500" oninput="updateVisuals()">
+                    <input type="range" id="input-n-slider" min="5" max="20" value="10" style="accent-color:#8B5CF6;" oninput="handleSizeSlider(this.value)">
                 </div>
 
-                <!-- Live Metrics Summary -->
-                <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Growth Impact at current n</h3>
-                    <p id="metricImpact" class="text-sm text-gray-300 font-mono">Operations required: ~16</p>
+                <!-- Target Value (For Searches) -->
+                <div class="ctrl-row" id="row-target-val">
+                    <label>Target Query Value</label>
+                    <input type="number" id="target-input-val" class="ctrl-input" value="42" placeholder="Search target">
+                </div>
+
+                <!-- Speed Control Slider -->
+                <div class="ctrl-row">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#94A3B8;">
+                        <label>Animation Speed</label>
+                        <span id="speed-display" style="font-family:var(--font-mono); color:#A78BFA;">Normal (600ms)</span>
+                    </div>
+                    <input type="range" id="speed-slider" min="150" max="1200" step="50" value="600" style="accent-color:#8B5CF6;" oninput="handleSpeedChange(this.value)">
+                </div>
+
+                <!-- Action Execution Buttons -->
+                <div class="btn-action-grid">
+                    <button class="act-btn primary" id="btn-start" onclick="startSimulation()">
+                        <i class="fa-solid fa-play"></i> Start / Run
+                    </button>
+                    <button class="act-btn secondary" id="btn-pause" onclick="pauseSimulation()" disabled>
+                        <i class="fa-solid fa-pause"></i> Pause
+                    </button>
+                    <button class="act-btn secondary" id="btn-step" onclick="stepSimulation()">
+                        <i class="fa-solid fa-forward-step"></i> Step
+                    </button>
+                    <button class="act-btn danger" id="btn-reset" onclick="resetSimulation()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
                 </div>
             </div>
 
-            <!-- Graph and Code Displays (8 Cols) -->
-            <div class="lg:col-span-8 space-y-6">
-                <!-- Graph Container -->
-                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                    <canvas id="growthChart" class="w-full h-64"></canvas>
+            <!-- Terminal Diagnostics Log -->
+            <div class="panel-box">
+                <div class="panel-title">
+                    <span><i class="fa-solid fa-terminal"></i> Operational Trace</span>
                 </div>
-
-                <!-- Context and Code Section -->
-                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 space-y-4">
-                    
-                    <!-- Code View Tab Controls -->
-                    <div class="flex border-b border-gray-700 pb-2 justify-between items-center">
-                        <div class="flex space-x-4">
-                            <button id="tabPresets" class="text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" onclick="switchTab('presets')">Preset Reference</button>
-                            <button id="tabSandbox" class="text-sm font-bold text-gray-400 hover:text-white pb-2" onclick="switchTab('sandbox')">Custom Code Sandbox 🧪</button>
-                        </div>
-                        <span id="analyzerBadge" class="hidden text-xs bg-indigo-950 border border-indigo-700 text-indigo-300 px-2 py-0.5 rounded font-mono">Analyzer Active</span>
-                    </div>
-
-                    <div>
-                        <h2 id="exampleTitle" class="text-xl font-bold text-white mb-1">Linear Evaluation Example</h2>
-                        <p id="exampleDesc" class="text-sm text-gray-400 font-mono"></p>
-                    </div>
-
-                    <!-- Code Snippet Display / Textarea -->
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">Implementation Structure</span>
-                        
-                        <!-- Reference Container -->
-                        <div id="presetContainer">
-                            <pre class="bg-gray-950 p-4 rounded-lg overflow-x-auto text-sm font-mono text-emerald-400 border border-gray-900"><code id="codeSnippet"></code></pre>
-                        </div>
-
-                        <!-- Sandbox Container -->
-                        <div id="sandboxContainer" class="hidden space-y-2">
-                            <textarea id="customCodeInput" class="w-full h-52 bg-gray-950 border border-gray-700 rounded-lg p-4 font-mono text-xs text-indigo-300 focus:outline-none focus:border-indigo-500" oninput="handleSandboxInput()"></textarea>
-                            <div class="bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs text-gray-400 font-mono space-y-1">
-                                <p class="text-indigo-400 font-semibold mb-1">✨ Interactive Comment Tags Available:</p>
-                                <p>You can force scenario-specific tracking using tags anywhere in your code lines:</p>
-                                <p>• <code>// @best O(1)</code> or <code>// @worst O(n^2)</code></p>
-                                <p>• <code>// @space O(n)</code></p>
-                            </div>
-                        </div>
-                    </div>
+                <div id="terminal-trace-box" style="
+                    background:#06050f;
+                    border:1px solid rgba(255,255,255,0.05);
+                    border-left:3px solid #8B5CF6;
+                    border-radius:8px;
+                    padding:12px;
+                    font-family:var(--font-mono);
+                    font-size:12px;
+                    color:#A5F3FC;
+                    min-height:75px;
+                    line-height:1.5;
+                ">
+                    Simulator initialized. Ready to execute step-by-step operations.
                 </div>
             </div>
 
         </div>
-    </div>
 
-    <!-- App Engine Logic -->
+        <!-- RIGHT VISUAL CANVAS WORKSPACE -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+            
+            <!-- Canvas Frame -->
+            <div class="viewport-canvas">
+                <span class="canvas-badge" id="canvas-mode-indicator">Mode: Time Complexity &middot; Execution Track</span>
+                
+                <div class="array-track" id="canvas-array-track">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Real-Time Metrics Quad -->
+            <div class="metrics-quad">
+                <div class="m-card">
+                    <div class="m-card-label">Current $n$</div>
+                    <div class="m-card-val" id="metric-n">10</div>
+                </div>
+                <div class="m-card">
+                    <div class="m-card-label">Operations Executed</div>
+                    <div class="m-card-val" id="metric-ops" style="color:#FBBF24;">0</div>
+                </div>
+                <div class="m-card">
+                    <div class="m-card-label">Theoretical Bound</div>
+                    <div class="m-card-val" id="metric-bound" style="color:#60A5FA;">O(n)</div>
+                </div>
+                <div class="m-card">
+                    <div class="m-card-label">Execution Ratio</div>
+                    <div class="m-card-val" id="metric-ratio" style="color:#34D399;">0.00x</div>
+                </div>
+            </div>
+
+            <!-- Java Code Trace Frame -->
+            <div class="panel-box">
+                <div class="panel-title">
+                    <span><i class="fa-brands fa-java"></i> Active Java Execution Blueprint</span>
+                    <span style="font-size:11px; color:#A78BFA; font-family:var(--font-mono);">Java 17+</span>
+                </div>
+
+                <div class="code-trace-frame" id="code-snippet-box">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ENGINE SCRIPTS -->
     <script>
-        let currentMetric = 'time';
-        let currentNotationType = 'O'; 
-        let currentCaseScenario = 'average'; 
-        let currentTab = 'presets'; 
-        let chartInstance = null;
+        // Visualizer State
+        let currentMode = 'time'; // 'time' or 'space'
+        let currentAlgo = 'on';
+        let currentSize = 10;
+        let stepDelay = 600;
+        let isRunning = false;
+        let intervalId = null;
 
-        const dataTemplates = {
-            "O(1)": {
-                time: {
-                    title: "Constant Time Baseline",
-                    desc: "Decoupled execution complexity. Operations are identical regardless of input scaling.",
-                    code: "int getElement(int arr[]) {\n    return arr[0]; \n}",
-                    best: (n) => 1, average: (n) => 1, worst: (n) => 1,
-                    notationMap: { best: "1", average: "1", worst: "1" }
-                },
-                space: {
-                    title: "Constant Space Profile",
-                    desc: "Memory stays local within static allocation bounds.",
-                    code: "void swap(int *x, int *y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}",
-                    best: (n) => 1, average: (n) => 1, worst: (n) => 1,
-                    notationMap: { best: "1", average: "1", worst: "1" }
-                }
-            },
-            "O(log n)": {
-                time: {
-                    title: "Logarithmic Search Profile",
-                    desc: "Divide and conquer structures reduce tracking ranges dynamically.",
-                    code: "int binarySearch(int arr[], int n, int target) {\n    int low = 0, high = n - 1;\n    while(low <= high) {\n        int mid = low + (high-low)/2;\n        if(arr[mid] == target) return mid;\n        if(arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}",
-                    best: (n) => 1, average: (n) => Math.log2(n) * 0.7, worst: (n) => Math.log2(n),
-                    notationMap: { best: "1", average: "log n", worst: "log n" }
-                },
-                space: {
-                    title: "Logarithmic Stack Boundaries",
-                    desc: "Tracks depth frames across execution layers.",
-                    code: "void recurse(int n) {\n    if (n <= 1) return;\n    recurse(n / 2);\n}",
-                    best: (n) => 1, average: (n) => Math.log2(n), worst: (n) => Math.log2(n),
-                    notationMap: { best: "1", average: "log n", worst: "log n" }
-                }
-            },
-            "O(n)": {
-                time: {
-                    title: "Linear Complexity Profiling",
-                    desc: "Scanning through dataset items sequentially.",
-                    code: "int linearSearch(int arr[], int n, int target) {\n    for(int i = 0; i < n; i++) {\n        if(arr[i] == target) return i; \n    }\n    return -1;\n}",
-                    best: (n) => 1, average: (n) => n / 2, worst: (n) => n,
-                    notationMap: { best: "1", average: "n", worst: "n" }
-                },
-                space: {
-                    title: "Linear Array Allocations",
-                    desc: "Dynamic layout bounds mapping items directly matching input parameters.",
-                    code: "int* buildArray(int n) {\n    return (int*)malloc(n * sizeof(int));\n}",
-                    best: (n) => n, average: (n) => n, worst: (n) => n,
-                    notationMap: { best: "n", average: "n", worst: "n" }
-                }
-            },
-            "O(n log n)": {
-                time: {
-                    title: "Linearithmic Sort Frameworks",
-                    desc: "Highly scalable sorting execution maps splitting loops against complete data frames.",
-                    code: "void mergeSort(int arr[], int l, int r) {\n    if (l < r) {\n        int m = l + (r-l)/2;\n        mergeSort(arr, l, m);\n        mergeSort(arr, m+1, r);\n        merge(arr, l, m, r);\n    }\n}",
-                    best: (n) => n * Math.log2(n) * 0.8, average: (n) => n * Math.log2(n), worst: (n) => n * Math.log2(n) * 1.2,
-                    notationMap: { best: "n log n", average: "n log n", worst: "n log n" }
-                },
-                space: {
-                    title: "Linearithmic Buffer Context",
-                    desc: "Dynamic workspace allocation layers.",
-                    code: "void contextAlloc(int n) {\n    for(int i = 1; i < n; i *= 2) {\n        int *b = malloc(n * sizeof(int)); free(b);\n    }\n}",
-                    best: (n) => n, average: (n) => n * Math.log2(n), worst: (n) => n * Math.log2(n),
-                    notationMap: { best: "n", average: "n log n", worst: "n log n" }
-                }
-            },
-            "O(n^2)": {
-                time: {
-                    title: "Quadratic Sort Implementations",
-                    desc: "Overlapping iteration matrices tracking array layers inside secondary array loops.",
-                    code: "void bubbleSort(int arr[], int n) {\n    for(int i=0; i<n; i++) {\n        for(int j=0; j<n-i-1; j++) {\n            if(arr[j] > arr[j+1]) swap(&arr[j], &arr[j+1]);\n        }\n    }\n}",
-                    best: (n) => n, average: (n) => (n * n) / 2, worst: (n) => n * n,
-                    notationMap: { best: "n", average: "n^2", worst: "n^2" }
-                },
-                space: {
-                    title: "Quadratic Matrix Allocation",
-                    desc: "Grid mapping layers utilizing full height matching widths completely.",
-                    code: "int** makeGrid(int n) {\n    int** g = malloc(n * sizeof(int*));\n    for(int i=0; i<n; i++) g[i] = malloc(n * sizeof(int));\n    return g;\n}",
-                    best: (n) => n * n, average: (n) => n * n, worst: (n) => n * n,
-                    notationMap: { best: "n^2", average: "n^2", worst: "n^2" }
-                }
-            },
-            "O(2^n)": {
-                time: {
-                    title: "Exponential Processing Cascades",
-                    desc: "Deep branching layers triggering multiplication steps at consecutive tiers.",
-                    code: "int fib(int n) {\n    if (n <= 1) return n;\n    return fib(n-1) + fib(n-2);\n}",
-                    best: (n) => 1, average: (n) => Math.pow(1.618, n), worst: (n) => Math.pow(2, n),
-                    notationMap: { best: "1", average: "1.618^n", worst: "2^n" }
-                },
-                space: {
-                    title: "Exponential Growth Buffers",
-                    desc: "Structural allocation parameters duplicating at every progression layer.",
-                    code: "void structuralExplosion(int n) {\n    int size = pow(2, n);\n    int* cache = malloc(size * sizeof(int));\n}",
-                    best: (n) => n, average: (n) => Math.pow(2, n) * 0.5, worst: (n) => Math.pow(2, n),
-                    notationMap: { best: "n", average: "2^n", worst: "2^n" }
-                }
+        let arrayData = [];
+        let currentStepIndex = 0;
+        let operationsCount = 0;
+        let simulationSteps = [];
+
+        // Java Snippets Mapping
+        const JAVA_SNIPPETS = {
+            on: [
+                "public static int linearSearch(int[] arr, int target) {",
+                "    for (int i = 0; i < arr.length; i++) { // Loop runs n times",
+                "        if (arr[i] == target) {           // Comparison check",
+                "            return i;                     // Match found!",
+                "        }",
+                "    }",
+                "    return -1;                            // Target not found",
+                "}"
+            ],
+            ologn: [
+                "public static int binarySearch(int[] arr, int target) {",
+                "    int low = 0, high = arr.length - 1;",
+                "    while (low <= high) {                 // Cuts search space by half",
+                "        int mid = low + (high - low) / 2;",
+                "        if (arr[mid] == target) return mid; // Found!",
+                "        else if (arr[mid] < target) low = mid + 1;",
+                "        else high = mid - 1;",
+                "    }",
+                "    return -1;",
+                "}"
+            ],
+            on2: [
+                "public static void bubbleSort(int[] arr) {",
+                "    int n = arr.length;",
+                "    for (int i = 0; i < n - 1; i++) {       // Outer loop: n passes",
+                "        for (int j = 0; j < n - i - 1; j++) { // Inner loop: comparisons",
+                "            if (arr[j] > arr[j + 1]) {      // Compare adjacent",
+                "                swap(arr, j, j + 1);        // Swap elements",
+                "            }",
+                "        }",
+                "    }",
+                "}"
+            ],
+            o1: [
+                "public static int getFirstElement(int[] arr) {",
+                "    // Direct RAM index formula: Base + (4 * 0)",
+                "    return arr[0];",
+                "}"
+            ]
+        };
+
+        function setVisualizerMode(mode) {
+            currentMode = mode;
+            document.getElementById('btn-mode-time').classList.toggle('active', mode === 'time');
+            document.getElementById('btn-mode-space').classList.toggle('active', mode === 'space');
+            document.getElementById('canvas-mode-indicator').innerText = mode === 'time' ? 
+                'Mode: Time Complexity · Operations & Steps' : 'Mode: Space Complexity · Memory Allocation & Stack Frames';
+            resetSimulation();
+        }
+
+        function handleAlgorithmSelect() {
+            currentAlgo = document.getElementById('algo-select').value;
+            const targetRow = document.getElementById('row-target-val');
+            targetRow.style.display = (currentAlgo === 'on' || currentAlgo === 'ologn') ? 'flex' : 'none';
+            resetSimulation();
+        }
+
+        function handleSizeSlider(val) {
+            currentSize = parseInt(val);
+            document.getElementById('slider-n-display').innerText = val;
+            document.getElementById('metric-n').innerText = val;
+            resetSimulation();
+        }
+
+        function handleSpeedChange(val) {
+            stepDelay = parseInt(val);
+            document.getElementById('speed-display').innerText = `${stepDelay}ms`;
+            if (isRunning) {
+                pauseSimulation();
+                startSimulation();
             }
-        };
-
-        // Shared baseline mathematical behaviors
-        const coreMathEngines = {
-            "1": (n) => 1,
-            "log n": (n) => Math.log2(n),
-            "n": (n) => n,
-            "n log n": (n) => n * Math.log2(n),
-            "n^2": (n) => n * n,
-            "2^n": (n) => Math.pow(2, n)
-        };
-
-        let sandboxProfile = {
-            time: { best: "1", average: "n", worst: "n" },
-            space: { best: "1", average: "1", worst: "1" }
-        };
-
-        function setMetric(metric) {
-            currentMetric = metric;
-            const isTime = metric === 'time';
-            document.getElementById('btnTime').className = isTime ? "flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" : "flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition";
-            document.getElementById('btnSpace').className = !isTime ? "flex-1 py-2 text-xs font-medium rounded bg-indigo-600 text-white transition" : "flex-1 py-2 text-xs font-medium rounded text-gray-400 hover:text-white transition";
-            updateVisuals();
         }
 
-        function setNotationType(type) {
-            currentNotationType = type;
-            ['O', 'Theta', 'Omega'].forEach(t => {
-                const btn = document.getElementById(`btn${t}`);
-                btn.className = (t === type) ? "flex-1 py-1.5 text-xs font-mono font-bold rounded bg-indigo-600 text-white transition" : "flex-1 py-1.5 text-xs font-mono font-bold rounded text-gray-400 hover:text-white transition";
-            });
-            updateVisuals();
-        }
-
-        function setCaseScenario(csc) {
-            currentCaseScenario = csc;
-            ['best', 'average', 'worst'].forEach(c => {
-                const btn = document.getElementById(`btn${c.charAt(0).toUpperCase() + c.slice(1)}`);
-                btn.className = (c === csc) ? "flex-1 py-1.5 text-xs font-semibold rounded bg-indigo-600 text-white transition" : "flex-1 py-1.5 text-xs font-semibold rounded text-gray-400 hover:text-white transition";
-            });
-            updateVisuals();
-        }
-
-        function switchTab(tab) {
-            currentTab = tab;
-            const isPresets = tab === 'presets';
-
-            document.getElementById('tabPresets').className = isPresets ? "text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" : "text-sm font-bold text-gray-400 hover:text-white pb-2";
-            document.getElementById('tabSandbox').className = !isPresets ? "text-sm font-bold border-b-2 border-indigo-500 pb-2 text-white" : "text-sm font-bold text-gray-400 hover:text-white pb-2";
-
-            if (isPresets) {
-                document.getElementById('presetContainer').classList.remove('hidden');
-                document.getElementById('sandboxContainer').classList.add('hidden');
-                document.getElementById('analyzerBadge').classList.add('hidden');
-                document.getElementById('notationSelect').disabled = false;
+        function generateData() {
+            arrayData = [];
+            if (currentAlgo === 'ologn') {
+                // Sorted array for Binary Search
+                let base = 5 + Math.floor(Math.random() * 5);
+                for (let i = 0; i < currentSize; i++) {
+                    arrayData.push(base);
+                    base += 4 + Math.floor(Math.random() * 6);
+                }
+                // Pick a target likely in the array
+                document.getElementById('target-input-val').value = arrayData[Math.floor(currentSize / 2)];
+            } else if (currentAlgo === 'on2') {
+                // Random unsorted numbers
+                for (let i = 0; i < currentSize; i++) {
+                    arrayData.push(Math.floor(Math.random() * 90) + 10);
+                }
             } else {
-                document.getElementById('presetContainer').classList.add('hidden');
-                document.getElementById('sandboxContainer').classList.remove('hidden');
-                document.getElementById('analyzerBadge').classList.remove('hidden');
-                document.getElementById('notationSelect').disabled = true;
-                if(!document.getElementById('customCodeInput').value) {
-                    document.getElementById('customCodeInput').value = "// Custom Implementation Sandbox\n// Try defining custom scenario profiles directly via tags below:\n// @best O(1)\n// @worst O(log n)\n\nint customSearch(int arr[], int n) {\n    while(n > 1) {\n        n /= 2; // Matches logarithmic scale structural parameters\n    }\n    return -1;\n}";
+                // Standard linear array
+                for (let i = 0; i < currentSize; i++) {
+                    arrayData.push(Math.floor(Math.random() * 90) + 10);
                 }
-                handleSandboxInput();
-            }
-            updateVisuals();
-        }
-
-        function handleNotationChange() {
-            if (currentTab === 'presets') updateVisuals();
-        }
-
-        function handleSandboxInput() {
-            const code = document.getElementById('customCodeInput').value;
-            parseAdvancedSandboxCode(code);
-            updateVisuals();
-        }
-
-        // Deep Analytical Code Parser Engine
-        function parseAdvancedSandboxCode(code) {
-            // 1. Establish structurally derived defaults
-            const totalLoops = (code.match(/for\s*\(|while\s*\(/g) || []).length;
-            let dynamicBase = "1";
-
-            if (/(- 1).*( - 2)|(- 2).*( - 1)|pow\(2/i.test(code)) {
-                dynamicBase = "2^n";
-            } else if (totalLoops >= 2) {
-                dynamicBase = (/\/\s*=\s*2|>>\s*=\s*1|mid\s*=/.test(code)) ? "n log n" : "n^2";
-            } else if (totalLoops === 1) {
-                dynamicBase = (/\/\s*=\s*2|>>\s*=\s*1|mid\s*=/.test(code)) ? "log n" : "n";
-            }
-
-            // Fallback base configuration mapping
-            sandboxProfile.time.best = dynamicBase === "log n" || dynamicBase === "n" || dynamicBase === "n^2" ? "1" : dynamicBase;
-            sandboxProfile.time.average = dynamicBase;
-            sandboxProfile.time.worst = dynamicBase;
-
-            // Space baseline estimation
-            sandboxProfile.space.best = "1";
-            sandboxProfile.space.average = (code.includes("malloc") || code.includes("new int")) ? dynamicBase : "1";
-            sandboxProfile.space.worst = sandboxProfile.space.average;
-
-            // 2. Scan and extract inline user directive tags overrides explicitly
-            const lines = code.split("\n");
-            lines.forEach(line => {
-                if (line.includes("@best")) sandboxProfile.time.best = extractNotationTarget(line);
-                if (line.includes("@worst")) sandboxProfile.time.worst = extractNotationTarget(line);
-                if (line.includes("@average")) sandboxProfile.time.average = extractNotationTarget(line);
-                if (line.includes("@space")) {
-                    const tag = extractNotationTarget(line);
-                    sandboxProfile.space.best = tag; sandboxProfile.space.average = tag; sandboxProfile.space.worst = tag;
+                if (Math.random() > 0.3) {
+                    document.getElementById('target-input-val').value = arrayData[Math.floor(Math.random() * currentSize)];
                 }
+            }
+        }
+
+        function renderCanvas() {
+            const track = document.getElementById('canvas-array-track');
+            track.innerHTML = '';
+
+            arrayData.forEach((val, idx) => {
+                const node = document.createElement('div');
+                node.className = 'elem-node';
+                node.id = `node-${idx}`;
+                node.innerHTML = `
+                    <div class="pointer-marker" id="ptr-${idx}"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="elem-box" id="box-${idx}">${val}</div>
+                    <div class="elem-idx">[${idx}]</div>
+                `;
+                track.appendChild(node);
             });
+
+            renderCodeSnippet(-1);
         }
 
-        function extractNotationTarget(line) {
-            if(line.includes("1")) return "1";
-            if(line.includes("log n")) return "log n";
-            if(line.includes("n log n")) return "n log n";
-            if(line.includes("n^2")) return "n^2";
-            if(line.includes("2^n")) return "2^n";
-            if(line.includes("n")) return "n";
-            return "1";
+        function renderCodeSnippet(highlightLine) {
+            const lines = JAVA_SNIPPETS[currentAlgo] || [];
+            const container = document.getElementById('code-snippet-box');
+            container.innerHTML = lines.map((line, idx) => {
+                const isHi = idx === highlightLine;
+                return `<div class="${isHi ? 'highlight-line' : ''}">${escapeHtml(line)}</div>`;
+            }).join('');
         }
 
-        function formatNotationSymbol(innerComplexity) {
-            let symbol = 'O';
-            if (currentNotationType === 'Theta') symbol = 'Θ';
-            if (currentNotationType === 'Omega') symbol = 'Ω';
-            return `${symbol}(${innerComplexity})`;
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
 
-        function updateVisuals() {
-            const n = parseInt(document.getElementById('nSlider').value);
-            document.getElementById('nValue').innerText = n;
+        function compileSteps() {
+            simulationSteps = [];
+            const target = parseInt(document.getElementById('target-input-val').value) || 42;
 
-            let adaptiveInnerComplexity = "";
-            let mathFunc = null;
+            if (currentAlgo === 'o1') {
+                simulationSteps.push({
+                    type: 'access',
+                    idx: 0,
+                    log: `O(1) Direct RAM Lookup: Array index [0] read instantly via hardware offset formula.`,
+                    line: 2,
+                    ops: 1
+                });
+            } else if (currentAlgo === 'on') {
+                for (let i = 0; i < arrayData.length; i++) {
+                    const isMatch = arrayData[i] === target;
+                    simulationSteps.push({
+                        type: 'check',
+                        idx: i,
+                        log: `Checking index [${i}] (value ${arrayData[i]}) against target ${target}...`,
+                        line: 2,
+                        ops: 1
+                    });
+                    if (isMatch) {
+                        simulationSteps.push({
+                            type: 'match',
+                            idx: i,
+                            log: `Target match hit at index [${i}]! Terminating loop.`,
+                            line: 3,
+                            ops: 0
+                        });
+                        break;
+                    }
+                }
+            } else if (currentAlgo === 'ologn') {
+                let low = 0, high = arrayData.length - 1;
+                while (low <= high) {
+                    let mid = low + Math.floor((high - low) / 2);
+                    simulationSteps.push({
+                        type: 'binary_check',
+                        low, high, mid,
+                        log: `Evaluating range [${low}..${high}]. Midpoint at index [${mid}] = ${arrayData[mid]}.`,
+                        line: 4,
+                        ops: 1
+                    });
 
-            if (currentTab === 'presets') {
-                const baseNotation = document.getElementById('notationSelect').value;
-                const config = dataTemplates[baseNotation][currentMetric];
-                mathFunc = config[currentCaseScenario];
-                adaptiveInnerComplexity = config.notationMap[currentCaseScenario];
-                
-                document.getElementById('exampleTitle').innerText = `${config.title} [${formatNotationSymbol(adaptiveInnerComplexity)}]`;
-                document.getElementById('codeSnippet').innerText = config.code;
-            } else {
-                // Read adaptive components from customized sandbox tracker parameters
-                adaptiveInnerComplexity = sandboxProfile[currentMetric][currentCaseScenario];
-                const rawMath = coreMathEngines[adaptiveInnerComplexity];
-                
-                // Introduce natural operational curve modifiers for real-world simulation profiling
-                if (currentCaseScenario === 'best') mathFunc = (num) => Math.max(1, rawMath(num) * 0.5);
-                else if (currentCaseScenario === 'average') mathFunc = (num) => rawMath(num) * 0.9;
-                else mathFunc = (num) => rawMath(num) * 1.3;
-
-                document.getElementById('exampleTitle').innerText = `Sandbox Context [${formatNotationSymbol(adaptiveInnerComplexity)}]`;
-            }
-
-            document.getElementById('exampleDesc').innerText = `Analyzing running characteristics across [${currentCaseScenario.toUpperCase()} CASE] parameters under ${currentNotationType === 'O' ? 'Upper Bound (O)' : currentNotationType === 'Theta' ? 'Tight Bound (Θ)' : 'Lower Bound (Ω)'} criteria definitions.`;
-
-            const impactVal = Math.round(mathFunc(n));
-            const limitLabel = (adaptiveInnerComplexity === "2^n" && n > 25) ? "Scale Bound Limit" : `~${impactVal.toLocaleString()}`;
-            document.getElementById('metricImpact').innerText = `${currentMetric === 'time' ? 'Operations' : 'Memory units'} encountered: ${limitLabel}`;
-
-            renderGraph(formatNotationSymbol(adaptiveInnerComplexity), n, mathFunc);
-        }
-
-        function renderGraph(activeLabel, activeN, mathFunc) {
-            const ctx = document.getElementById('growthChart').getContext('2d');
-            const labels = [];
-            const dataPoints = [];
-
-            for (let i = 1; i <= activeN; i++) {
-                labels.push(i);
-                dataPoints.push(mathFunc(i));
-            }
-
-            if (chartInstance) chartInstance.destroy();
-
-            let strokeColor = '#818cf8'; 
-            let fillColor = 'rgba(129, 140, 248, 0.1)';
-            if (currentCaseScenario === 'best') { strokeColor = '#34d399'; fillColor = 'rgba(52, 211, 153, 0.1)'; }
-            if (currentCaseScenario === 'worst') { strokeColor = '#f87171'; fillColor = 'rgba(248, 113, 113, 0.1)'; }
-
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: `${activeLabel} [${currentCaseScenario.toUpperCase()} Case]`,
-                        data: dataPoints,
-                        borderColor: strokeColor,
-                        backgroundColor: fillColor,
-                        borderWidth: 2,
-                        fill: true,
-                        pointRadius: labels.length > 30 ? 1 : 3,
-                        tension: 0.15
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#9ca3af' } }
-                    },
-                    scales: {
-                        x: { 
-                            title: { display: true, text: 'Input Units (n)', color: '#6b7280' },
-                            grid: { color: '#374151' }, ticks: { color: '#9ca3af' }
-                        },
-                        y: { 
-                            title: { display: true, text: currentMetric === 'time' ? 'Total Steps Computed' : 'Memory Spaces Occupied', color: '#6b7280' },
-                            grid: { color: '#374151' }, ticks: { color: '#9ca3af' },
-                            beginAtZero: true
+                    if (arrayData[mid] === target) {
+                        simulationSteps.push({
+                            type: 'match',
+                            idx: mid,
+                            log: `Target match found at index [${mid}]! Search space eliminated logarithmically.`,
+                            line: 4,
+                            ops: 0
+                        });
+                        break;
+                    } else if (arrayData[mid] < target) {
+                        simulationSteps.push({
+                            type: 'discard_left',
+                            low, mid,
+                            log: `${arrayData[mid]} < ${target}. Discarding left sub-array [${low}..${mid}].`,
+                            line: 5,
+                            ops: 0
+                        });
+                        low = mid + 1;
+                    } else {
+                        simulationSteps.push({
+                            type: 'discard_right',
+                            mid, high,
+                            log: `${arrayData[mid]} > ${target}. Discarding right sub-array [${mid}..${high}].`,
+                            line: 6,
+                            ops: 0
+                        });
+                        high = mid - 1;
+                    }
+                }
+            } else if (currentAlgo === 'on2') {
+                let arrCopy = [...arrayData];
+                let n = arrCopy.length;
+                for (let i = 0; i < n - 1; i++) {
+                    for (let j = 0; j < n - i - 1; j++) {
+                        simulationSteps.push({
+                            type: 'compare_pair',
+                            j: j, j2: j + 1,
+                            log: `Pass #${i+1}: Comparing arr[${j}] (${arrCopy[j]}) with arr[${j+1}] (${arrCopy[j+1]}).`,
+                            line: 4,
+                            ops: 1
+                        });
+                        if (arrCopy[j] > arrCopy[j + 1]) {
+                            let temp = arrCopy[j];
+                            arrCopy[j] = arrCopy[j + 1];
+                            arrCopy[j + 1] = temp;
+                            simulationSteps.push({
+                                type: 'swap_pair',
+                                j: j, j2: j + 1,
+                                val1: arrCopy[j], val2: arrCopy[j+1],
+                                log: `Swapping ${arrCopy[j+1]} & ${arrCopy[j]} to maintain sorted order.`,
+                                line: 5,
+                                ops: 1
+                            });
                         }
                     }
                 }
-            });
+            }
         }
 
-        window.onload = () => { updateVisuals(); };
+        function executeSingleStep() {
+            if (currentStepIndex >= simulationSteps.length) {
+                pauseSimulation();
+                document.getElementById('live-status-pill').innerText = "Finished";
+                document.getElementById('live-status-pill').style.color = "#34D399";
+                return;
+            }
+
+            const step = simulationSteps[currentStepIndex];
+            operationsCount += step.ops;
+            document.getElementById('metric-ops').innerText = operationsCount;
+            document.getElementById('metric-ratio').innerText = (operationsCount / currentSize).toFixed(2) + "x";
+            document.getElementById('terminal-trace-box').innerText = step.log;
+
+            // Reset visual highlights
+            document.querySelectorAll('.elem-node').forEach(node => {
+                node.classList.remove('active', 'has-pointer');
+            });
+
+            if (step.type === 'check' || step.type === 'access') {
+                const node = document.getElementById(`node-${step.idx}`);
+                if (node) {
+                    node.classList.add('active', 'has-pointer');
+                }
+            } else if (step.type === 'match') {
+                const node = document.getElementById(`node-${step.idx}`);
+                if (node) node.classList.add('found');
+            } else if (step.type === 'binary_check') {
+                const midNode = document.getElementById(`node-${step.mid}`);
+                if (midNode) midNode.classList.add('active', 'has-pointer');
+            } else if (step.type === 'discard_left') {
+                for (let k = step.low; k <= step.mid; k++) {
+                    const node = document.getElementById(`node-${k}`);
+                    if (node) node.classList.add('discarded');
+                }
+            } else if (step.type === 'discard_right') {
+                for (let k = step.mid; k <= step.high; k++) {
+                    const node = document.getElementById(`node-${k}`);
+                    if (node) node.classList.add('discarded');
+                }
+            } else if (step.type === 'compare_pair') {
+                const n1 = document.getElementById(`node-${step.j}`);
+                const n2 = document.getElementById(`node-${step.j2}`);
+                if (n1) n1.classList.add('active');
+                if (n2) n2.classList.add('active');
+            } else if (step.type === 'swap_pair') {
+                const b1 = document.getElementById(`box-${step.j}`);
+                const b2 = document.getElementById(`box-${step.j2}`);
+                if (b1 && b2) {
+                    b1.innerText = step.val1;
+                    b2.innerText = step.val2;
+                }
+            }
+
+            renderCodeSnippet(step.line);
+            currentStepIndex++;
+        }
+
+        function startSimulation() {
+            if (isRunning) return;
+            isRunning = true;
+            document.getElementById('btn-start').disabled = true;
+            document.getElementById('btn-pause').disabled = false;
+            document.getElementById('live-status-pill').innerText = "Running";
+            document.getElementById('live-status-pill').style.color = "#FBBF24";
+
+            intervalId = setInterval(() => {
+                executeSingleStep();
+            }, stepDelay);
+        }
+
+        function pauseSimulation() {
+            isRunning = false;
+            clearInterval(intervalId);
+            document.getElementById('btn-start').disabled = false;
+            document.getElementById('btn-pause').disabled = true;
+            document.getElementById('live-status-pill').innerText = "Paused";
+            document.getElementById('live-status-pill').style.color = "#60A5FA";
+        }
+
+        function stepSimulation() {
+            pauseSimulation();
+            executeSingleStep();
+        }
+
+        function resetSimulation() {
+            pauseSimulation();
+            currentStepIndex = 0;
+            operationsCount = 0;
+            document.getElementById('metric-ops').innerText = "0";
+            document.getElementById('metric-ratio').innerText = "0.00x";
+            document.getElementById('live-status-pill').innerText = "Ready";
+            document.getElementById('live-status-pill').style.color = "#10B981";
+
+            const boundMap = { o1: 'O(1)', ologn: 'O(log n)', on: 'O(n)', on2: 'O(n²)' };
+            document.getElementById('metric-bound').innerText = boundMap[currentAlgo] || 'O(n)';
+
+            generateData();
+            renderCanvas();
+            compileSteps();
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            resetSimulation();
+        });
     </script>
 </body>
 </html>

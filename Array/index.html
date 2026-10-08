@@ -6,6 +6,7 @@
     <title>Mastering Arrays | DSA Learning Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
     <style>
         * {
             margin: 0;
@@ -394,10 +395,14 @@
 <body>
 
     <header>
-        <a href="index.html" class="logo">DSA Learning Platform</a>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
         <div class="nav-links">
-            <a href="index.html" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="collections.html" class="nav-btn"><i class="fa-solid fa-layer-group"></i> Back to Collection</a>
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="visualizer_array1D.html" class="nav-btn"><i class="fa-solid fa-play"></i> 1D Visualizer</a>
+            <a href="array2D_theory.html" class="nav-btn"><i class="fa-solid fa-table-cells"></i> 2D Arrays</a>
+            <button id="array-complete-btn" class="complete-toggle-btn" style="padding:6px 14px; font-size:12px;" onclick="handleArrayCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="array-complete-txt">Mark Complete</span>
+            </button>
         </div>
     </header>
 
@@ -419,6 +424,8 @@
                 <li><a href="#mod-rearrange"><i class="fa-solid fa-arrows-spin"></i> Array Rearrangement</a></li>
                 <li><a href="#mod-interview"><i class="fa-solid fa-briefcase"></i> Common Interview Ops</a></li>
                 <li><a href="#mod-utility-class"><i class="fa-solid fa-code"></i> Arrays Utility Class</a></li>
+                <li><a href="#mod-advanced-concepts"><i class="fa-solid fa-layer-group"></i> Runtime & Jagged Arrays</a></li>
+                <li><a href="#mod-problems"><i class="fa-solid fa-circle-check"></i> Important Problems</a></li>
             </ul>
         </aside>
 
@@ -811,6 +818,142 @@ arr[pos] = value; // Inject</pre>
                 </div>
             </section>
 
+            <!-- ADVANCED CONCEPTS: RUNTIME INPUT, JAGGED ARRAYS, ARRAY VS ARRAYLIST -->
+            <section id="mod-advanced-concepts" class="module-section">
+                <h1>Runtime Input & Jagged Arrays</h1>
+                
+                <div class="card">
+                    <h2><i class="fa-solid fa-keyboard"></i> 1. Runtime Input via Scanner</h2>
+                    <p>When user input determines array contents, we first read the size $n$, allocate memory, and populate values sequentially in an $O(n)$ loop.</p>
+                    <pre><code class="language-java">import java.util.Scanner;
+
+public class ArrayInputExample {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter array length: ");
+        int n = sc.nextInt();
+
+        int[] arr = new int[n]; // Heap allocation of n integers
+        System.out.println("Enter " + n + " elements:");
+        for (int i = 0; i < n; i++) {
+            arr[i] = sc.nextInt();
+        }
+
+        System.out.print("Array stored: ");
+        for (int val : arr) {
+            System.out.print(val + " ");
+        }
+        sc.close();
+    }
+}</code></pre>
+                </div>
+
+                <div class="card">
+                    <h2><i class="fa-solid fa-shapes"></i> 2. Jagged (Ragged) Arrays in Java</h2>
+                    <p>In Java, multidimensional arrays are implemented as <em>arrays of arrays</em>. This means sub-arrays do not need to have equal column lengths! An array where each row has a different number of columns is called a <strong>Jagged Array</strong>.</p>
+                    
+                    <div style="background:#090814; border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:18px; margin-bottom:15px;">
+                        <div style="color:#A78BFA; font-weight:600; font-size:13px; margin-bottom:8px;">Heap Memory Representation:</div>
+                        <p style="font-size:13px; color:#CBD5E1; margin:0;">The base reference <code>int[][] jagged</code> points to an array of object references on the Heap. Each cell contains an independent 32-bit/64-bit reference address pointing to a completely separate 1D array.</p>
+                    </div>
+
+                    <pre><code class="language-java">// Declaring a Jagged Array (row count 3, unspecified columns)
+int[][] jagged = new int[3][];
+
+// Allocating independent sub-arrays with different lengths
+jagged[0] = new int[2]; // Row 0 has 2 elements
+jagged[1] = new int[4]; // Row 1 has 4 elements
+jagged[2] = new int[1]; // Row 2 has 1 element
+
+// Traversing a jagged array safely using row lengths
+for (int r = 0; r < jagged.length; r++) {
+    for (int c = 0; c < jagged[r].length; c++) {
+        jagged[r][c] = (r + 1) * (c + 1);
+        System.out.print(jagged[r][c] + " ");
+    }
+    System.out.println();
+}</code></pre>
+                </div>
+
+                <div class="card">
+                    <h2><i class="fa-solid fa-code-compare"></i> 3. Array vs ArrayList (Java Collections)</h2>
+                    <p>Choosing between static arrays and dynamic <code>ArrayList</code> is a fundamental software design decision.</p>
+
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left; color:#CBD5E1; margin-top:10px;">
+                            <thead>
+                                <tr style="background:#1C1936; color:#C4B5FD; font-weight:600;">
+                                    <th style="padding:12px;">Feature</th>
+                                    <th style="padding:12px;">Standard Array (<code>int[]</code>)</th>
+                                    <th style="padding:12px;">ArrayList (<code>ArrayList&lt;Integer&gt;</code>)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding:12px; font-weight:600; color:#FFF;">Sizing</td>
+                                    <td style="padding:12px; color:#F87171;">Fixed capacity at creation time.</td>
+                                    <td style="padding:12px; color:#34D399;">Dynamic. Auto-resizes by 1.5&times; when full.</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding:12px; font-weight:600; color:#FFF;">Data Types</td>
+                                    <td style="padding:12px; color:#34D399;">Supports both primitives (<code>int</code>, <code>char</code>) and objects.</td>
+                                    <td style="padding:12px; color:#FBBF24;">Only supports objects (requires boxing: <code>Integer</code>).</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding:12px; font-weight:600; color:#FFF;">Memory Overhead</td>
+                                    <td style="padding:12px; color:#34D399;">Minimal: Pure data bytes + standard 16B object header.</td>
+                                    <td style="padding:12px; color:#F87171;">Higher: Wraps internal array + object references + autoboxing.</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding:12px; font-weight:600; color:#FFF;">Access Time</td>
+                                    <td style="padding:12px; font-family:'JetBrains Mono'; color:#34D399;">O(1) direct offset arithmetic</td>
+                                    <td style="padding:12px; font-family:'JetBrains Mono'; color:#34D399;">O(1) method call to .get(i)</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding:12px; font-weight:600; color:#FFF;">Insertion (End)</td>
+                                    <td style="padding:12px; font-family:'JetBrains Mono'; color:#EF4444;">N/A (cannot append past size)</td>
+                                    <td style="padding:12px; font-family:'JetBrains Mono'; color:#34D399;">O(1) amortized</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:12px; font-weight:600; color:#FFF;">Generics</td>
+                                    <td style="padding:12px; color:#F87171;">Covariant & reified (cannot do <code>new T[n]</code>)</td>
+                                    <td style="padding:12px; color:#34D399;">Full Java Generics type safety</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- IMPORTANT PROBLEMS SECTION -->
+            <section id="mod-problems" class="module-section">
+                <h1>Important Coding Problems</h1>
+                <div class="card">
+                    <p style="margin-bottom:20px;">
+                        Handpicked LeetCode problems crucial for mastering Arrays. Solving these covers Two-Pointers, Kadane's Algorithm, Prefix Sums, and in-place transformations.
+                    </p>
+                    <div id="array-problems-grid" class="dsa-problems-grid">
+                        <!-- Populated dynamically by problem-db.js -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TOPIC COMPLETION & NAVIGATION CARD -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered Arrays?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to update your overall roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleArrayCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_array1D.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open 1D Visualizer
+                    </a>
+                </div>
+            </div>
+
             <!-- NEXT PAGE ROUTING SYSTEM CARD BUTTON -->
             <div class="next-page-card">
                 <span style="font-size: 13px; color: #A78BFA; text-transform: uppercase; letter-spacing: 1px;">Finished 1D Storage?</span>
@@ -824,5 +967,44 @@ arr[pos] = value; // Inject</pre>
         </div>
     </main>
 
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function updateArrayButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('array') === 'COMPLETED';
+            const hBtn = document.getElementById('array-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const hTxt = document.getElementById('array-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (hBtn) hBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (hTxt) hTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (hBtn) hBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (hTxt) hTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleArrayCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('array');
+                updateArrayButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('array-problems-grid', 'Arrays');
+            }
+            updateArrayButtonsState();
+        });
+    </script>
 </body>
 </html>

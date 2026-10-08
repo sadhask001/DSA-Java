@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursion Call Stack & Backtracking Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        select, input[type="text"], input[type="number"], input[type="range"] {
+            background: #0D0B1C;
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus, input[type="number"]:focus {
+            border-color: #A78BFA;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            background: #231C4D;
+            color: #E9D5FF;
+            border: 1px solid rgba(167, 139, 250, .2);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn:hover:not(:disabled) {
+            background: #3B2E7E;
+            color: white;
+            border-color: #A78BFA;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            border: none;
+        }
+        .btn.primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        }
+
+        .btn.accent {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
+            border: 1px solid rgba(52, 211, 153, 0.4);
+        }
+
+        /* Dual Viewport Area */
+        .dual-viewport {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 16px;
+            min-height: 520px;
+        }
+
+        /* Call Stack Container */
+        .callstack-container {
+            background: #0B1120;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            padding: 16px;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 8px;
+            overflow-y: auto;
+            max-height: 520px;
+        }
+
+        .stack-frame {
+            background: rgba(30, 27, 55, 0.8);
+            border: 1px solid #8B5CF6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: slideUp 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stack-frame.active {
+            border-color: #FBBF24;
+            background: rgba(245, 158, 11, 0.15);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .stack-frame.returning {
+            border-color: #34D399;
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        /* Tree & Board Canvas */
+        .tree-canvas-container {
+            background: #0B1120;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            position: relative;
+        }
+
+        /* N-Queens Chessboard */
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            grid-template-rows: repeat(4, 60px);
+            border: 3px solid #7C3AED;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .chess-cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            transition: all 0.2s;
+        }
+        .chess-cell.light { background: #1E1B37; }
+        .chess-cell.dark { background: #131126; }
+        .chess-cell.conflict { background: rgba(244, 63, 94, 0.35) !important; }
+        .chess-cell.placed { background: rgba(16, 185, 129, 0.3) !important; color: #34D399; }
+
+        .log-box {
+            background: #090814;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #A78BFA;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            line-height: 1.5;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(15px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 1024px) {
+            .workspace { grid-template-columns: 1fr; }
+            .dual-viewport { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> Recursion Notes</a>
+            <a href="../Searching/index.html" class="back-btn"><i class="fa-solid fa-magnifying-glass"></i> Searching</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Algorithm Selector</span>
+                    <i class="fa-solid fa-tree"></i>
+                </div>
+
+                <div class="form-group">
+                    <label>Simulation Mode</label>
+                    <select id="sim-mode" onchange="handleModeChange()">
+                        <option value="FIBONACCI" selected>Fibonacci Stack Tree — fib(n)</option>
+                        <option value="FACTORIAL">Factorial Call Stack — fact(n)</option>
+                        <option value="SUBSETS">Subsets (Include / Exclude Tree)</option>
+                        <option value="NQUEENS">N-Queens Backtracking (4x4 Board)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="input-group">
+                    <label>Parameter n (Max 5 for Tree Clarity)</label>
+                    <input type="number" id="param-n" min="2" max="5" value="4">
+                </div>
+
+                <div class="btn-grid">
+                    <button class="btn primary" id="play-pause-btn" onclick="togglePlayPause()">
+                        <i class="fa-solid fa-play" id="play-icon"></i> <span id="play-text">Simulate</span>
+                    </button>
+                    <button class="btn" id="step-btn" onclick="stepForward()">
+                        <i class="fa-solid fa-forward-step"></i> Step
+                    </button>
+                    <button class="btn" onclick="resetSim()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button class="btn accent" onclick="triggerPreset()">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Preset
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Speed & Diagnostics</span>
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between;">
+                        <label>Frame Delay</label>
+                        <span id="speed-display" style="font-size:12px; color:#A78BFA; font-family:'JetBrains Mono';">500ms</span>
+                    </div>
+                    <input type="range" id="speed-slider" min="100" max="1200" value="500" oninput="handleSpeedChange()">
+                </div>
+
+                <div style="font-size:12px; color:#94A3B8; line-height:1.6; margin-top:4px;">
+                    <strong style="color:#C4B5FD;">Call Stack:</strong> Watch frames push during recursive descent and pop during base case return unwind.
+                </div>
+            </div>
+
+            <!-- METRICS PANEL -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Call Stack Metrics</span>
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; text-align:center;">
+                    <div style="background:#090814; padding:10px; border-radius:8px;">
+                        <div style="font-size:10px; color:#94A3B8;">CALL COUNT</div>
+                        <div id="metric-calls" style="font-family:'JetBrains Mono'; font-size:18px; font-weight:700; color:#FBBF24;">0</div>
+                    </div>
+                    <div style="background:#090814; padding:10px; border-radius:8px;">
+                        <div style="font-size:10px; color:#94A3B8;">MAX DEPTH</div>
+                        <div id="metric-depth" style="font-family:'JetBrains Mono'; font-size:18px; font-weight:700; color:#38BDF8;">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT DUAL VIEWPORT -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="dual-viewport">
+                <!-- LEFT SUB-COLUMN: THE CALL STACK -->
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:0 4px;">
+                        <span style="font-size:12px; font-weight:600; color:#A78BFA; text-transform:uppercase;">
+                            <i class="fa-solid fa-layer-group"></i> JVM Call Stack (LIFO)
+                        </span>
+                        <span id="stack-depth-label" style="font-size:11px; color:#94A3B8; font-family:'JetBrains Mono';">Depth: 0</span>
+                    </div>
+                    <div class="callstack-container" id="stack-viewport">
+                        <div style="color:#64748B; font-size:12px; text-align:center; padding:20px; font-style:italic;">
+                            Stack is currently empty.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SUB-COLUMN: TREE / CHESSBOARD CANVAS -->
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:0 4px;">
+                        <span style="font-size:12px; font-weight:600; color:#A78BFA; text-transform:uppercase;" id="canvas-header">
+                            <i class="fa-solid fa-diagram-project"></i> State Space Canvas
+                        </span>
+                    </div>
+                    <div class="tree-canvas-container" id="tree-canvas">
+                        <!-- SVG Tree or 4x4 Chessboard -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- LIVE STEP LOG -->
+            <div class="log-box" id="step-log">
+                Select a simulation mode and click "Simulate" or "Step" to watch the JVM call stack in action.
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        let animationSteps = [];
+        let currentStepIndex = 0;
+        let isRunning = false;
+        let animationTimer = null;
+        let delayMs = 500;
+        let totalCalls = 0;
+        let maxDepth = 0;
+
+        function init() {
+            renderInitialCanvas();
+        }
+
+        function handleModeChange() {
+            stopAnimation();
+            resetSim();
+            renderInitialCanvas();
+        }
+
+        function handleSpeedChange() {
+            const val = parseInt(document.getElementById('speed-slider').value);
+            delayMs = val;
+            document.getElementById('speed-display').innerText = val + 'ms';
+        }
+
+        function triggerPreset() {
+            stopAnimation();
+            const mode = document.getElementById('sim-mode').value;
+            if (mode === 'FIBONACCI') document.getElementById('param-n').value = 4;
+            else if (mode === 'FACTORIAL') document.getElementById('param-n').value = 4;
+            resetSim();
+        }
+
+        function resetSim() {
+            stopAnimation();
+            currentStepIndex = 0;
+            animationSteps = [];
+            totalCalls = 0;
+            maxDepth = 0;
+            document.getElementById('metric-calls').innerText = "0";
+            document.getElementById('metric-depth').innerText = "0";
+            document.getElementById('stack-depth-label').innerText = "Depth: 0";
+            document.getElementById('stack-viewport').innerHTML = `<div style="color:#64748B; font-size:12px; text-align:center; padding:20px; font-style:italic;">Stack is currently empty.</div>`;
+            renderInitialCanvas();
+            document.getElementById('step-log').innerText = "Simulation reset.";
+        }
+
+        function renderInitialCanvas() {
+            const mode = document.getElementById('sim-mode').value;
+            const canvas = document.getElementById('tree-canvas');
+            if (mode === 'NQUEENS') {
+                document.getElementById('canvas-header').innerHTML = `<i class="fa-solid fa-chess-board"></i> 4x4 N-Queens Chessboard`;
+                let boardHtml = `<div class="chessboard">`;
+                for (let r = 0; r < 4; r++) {
+                    for (let c = 0; c < 4; c++) {
+                        const isLight = (r + c) % 2 === 0;
+                        boardHtml += `<div class="chess-cell ${isLight ? 'light' : 'dark'}" id="cell-${r}-${c}"></div>`;
+                    }
+                }
+                boardHtml += `</div>`;
+                canvas.innerHTML = boardHtml;
+            } else {
+                document.getElementById('canvas-header').innerHTML = `<i class="fa-solid fa-diagram-project"></i> Recursion State-Space Tree`;
+                canvas.innerHTML = `<div style="color:#94A3B8; font-size:13px; text-align:center;"><i class="fa-solid fa-circle-nodes" style="font-size:32px; color:#A78BFA; margin-bottom:10px; display:block;"></i>Click "Simulate" to trace state space tree traversal.</div>`;
+            }
+        }
+
+        // ================= STEP GENERATORS =================
+        function generateSteps() {
+            const mode = document.getElementById('sim-mode').value;
+            const n = Math.min(5, Math.max(2, parseInt(document.getElementById('param-n').value) || 4));
+            animationSteps = [];
+
+            if (mode === 'FACTORIAL') buildFactorialSteps(n);
+            else if (mode === 'FIBONACCI') buildFibonacciSteps(n);
+            else if (mode === 'SUBSETS') buildSubsetsSteps();
+            else if (mode === 'NQUEENS') buildNQueensSteps();
+        }
+
+        function buildFactorialSteps(n) {
+            let stack = [];
+            function fact(val) {
+                const frame = { func: `fact(${val})`, val, status: 'CALL' };
+                stack.push(frame);
+                animationSteps.push({
+                    stack: JSON.parse(JSON.stringify(stack)),
+                    log: `Pushing stack frame: fact(${val}). Parameter n = ${val}.`
+                });
+
+                if (val <= 1) {
+                    stack[stack.length - 1].returnVal = 1;
+                    stack[stack.length - 1].status = 'RETURN';
+                    animationSteps.push({
+                        stack: JSON.parse(JSON.stringify(stack)),
+                        log: `Base case reached! fact(${val}) returns 1 immediately.`
+                    });
+                    const res = 1;
+                    stack.pop();
+                    return res;
+                }
+
+                const sub = fact(val - 1);
+                const res = val * sub;
+                stack[stack.length - 1].returnVal = res;
+                stack[stack.length - 1].status = 'RETURN';
+                animationSteps.push({
+                    stack: JSON.parse(JSON.stringify(stack)),
+                    log: `Unwinding: fact(${val}) computes ${val} * fact(${val - 1}) = ${res}.`
+                });
+                stack.pop();
+                return res;
+            }
+            fact(n);
+        }
+
+        function buildFibonacciSteps(n) {
+            let stack = [];
+            function fib(val) {
+                const frame = { func: `fib(${val})`, val, status: 'CALL' };
+                stack.push(frame);
+                animationSteps.push({
+                    stack: JSON.parse(JSON.stringify(stack)),
+                    log: `Pushing frame: fib(${val}).`
+                });
+
+                if (val <= 1) {
+                    stack[stack.length - 1].returnVal = val;
+                    stack[stack.length - 1].status = 'RETURN';
+                    animationSteps.push({
+                        stack: JSON.parse(JSON.stringify(stack)),
+                        log: `Base case: fib(${val}) returns ${val}.`
+                    });
+                    stack.pop();
+                    return val;
+                }
+
+                const a = fib(val - 1);
+                const b = fib(val - 2);
+                const res = a + b;
+                stack[stack.length - 1].returnVal = res;
+                stack[stack.length - 1].status = 'RETURN';
+                animationSteps.push({
+                    stack: JSON.parse(JSON.stringify(stack)),
+                    log: `Unwinding: fib(${val}) = fib(${val-1}) [${a}] + fib(${val-2}) [${b}] = ${res}.`
+                });
+                stack.pop();
+                return res;
+            }
+            fib(n);
+        }
+
+        function buildSubsetsSteps() {
+            let stack = [];
+            const nums = [1, 2, 3];
+            let current = [];
+
+            function backtrack(index) {
+                stack.push({ func: `subsets(idx=${index})`, current: `[${current.join(',')}]`, status: 'CALL' });
+                animationSteps.push({
+                    stack: JSON.parse(JSON.stringify(stack)),
+                    log: `Exploring index ${index}. Current subset: [${current.join(', ')}].`
+                });
+
+                if (index === nums.length) {
+                    animationSteps.push({
+                        stack: JSON.parse(JSON.stringify(stack)),
+                        log: `Leaf state reached: Recorded subset {${current.join(', ')}}!`
+                    });
+                    stack.pop();
+                    return;
+                }
+
+                // Choose Include
+                current.push(nums[index]);
+                animationSteps.push({
+                    stack: JSON.parse(JSON.stringify(stack)),
+                    log: `Choose: INCLUDE element ${nums[index]}.`
+                });
+                backtrack(index + 1);
+
+                // Backtrack (Unchoose)
+                current.pop();
+                animationSteps.push({
+                    stack: JSON.parse(JSON.stringify(stack)),
+                    log: `Backtrack: EXCLUDE element ${nums[index]}.`
+                });
+                backtrack(index + 1);
+
+                stack.pop();
+            }
+            backtrack(0);
+        }
+
+        function buildNQueensSteps() {
+            let board = [-1, -1, -1, -1];
+            let stack = [];
+
+            function isSafe(row, col) {
+                for (let r = 0; r < row; r++) {
+                    const c = board[r];
+                    if (c === col || Math.abs(r - row) === Math.abs(c - col)) return false;
+                }
+                return true;
+            }
+
+            function solve(row) {
+                stack.push({ func: `placeQueen(row=${row})`, status: 'CALL' });
+                animationSteps.push({
+                    stack: JSON.parse(JSON.stringify(stack)),
+                    board: [...board],
+                    log: `Starting search for row ${row}.`
+                });
+
+                if (row === 4) {
+                    animationSteps.push({
+                        stack: JSON.parse(JSON.stringify(stack)),
+                        board: [...board],
+                        status: 'FOUND',
+                        log: `SUCCESS! All 4 queens legally positioned without mutual conflict!`
+                    });
+                    stack.pop();
+                    return true;
+                }
+
+                for (let col = 0; col < 4; col++) {
+                    board[row] = col;
+                    const safe = isSafe(row, col);
+
+                    animationSteps.push({
+                        stack: JSON.parse(JSON.stringify(stack)),
+                        board: [...board],
+                        conflict: safe ? null : [row, col],
+                        log: safe ? `Placed Queen at (${row}, ${col}). Path is legal.` : `Conflict detected at (${row}, ${col})! PRUNING branch.`
+                    });
+
+                    if (safe) {
+                        if (solve(row + 1)) return true;
+                    }
+
+                    // Backtrack
+                    board[row] = -1;
+                    animationSteps.push({
+                        stack: JSON.parse(JSON.stringify(stack)),
+                        board: [...board],
+                        log: `Backtracking from cell (${row}, ${col}). Removing queen.`
+                    });
+                }
+
+                stack.pop();
+                return false;
+            }
+
+            solve(0);
+        }
+
+        // ================= PLAYBACK CONTROLLER =================
+        function togglePlayPause() {
+            if (isRunning) stopAnimation();
+            else startAnimation();
+        }
+
+        function startAnimation() {
+            if (animationSteps.length === 0 || currentStepIndex >= animationSteps.length) {
+                generateSteps();
+                currentStepIndex = 0;
+            }
+            isRunning = true;
+            document.getElementById('play-icon').className = "fa-solid fa-pause";
+            document.getElementById('play-text').innerText = "Pause";
+            playNextStep();
+        }
+
+        function stopAnimation() {
+            isRunning = false;
+            if (animationTimer) clearTimeout(animationTimer);
+            document.getElementById('play-icon').className = "fa-solid fa-play";
+            document.getElementById('play-text').innerText = "Resume";
+        }
+
+        function playNextStep() {
+            if (!isRunning) return;
+            if (currentStepIndex >= animationSteps.length) {
+                isRunning = false;
+                document.getElementById('play-icon').className = "fa-solid fa-play";
+                document.getElementById('play-text').innerText = "Simulate";
+                return;
+            }
+
+            executeStep(currentStepIndex);
+            currentStepIndex++;
+            animationTimer = setTimeout(playNextStep, delayMs);
+        }
+
+        function stepForward() {
+            stopAnimation();
+            if (animationSteps.length === 0 || currentStepIndex >= animationSteps.length) {
+                generateSteps();
+                currentStepIndex = 0;
+            }
+            if (currentStepIndex < animationSteps.length) {
+                executeStep(currentStepIndex);
+                currentStepIndex++;
+            }
+        }
+
+        function executeStep(idx) {
+            const step = animationSteps[idx];
+            totalCalls++;
+            const currentDepth = step.stack ? step.stack.length : 0;
+            maxDepth = Math.max(maxDepth, currentDepth);
+
+            document.getElementById('metric-calls').innerText = totalCalls;
+            document.getElementById('metric-depth').innerText = maxDepth;
+            document.getElementById('stack-depth-label').innerText = `Depth: ${currentDepth}`;
+
+            // Render Stack Frames
+            renderStack(step.stack);
+
+            // Render Board if N-Queens
+            if (step.board) renderBoard(step.board, step.conflict);
+
+            if (step.log) document.getElementById('step-log').innerText = step.log;
+        }
+
+        function renderStack(stack) {
+            const viewport = document.getElementById('stack-viewport');
+            if (!stack || stack.length === 0) {
+                viewport.innerHTML = `<div style="color:#64748B; font-size:12px; text-align:center; padding:20px; font-style:italic;">Stack is currently empty.</div>`;
+                return;
+            }
+
+            viewport.innerHTML = stack.map((frame, i) => {
+                const isTop = i === stack.length - 1;
+                const isReturning = frame.status === 'RETURN';
+                return `
+                    <div class="stack-frame ${isTop ? 'active' : ''} ${isReturning ? 'returning' : ''}">
+                        <div style="display:flex; justify-content:space-between;">
+                            <strong style="color:#E2E8F0;">${frame.func}</strong>
+                            <span style="color:#A78BFA; font-size:10px;">Frame #${i}</span>
+                        </div>
+                        ${frame.current ? `<div style="color:#94A3B8; font-size:11px;">set = ${frame.current}</div>` : ''}
+                        ${frame.returnVal !== undefined ? `<div style="color:#34D399; font-size:11px;">return \u2192 ${frame.returnVal}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderBoard(board, conflict) {
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    const cell = document.getElementById(`cell-${r}-${c}`);
+                    if (!cell) continue;
+                    cell.classList.remove('placed', 'conflict');
+                    cell.innerHTML = '';
+
+                    if (board[r] === c) {
+                        cell.classList.add('placed');
+                        cell.innerHTML = '<i class="fa-solid fa-chess-queen"></i>';
+                    }
+
+                    if (conflict && conflict[0] === r && conflict[1] === c) {
+                        cell.classList.add('conflict');
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

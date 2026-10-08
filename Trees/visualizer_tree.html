@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Tree & BST Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        /* Ambient Glow Backgrounds */
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        /* Workspace Grid */
+        .workspace {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .form-group label { font-size: 11px; color: #94A3B8; }
+
+        input, select {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+        input:focus { border-color: #A78BFA; }
+
+        button {
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: .2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(167, 139, 250, .2); }
+        button:disabled { background: #2B214E !important; color: #64748B !important; cursor: not-allowed; transform: none !important; }
+
+        /* Canvas Viewport */
+        .visualization-viewport {
+            background: #0B1120;
+            border-radius: 16px;
+            min-height: 520px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            position: relative;
+            overflow: auto;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #tree-svg {
+            width: 100%;
+            height: 500px;
+            min-width: 650px;
+        }
+
+        .tree-node-circle {
+            fill: #1E1B37;
+            stroke: #8B5CF6;
+            stroke-width: 2.5;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .tree-node-circle.active {
+            fill: #7C3AED;
+            stroke: #FBBF24;
+            stroke-width: 4;
+            filter: drop-shadow(0 0 10px #FBBF24);
+        }
+        .tree-node-circle.found {
+            fill: #065F46;
+            stroke: #34D399;
+            stroke-width: 4;
+            filter: drop-shadow(0 0 12px #34D399);
+        }
+        .tree-node-circle.deleting {
+            fill: #7F1D1D;
+            stroke: #F87171;
+            stroke-width: 4;
+            filter: drop-shadow(0 0 12px #F87171);
+        }
+
+        .tree-node-text {
+            fill: #FFF;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+
+        .tree-edge-line {
+            stroke: #4C3D77;
+            stroke-width: 2;
+            transition: stroke 0.3s;
+        }
+        .tree-edge-line.active {
+            stroke: #FBBF24;
+            stroke-width: 3.5;
+        }
+
+        .tree-metrics-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background: #090814;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            text-align: center;
+        }
+        .metric-item-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #A78BFA;
+        }
+        .metric-item-lbl {
+            font-size: 10px;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .traversal-strip {
+            background: #090814;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #34D399;
+            border-left: 3px solid #10B981;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+        }
+
+        @media(max-width: 1050px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> Tree Notes</a>
+            <a href="../Collection/index.html" class="back-btn"><i class="fa-solid fa-layer-group"></i> Collections</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROLLER PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- Controls Panel -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>BST Operations Engine</span>
+                    <span style="font-size:10px; color:#34D399;"><i class="fa-solid fa-circle" style="font-size:8px;"></i> Live State</span>
+                </div>
+
+                <!-- Input Row -->
+                <div class="controls-row">
+                    <div class="form-group" style="grid-column:span 2;">
+                        <label>Node Key Value</label>
+                        <input type="number" id="node-val-input" placeholder="e.g. 45" value="45">
+                    </div>
+                </div>
+
+                <div class="controls-row">
+                    <button onclick="insertNodeAction()"><i class="fa-solid fa-plus"></i> Insert(val)</button>
+                    <button onclick="searchNodeAction()" style="background:#1E1B37; border:1px solid #4B5563;"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                    <button onclick="deleteNodeAction()" style="background:linear-gradient(135deg,#EF4444,#DC2626);"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+
+                <!-- Traversals Row -->
+                <div class="panel-heading" style="margin-top:5px;"><span>Tree Traversals</span></div>
+                <div class="controls-row">
+                    <button onclick="runTraversal('inorder')" style="background:linear-gradient(135deg,#10B981,#059669);">Inorder (L-R-R)</button>
+                    <button onclick="runTraversal('preorder')" style="background:#131022; border:1px solid rgba(255,255,255,0.1);">Preorder</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="runTraversal('postorder')" style="background:#131022; border:1px solid rgba(255,255,255,0.1);">Postorder</button>
+                    <button onclick="runTraversal('levelorder')" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);">Level-Order (BFS)</button>
+                </div>
+
+                <!-- Presets Row -->
+                <div class="panel-heading" style="margin-top:5px;"><span>Presets & Reset</span></div>
+                <div class="controls-row">
+                    <button onclick="loadPresetTree('balanced')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);">Balanced BST</button>
+                    <button onclick="loadPresetTree('skewed')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);">Skewed O(n)</button>
+                    <button onclick="clearTreeWorkspace()" style="background:#374151;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Playback & Speed Controls -->
+            <div class="panel">
+                <div class="panel-heading"><span>Playback Controller</span></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                    <button id="btn-pause-resume" onclick="togglePauseResume()" style="flex:1; background:#1E1B37; border:1px solid #4B5563;">
+                        <i class="fa-solid fa-pause"></i> Pause
+                    </button>
+                    <button id="btn-step-forward" onclick="stepForwardAction()" style="flex:1; background:#1E1B37; border:1px solid #4B5563;">
+                        <i class="fa-solid fa-forward-step"></i> Step
+                    </button>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
+                    <label style="font-size:11px; color:#94A3B8;">Speed:</label>
+                    <input type="range" id="speed-slider" min="200" max="1500" value="600" style="flex:1; accent-color:#8B5CF6;" onchange="updateSpeed(this.value)">
+                    <span id="speed-lbl" style="font-size:11px; font-family:'JetBrains Mono'; color:#A78BFA;">600ms</span>
+                </div>
+            </div>
+
+            <!-- Real-time Metrics Dashboard -->
+            <div class="tree-metrics-bar">
+                <div>
+                    <div class="metric-item-num" id="metric-nodes">0</div>
+                    <div class="metric-item-lbl">Total Nodes</div>
+                </div>
+                <div>
+                    <div class="metric-item-num" id="metric-height">0</div>
+                    <div class="metric-item-lbl">Tree Height</div>
+                </div>
+                <div>
+                    <div class="metric-item-num" id="metric-balanced">Yes</div>
+                    <div class="metric-item-lbl">Balanced</div>
+                </div>
+                <div>
+                    <div class="metric-item-num" id="metric-depth">0</div>
+                    <div class="metric-item-lbl">Max Depth</div>
+                </div>
+            </div>
+
+            <!-- Execution Step Tracker -->
+            <div class="panel">
+                <div class="panel-heading"><span>Code Execution Line Logic</span></div>
+                <div class="code-window" style="margin:0;">
+                    <div class="code-window-header">
+                        <span class="code-window-title"><i class="fa-brands fa-java"></i> Java BST Logic</span>
+                    </div>
+                    <pre><code id="java-trace-code">// Ready for instruction...
+Node insert(Node root, int val) {
+    if (root == null) return new Node(val);
+    if (val < root.val) root.left = insert(root.left, val);
+    else root.right = insert(root.right, val);
+    return root;
+}</code></pre>
+                </div>
+                <div id="step-log-desc" style="font-size:12px; color:#CBD5E1; line-height:1.5; background:#090814; padding:10px; border-radius:6px; border-left:3px solid #8B5CF6;">
+                    Tree workspace initialized. Insert values or trigger traversals to begin.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT VIEWPORT: INTERACTIVE TREE SVG CANVAS -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="panel" style="flex:1;">
+                <div class="panel-heading">
+                    <span>Hierarchical Tree Visualization Canvas</span>
+                    <span style="font-size:11px; color:#94A3B8;">Left &lt; Root &lt; Right</span>
+                </div>
+                
+                <div class="traversal-strip" id="traversal-output-strip">
+                    Traversal Sequence: <span style="color:#FFF; margin-left:8px;">[None executed yet]</span>
+                </div>
+
+                <div class="visualization-viewport">
+                    <svg id="tree-svg">
+                        <!-- Dynamic SVG Tree rendered here -->
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        // Tree Node Definition
+        class TreeNode {
+            constructor(val) {
+                this.val = val;
+                this.left = null;
+                this.right = null;
+                this.x = 0;
+                this.y = 0;
+            }
+        }
+
+        let root = null;
+        let animationSteps = [];
+        let currentStepIndex = 0;
+        let isPaused = false;
+        let animationTimer = null;
+        let stepDelay = 600;
+
+        function updateSpeed(val) {
+            stepDelay = parseInt(val);
+            document.getElementById('speed-lbl').innerText = `${stepDelay}ms`;
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Calculate (x, y) coordinates for SVG rendering
+        function layoutTree(node, depth = 0, left = 0, right = 800) {
+            if (!node) return;
+            node.y = 50 + depth * 75;
+            node.x = (left + right) / 2;
+            layoutTree(node.left, depth + 1, left, node.x);
+            layoutTree(node.right, depth + 1, node.x, right);
+        }
+
+        function getTreeHeight(node) {
+            if (!node) return 0;
+            return 1 + Math.max(getTreeHeight(node.left), getTreeHeight(node.right));
+        }
+
+        function countNodes(node) {
+            if (!node) return 0;
+            return 1 + countNodes(node.left) + countNodes(node.right);
+        }
+
+        function isTreeBalanced(node) {
+            if (!node) return true;
+            const lh = getTreeHeight(node.left);
+            const rh = getTreeHeight(node.right);
+            return Math.abs(lh - rh) <= 1 && isTreeBalanced(node.left) && isTreeBalanced(node.right);
+        }
+
+        function renderTreeSVG(highlightNodeVal = null, stateClass = 'active') {
+            const svg = document.getElementById('tree-svg');
+            const width = Math.max(800, countNodes(root) * 60);
+            svg.setAttribute('viewBox', `0 0 ${width} 480`);
+            svg.innerHTML = '';
+
+            if (!root) {
+                svg.innerHTML = `<text x="${width/2}" y="240" fill="#64748B" font-size="14" text-anchor="middle" font-family="Poppins">Tree is empty. Insert a value to start.</text>`;
+                updateMetrics();
+                return;
+            }
+
+            layoutTree(root, 0, 40, width - 40);
+
+            // Draw Edges First
+            function drawEdges(node) {
+                if (!node) return;
+                if (node.left) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', node.x);
+                    line.setAttribute('y1', node.y);
+                    line.setAttribute('x2', node.left.x);
+                    line.setAttribute('y2', node.left.y);
+                    line.setAttribute('class', 'tree-edge-line');
+                    svg.appendChild(line);
+                    drawEdges(node.left);
+                }
+                if (node.right) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', node.x);
+                    line.setAttribute('y1', node.y);
+                    line.setAttribute('x2', node.right.x);
+                    line.setAttribute('y2', node.right.y);
+                    line.setAttribute('class', 'tree-edge-line');
+                    svg.appendChild(line);
+                    drawEdges(node.right);
+                }
+            }
+            drawEdges(root);
+
+            // Draw Nodes
+            function drawNodes(node) {
+                if (!node) return;
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', node.x);
+                circle.setAttribute('cy', node.y);
+                circle.setAttribute('r', 20);
+                let circleClass = 'tree-node-circle';
+                if (node.val === highlightNodeVal) {
+                    circleClass += ` ${stateClass}`;
+                }
+                circle.setAttribute('class', circleClass);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', node.x);
+                text.setAttribute('y', node.y);
+                text.setAttribute('class', 'tree-node-text');
+                text.textContent = node.val;
+
+                g.appendChild(circle);
+                g.appendChild(text);
+                svg.appendChild(g);
+
+                drawNodes(node.left);
+                drawNodes(node.right);
+            }
+            drawNodes(root);
+            updateMetrics();
+        }
+
+        function updateMetrics() {
+            const nodes = countNodes(root);
+            const height = getTreeHeight(root);
+            const balanced = isTreeBalanced(root);
+            document.getElementById('metric-nodes').innerText = nodes;
+            document.getElementById('metric-height').innerText = height;
+            document.getElementById('metric-depth').innerText = height > 0 ? height - 1 : 0;
+            document.getElementById('metric-balanced').innerText = balanced ? "Yes" : "No";
+            document.getElementById('metric-balanced').style.color = balanced ? "#34D399" : "#F87171";
+        }
+
+        // BST Insertion
+        function insertBST(node, val) {
+            if (!node) return new TreeNode(val);
+            if (val < node.val) node.left = insertBST(node.left, val);
+            else if (val > node.val) node.right = insertBST(node.right, val);
+            return node;
+        }
+
+        async function insertNodeAction() {
+            const input = document.getElementById('node-val-input');
+            const val = parseInt(input.value);
+            if (isNaN(val)) return;
+
+            document.getElementById('step-log-desc').innerText = `Inserting key ${val} into BST...`;
+            document.getElementById('java-trace-code').innerText = `if (val < root.val) root.left = insert(root.left, ${val});\nelse root.right = insert(root.right, ${val});`;
+
+            // Step through path
+            let curr = root;
+            while (curr) {
+                renderTreeSVG(curr.val, 'active');
+                await delay(stepDelay);
+                if (val === curr.val) {
+                    document.getElementById('step-log-desc').innerText = `Value ${val} already exists in BST (no duplicate insertion).`;
+                    renderTreeSVG();
+                    return;
+                }
+                curr = val < curr.val ? curr.left : curr.right;
+            }
+
+            root = insertBST(root, val);
+            renderTreeSVG(val, 'found');
+            document.getElementById('step-log-desc').innerText = `Node ${val} successfully placed in tree hierarchy.`;
+            await delay(stepDelay);
+            renderTreeSVG();
+            input.value = Math.floor(Math.random() * 80) + 10;
+        }
+
+        // BST Search
+        async function searchNodeAction() {
+            const input = document.getElementById('node-val-input');
+            const val = parseInt(input.value);
+            if (isNaN(val) || !root) return;
+
+            document.getElementById('step-log-desc').innerText = `Searching for key ${val}...`;
+            let curr = root;
+            let found = false;
+
+            while (curr) {
+                renderTreeSVG(curr.val, 'active');
+                document.getElementById('java-trace-code').innerText = `if (val == ${curr.val}) return root;\nif (${val} < ${curr.val}) search(left);\nelse search(right);`;
+                await delay(stepDelay);
+
+                if (curr.val === val) {
+                    renderTreeSVG(curr.val, 'found');
+                    document.getElementById('step-log-desc').innerText = `Key ${val} found in BST!`;
+                    found = true;
+                    break;
+                }
+                curr = val < curr.val ? curr.left : curr.right;
+            }
+
+            if (!found) {
+                document.getElementById('step-log-desc').innerText = `Key ${val} does not exist in BST.`;
+                renderTreeSVG();
+            }
+        }
+
+        // BST Deletion
+        function findMin(node) {
+            while (node.left) node = node.left;
+            return node;
+        }
+
+        function deleteBST(node, val) {
+            if (!node) return null;
+            if (val < node.val) node.left = deleteBST(node.left, val);
+            else if (val > node.val) node.right = deleteBST(node.right, val);
+            else {
+                // Node found
+                if (!node.left) return node.right;
+                if (!node.right) return node.left;
+                // Two children: find inorder successor
+                const successor = findMin(node.right);
+                node.val = successor.val;
+                node.right = deleteBST(node.right, successor.val);
+            }
+            return node;
+        }
+
+        async function deleteNodeAction() {
+            const input = document.getElementById('node-val-input');
+            const val = parseInt(input.value);
+            if (isNaN(val) || !root) return;
+
+            document.getElementById('step-log-desc').innerText = `Locating and deleting node ${val}...`;
+            renderTreeSVG(val, 'deleting');
+            await delay(stepDelay);
+
+            root = deleteBST(root, val);
+            renderTreeSVG();
+            document.getElementById('step-log-desc').innerText = `Node ${val} deleted. Inorder structure preserved.`;
+        }
+
+        // Traversals
+        async function runTraversal(type) {
+            if (!root) return;
+            const sequence = [];
+
+            function traverse(node) {
+                if (!node) return;
+                if (type === 'preorder') sequence.push(node.val);
+                traverse(node.left);
+                if (type === 'inorder') sequence.push(node.val);
+                traverse(node.right);
+                if (type === 'postorder') sequence.push(node.val);
+            }
+
+            function levelOrder(r) {
+                const q = [r];
+                while (q.length > 0) {
+                    const curr = q.shift();
+                    sequence.push(curr.val);
+                    if (curr.left) q.push(curr.left);
+                    if (curr.right) q.push(curr.right);
+                }
+            }
+
+            if (type === 'levelorder') levelOrder(root);
+            else traverse(root);
+
+            const labelMap = {
+                inorder: 'Inorder (Left &rarr; Root &rarr; Right):',
+                preorder: 'Preorder (Root &rarr; Left &rarr; Right):',
+                postorder: 'Postorder (Left &rarr; Right &rarr; Root):',
+                levelorder: 'Level-Order BFS (Top &rarr; Bottom):'
+            };
+
+            const strip = document.getElementById('traversal-output-strip');
+            strip.innerHTML = `<strong>${labelMap[type]}</strong>&nbsp;`;
+
+            for (let i = 0; i < sequence.length; i++) {
+                const val = sequence[i];
+                renderTreeSVG(val, 'active');
+                document.getElementById('step-log-desc').innerText = `Visited node: ${val} (${i + 1}/${sequence.length})`;
+                strip.innerHTML += `<span style="background:#1E1B37; padding:2px 8px; border-radius:4px; margin-right:4px; border:1px solid #8B5CF6;">${val}</span>`;
+                await delay(stepDelay);
+            }
+            renderTreeSVG();
+            document.getElementById('step-log-desc').innerText = `${type.toUpperCase()} traversal complete! Total nodes visited: ${sequence.length}.`;
+        }
+
+        // Presets
+        function loadPresetTree(type) {
+            root = null;
+            let values = [];
+            if (type === 'balanced') {
+                values = [50, 30, 70, 20, 40, 60, 80];
+            } else if (type === 'skewed') {
+                values = [10, 20, 30, 40, 50];
+            }
+            values.forEach(v => { root = insertBST(root, v); });
+            renderTreeSVG();
+            document.getElementById('step-log-desc').innerText = `Loaded ${type} tree preset.`;
+        }
+
+        function clearTreeWorkspace() {
+            root = null;
+            renderTreeSVG();
+            document.getElementById('traversal-output-strip').innerHTML = 'Traversal Sequence: <span style="color:#FFF; margin-left:8px;">[None executed yet]</span>';
+            document.getElementById('step-log-desc').innerText = 'Tree reset. Ready for new operations.';
+        }
+
+        function togglePauseResume() {
+            isPaused = !isPaused;
+            document.getElementById('btn-pause-resume').innerHTML = isPaused ? '<i class="fa-solid fa-play"></i> Resume' : '<i class="fa-solid fa-pause"></i> Pause';
+        }
+
+        function stepForwardAction() {
+            // Unpauses for a single animation tick
+            isPaused = false;
+        }
+
+        window.onload = () => {
+            loadPresetTree('balanced');
+        };
+    </script>
+</body>
+</html>

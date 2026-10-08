@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searching Algorithms Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        select, input[type="text"], input[type="number"], input[type="range"] {
+            background: #0D0B1C;
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus, input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #A78BFA;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            background: #231C4D;
+            color: #E9D5FF;
+            border: 1px solid rgba(167, 139, 250, .2);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn:hover:not(:disabled) {
+            background: #3B2E7E;
+            color: white;
+            border-color: #A78BFA;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            border: none;
+        }
+        .btn.primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        }
+
+        .btn.accent {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
+            border: 1px solid rgba(52, 211, 153, 0.4);
+        }
+
+        .metrics-card {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: #090814;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            text-align: center;
+        }
+
+        .metric-title {
+            font-size: 10px;
+            color: #94A3B8;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: #F8FAFC;
+        }
+
+        /* Viewport Canvas */
+        .search-viewport {
+            background: #0B1120;
+            border-radius: 16px;
+            min-height: 480px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        /* 1D Cell Strip */
+        .array-strip {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 20px 10px 40px;
+        }
+
+        .cell-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+        }
+
+        .cell-pointer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cell-box {
+            width: 54px;
+            height: 54px;
+            background: rgba(20, 18, 40, 0.7);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: #F8FAFC;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .cell-index {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #64748B;
+        }
+
+        /* Cell State Styles */
+        .cell-box.active-mid {
+            border-color: #FBBF24 !important;
+            background: rgba(245, 158, 11, 0.25) !important;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5) !important;
+            transform: translateY(-4px);
+        }
+
+        .cell-box.eliminated {
+            opacity: 0.25;
+            background: #111827 !important;
+            border-color: #374151 !important;
+        }
+
+        .cell-box.target-found {
+            border-color: #34D399 !important;
+            background: rgba(16, 185, 129, 0.3) !important;
+            box-shadow: 0 0 25px rgba(52, 211, 153, 0.6) !important;
+            transform: scale(1.08);
+        }
+
+        /* 2D Matrix Grid */
+        .matrix-grid {
+            display: grid;
+            gap: 8px;
+            padding: 20px;
+        }
+
+        .matrix-cell {
+            width: 55px;
+            height: 55px;
+            background: rgba(20, 18, 40, 0.7);
+            border: 2px solid rgba(167, 139, 250, 0.25);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: #E2E8F0;
+            transition: all 0.2s;
+        }
+        .matrix-cell.examining {
+            border-color: #FBBF24;
+            background: rgba(245, 158, 11, 0.2);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+        .matrix-cell.pruned {
+            opacity: 0.2;
+            background: #0D0F17;
+            border-color: #2D3748;
+        }
+        .matrix-cell.found {
+            border-color: #34D399;
+            background: rgba(16, 185, 129, 0.35);
+            box-shadow: 0 0 20px #10B981;
+        }
+
+        .log-box {
+            background: #090814;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #A78BFA;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            line-height: 1.5;
+        }
+
+        .legend-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 8px 12px;
+            background: rgba(10, 8, 25, 0.5);
+            border-radius: 8px;
+            font-size: 11.5px;
+            color: #94A3B8;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> Searching Notes</a>
+            <a href="../Sorting/index.html" class="back-btn"><i class="fa-solid fa-arrow-down-a-z"></i> Sorting</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Algorithm & Target</span>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+
+                <div class="form-group">
+                    <label>Search Algorithm</label>
+                    <select id="algo-mode" onchange="handleModeChange()">
+                        <option value="BINARY" selected>Binary Search (1D Sorted Array) — O(log n)</option>
+                        <option value="LINEAR">Linear Search (1D Array) — O(n)</option>
+                        <option value="MATRIX">2D Matrix Search (Staircase Pruning) — O(m + n)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Target Value</label>
+                    <input type="number" id="target-input" value="48">
+                </div>
+
+                <div class="btn-grid">
+                    <button class="btn primary" id="play-pause-btn" onclick="togglePlayPause()">
+                        <i class="fa-solid fa-play" id="play-icon"></i> <span id="play-text">Start Search</span>
+                    </button>
+                    <button class="btn" id="step-btn" onclick="stepForward()">
+                        <i class="fa-solid fa-forward-step"></i> Step
+                    </button>
+                    <button class="btn" onclick="resetSearch()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button class="btn accent" onclick="generateNewData()">
+                        <i class="fa-solid fa-shuffle"></i> New Array
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTROLS & ANIMATION SPEED -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Visual Settings</span>
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between;">
+                        <label>Animation Delay</label>
+                        <span id="speed-display" style="font-size:12px; color:#A78BFA; font-family:'JetBrains Mono';">450ms</span>
+                    </div>
+                    <input type="range" id="speed-slider" min="50" max="1200" value="450" oninput="handleSpeedChange()">
+                </div>
+
+                <div class="form-group">
+                    <label>Pick Target Preset</label>
+                    <div class="btn-grid">
+                        <button class="btn" onclick="setPresetTarget('present')">Existing Value</button>
+                        <button class="btn" onclick="setPresetTarget('absent')">Absent Value</button>
+                        <button class="btn" onclick="setPresetTarget('first')">First Element</button>
+                        <button class="btn" onclick="setPresetTarget('last')">Last Element</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ASYMPTOTICS SUMMARY CARD -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Theoretical Complexity</span>
+                    <span id="algo-name-badge" style="color:#C4B5FD; font-size:11px;">Binary Search</span>
+                </div>
+                <div class="metrics-card">
+                    <div>
+                        <div class="metric-title">Best</div>
+                        <div class="metric-value" style="color:#34D399; font-size:14px;">O(1)</div>
+                    </div>
+                    <div>
+                        <div class="metric-title">Average</div>
+                        <div class="metric-value" id="comp-avg" style="color:#FBBF24; font-size:14px;">O(log n)</div>
+                    </div>
+                    <div>
+                        <div class="metric-title">Worst</div>
+                        <div class="metric-value" id="comp-worst" style="color:#F87171; font-size:14px;">O(log n)</div>
+                    </div>
+                </div>
+                <div style="font-size:11.5px; color:#94A3B8; display:flex; justify-content:space-between; margin-top:4px;">
+                    <span>Space Auxiliary: <strong id="comp-space" style="color:#34D399;">O(1)</strong></span>
+                    <span>Requires Sorted: <strong id="comp-sorted" style="color:#FBBF24;">Yes</strong></span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT VIEWPORT & VISUALIZATION -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- METRICS BAR -->
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+                <div class="panel" style="padding:12px 18px; text-align:center;">
+                    <span style="font-size:11px; color:#94A3B8;">COMPARISONS</span>
+                    <span id="stat-comparisons" style="font-family:'JetBrains Mono'; font-size:22px; font-weight:700; color:#FBBF24;">0</span>
+                </div>
+                <div class="panel" style="padding:12px 18px; text-align:center;">
+                    <span style="font-size:11px; color:#94A3B8;">SEARCH SPACE</span>
+                    <span id="stat-space" style="font-family:'JetBrains Mono'; font-size:22px; font-weight:700; color:#38BDF8;">16</span>
+                </div>
+                <div class="panel" style="padding:12px 18px; text-align:center;">
+                    <span style="font-size:11px; color:#94A3B8;">REMAINING STEPS</span>
+                    <span id="stat-remaining" style="font-family:'JetBrains Mono'; font-size:22px; font-weight:700; color:#A78BFA;">-</span>
+                </div>
+                <div class="panel" style="padding:12px 18px; text-align:center;">
+                    <span style="font-size:11px; color:#94A3B8;">SEARCH STATUS</span>
+                    <span id="stat-status" style="font-family:'JetBrains Mono'; font-size:14px; font-weight:700; color:#34D399; margin-top:4px;">READY</span>
+                </div>
+            </div>
+
+            <!-- MAIN SEARCH VIEWPORT -->
+            <div class="search-viewport" id="viewport-canvas">
+                <!-- Dynamically generated elements (strip or matrix) -->
+            </div>
+
+            <!-- LEGEND -->
+            <div class="legend-row">
+                <span style="display:flex; align-items:center; gap:6px;">
+                    <span class="legend-dot" style="background:#A78BFA;"></span> Active Search Space
+                </span>
+                <span style="display:flex; align-items:center; gap:6px;">
+                    <span class="legend-dot" style="background:#FBBF24;"></span> Current Mid / Candidate
+                </span>
+                <span style="display:flex; align-items:center; gap:6px;">
+                    <span class="legend-dot" style="background:#374151;"></span> Pruned / Eliminated
+                </span>
+                <span style="display:flex; align-items:center; gap:6px;">
+                    <span class="legend-dot" style="background:#10B981;"></span> Target Located
+                </span>
+            </div>
+
+            <!-- LIVE STEP LOG -->
+            <div class="log-box" id="step-log">
+                Select an algorithm, choose or type a target, and click "Start Search" or "Step" to begin.
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        // State variables
+        let array1D = [8, 14, 19, 23, 29, 34, 41, 48, 55, 62, 69, 74, 81, 88, 93, 99];
+        let matrix2D = [
+            [1,  4,  7,  11, 15],
+            [2,  5,  8,  12, 19],
+            [3,  6,  9,  16, 22],
+            [10, 13, 14, 17, 24],
+            [18, 21, 23, 26, 30]
+        ];
+        let animationSteps = [];
+        let currentStepIndex = 0;
+        let isRunning = false;
+        let animationTimer = null;
+        let delayMs = 450;
+        let comparisonsCount = 0;
+
+        function init() {
+            renderView();
+            updateMetaBadge();
+        }
+
+        function handleModeChange() {
+            stopAnimation();
+            updateMetaBadge();
+            resetSearch();
+            renderView();
+        }
+
+        function updateMetaBadge() {
+            const mode = document.getElementById('algo-mode').value;
+            if (mode === 'BINARY') {
+                document.getElementById('algo-name-badge').innerText = 'Binary Search';
+                document.getElementById('comp-avg').innerText = 'O(log n)';
+                document.getElementById('comp-worst').innerText = 'O(log n)';
+                document.getElementById('comp-space').innerText = 'O(1)';
+                document.getElementById('comp-sorted').innerText = 'Yes';
+            } else if (mode === 'LINEAR') {
+                document.getElementById('algo-name-badge').innerText = 'Linear Search';
+                document.getElementById('comp-avg').innerText = 'O(n)';
+                document.getElementById('comp-worst').innerText = 'O(n)';
+                document.getElementById('comp-space').innerText = 'O(1)';
+                document.getElementById('comp-sorted').innerText = 'No';
+            } else {
+                document.getElementById('algo-name-badge').innerText = '2D Matrix Search';
+                document.getElementById('comp-avg').innerText = 'O(m + n)';
+                document.getElementById('comp-worst').innerText = 'O(m + n)';
+                document.getElementById('comp-space').innerText = 'O(1)';
+                document.getElementById('comp-sorted').innerText = 'Row & Col';
+            }
+        }
+
+        function handleSpeedChange() {
+            const val = parseInt(document.getElementById('speed-slider').value);
+            delayMs = val;
+            document.getElementById('speed-display').innerText = val + 'ms';
+        }
+
+        function generateNewData() {
+            stopAnimation();
+            const mode = document.getElementById('algo-mode').value;
+            if (mode === 'BINARY' || mode === 'LINEAR') {
+                let current = Math.floor(Math.random() * 10) + 3;
+                array1D = [];
+                for (let i = 0; i < 16; i++) {
+                    array1D.push(current);
+                    current += Math.floor(Math.random() * 8) + 2;
+                }
+                const randomTarget = array1D[Math.floor(Math.random() * array1D.length)];
+                document.getElementById('target-input').value = randomTarget;
+            } else {
+                document.getElementById('target-input').value = matrix2D[2][3];
+            }
+            resetSearch();
+            renderView();
+            document.getElementById('step-log').innerText = "Generated fresh data set.";
+        }
+
+        function setPresetTarget(preset) {
+            stopAnimation();
+            const mode = document.getElementById('algo-mode').value;
+            if (mode === 'BINARY' || mode === 'LINEAR') {
+                if (preset === 'present') document.getElementById('target-input').value = array1D[Math.floor(array1D.length / 2)];
+                else if (preset === 'absent') document.getElementById('target-input').value = 999;
+                else if (preset === 'first') document.getElementById('target-input').value = array1D[0];
+                else if (preset === 'last') document.getElementById('target-input').value = array1D[array1D.length - 1];
+            } else {
+                if (preset === 'present') document.getElementById('target-input').value = matrix2D[3][2];
+                else if (preset === 'absent') document.getElementById('target-input').value = 999;
+                else if (preset === 'first') document.getElementById('target-input').value = matrix2D[0][0];
+                else if (preset === 'last') document.getElementById('target-input').value = matrix2D[4][4];
+            }
+            resetSearch();
+        }
+
+        function resetSearch() {
+            stopAnimation();
+            currentStepIndex = 0;
+            animationSteps = [];
+            comparisonsCount = 0;
+            document.getElementById('stat-comparisons').innerText = "0";
+            document.getElementById('stat-status').innerText = "READY";
+            document.getElementById('stat-remaining').innerText = "-";
+            renderView();
+        }
+
+        function renderView(highlights = {}) {
+            const mode = document.getElementById('algo-mode').value;
+            const viewport = document.getElementById('viewport-canvas');
+            viewport.innerHTML = '';
+
+            if (mode === 'BINARY' || mode === 'LINEAR') {
+                const strip = document.createElement('div');
+                strip.className = 'array-strip';
+
+                array1D.forEach((val, idx) => {
+                    const col = document.createElement('div');
+                    col.className = 'cell-container';
+
+                    // Pointer badge
+                    const ptr = document.createElement('div');
+                    ptr.className = 'cell-pointer';
+
+                    if (highlights.pointers) {
+                        const tags = [];
+                        if (highlights.pointers.low === idx) tags.push('<span style="color:#60A5FA;">L</span>');
+                        if (highlights.pointers.mid === idx) tags.push('<span style="color:#FBBF24;">M</span>');
+                        if (highlights.pointers.high === idx) tags.push('<span style="color:#F43F5E;">H</span>');
+                        if (highlights.pointers.curr === idx) tags.push('<span style="color:#A78BFA;">i</span>');
+                        ptr.innerHTML = tags.join('');
+                    }
+
+                    col.appendChild(ptr);
+
+                    // Box
+                    const box = document.createElement('div');
+                    box.className = 'cell-box';
+                    box.innerText = val;
+
+                    if (highlights.eliminated && highlights.eliminated.includes(idx)) box.classList.add('eliminated');
+                    if (highlights.mid === idx) box.classList.add('active-mid');
+                    if (highlights.found === idx) box.classList.add('target-found');
+
+                    col.appendChild(box);
+
+                    // Index
+                    const idxLabel = document.createElement('div');
+                    idxLabel.className = 'cell-index';
+                    idxLabel.innerText = idx;
+                    col.appendChild(idxLabel);
+
+                    strip.appendChild(col);
+                });
+
+                viewport.appendChild(strip);
+                document.getElementById('stat-space').innerText = highlights.searchSpace !== undefined ? highlights.searchSpace : array1D.length;
+
+            } else {
+                // 2D Matrix Grid
+                const grid = document.createElement('div');
+                grid.className = 'matrix-grid';
+                grid.style.gridTemplateColumns = `repeat(${matrix2D[0].length}, 55px)`;
+
+                matrix2D.forEach((row, r) => {
+                    row.forEach((val, c) => {
+                        const cell = document.createElement('div');
+                        cell.className = 'matrix-cell';
+                        cell.innerText = val;
+
+                        if (highlights.current && highlights.current[0] === r && highlights.current[1] === c) {
+                            cell.classList.add('examining');
+                        }
+                        if (highlights.pruned && highlights.pruned.some(([pr, pc]) => pr === r && pc === c)) {
+                            cell.classList.add('pruned');
+                        }
+                        if (highlights.found && highlights.found[0] === r && highlights.found[1] === c) {
+                            cell.classList.add('found');
+                        }
+
+                        grid.appendChild(cell);
+                    });
+                });
+
+                viewport.appendChild(grid);
+                document.getElementById('stat-space').innerText = highlights.searchSpace !== undefined ? highlights.searchSpace : (matrix2D.length * matrix2D[0].length);
+            }
+        }
+
+        // ================= ALGORITHM STEP GENERATORS =================
+        function generateSteps() {
+            const mode = document.getElementById('algo-mode').value;
+            const target = parseInt(document.getElementById('target-input').value);
+            animationSteps = [];
+
+            if (mode === 'BINARY') buildBinarySearchSteps(target);
+            else if (mode === 'LINEAR') buildLinearSearchSteps(target);
+            else if (mode === 'MATRIX') buildMatrixSearchSteps(target);
+        }
+
+        function buildBinarySearchSteps(target) {
+            let low = 0;
+            let high = array1D.length - 1;
+            let eliminated = [];
+
+            while (low <= high) {
+                const mid = Math.floor(low + (high - low) / 2);
+                const midVal = array1D[mid];
+
+                animationSteps.push({
+                    pointers: { low, mid, high },
+                    mid: mid,
+                    eliminated: [...eliminated],
+                    searchSpace: high - low + 1,
+                    log: `Inspecting mid index ${mid} (${midVal}) against target ${target}. (low = ${low}, high = ${high})`
+                });
+
+                if (midVal === target) {
+                    animationSteps.push({
+                        pointers: { mid },
+                        found: mid,
+                        eliminated: [...eliminated],
+                        searchSpace: 1,
+                        status: 'FOUND',
+                        log: `Target ${target} successfully located at index ${mid}!`
+                    });
+                    return;
+                } else if (midVal < target) {
+                    // Eliminate left half [low..mid]
+                    for (let k = low; k <= mid; k++) eliminated.push(k);
+                    animationSteps.push({
+                        pointers: { low: mid + 1, high },
+                        eliminated: [...eliminated],
+                        searchSpace: high - (mid + 1) + 1,
+                        log: `${midVal} < ${target}: target must lie in upper partition. Shift low = ${mid + 1}.`
+                    });
+                    low = mid + 1;
+                } else {
+                    // Eliminate right half [mid..high]
+                    for (let k = mid; k <= high; k++) eliminated.push(k);
+                    animationSteps.push({
+                        pointers: { low, high: mid - 1 },
+                        eliminated: [...eliminated],
+                        searchSpace: (mid - 1) - low + 1,
+                        log: `${midVal} > ${target}: target must lie in lower partition. Shift high = ${mid - 1}.`
+                    });
+                    high = mid - 1;
+                }
+            }
+
+            animationSteps.push({
+                eliminated: Array.from({length: array1D.length}, (_, i) => i),
+                searchSpace: 0,
+                status: 'NOT FOUND',
+                log: `Search space exhausted (low > high). Target ${target} does not exist in array.`
+            });
+        }
+
+        function buildLinearSearchSteps(target) {
+            let eliminated = [];
+            for (let i = 0; i < array1D.length; i++) {
+                animationSteps.push({
+                    pointers: { curr: i },
+                    mid: i,
+                    eliminated: [...eliminated],
+                    searchSpace: array1D.length - i,
+                    log: `Scanning index ${i}: comparing array[${i}] = ${array1D[i]} with target ${target}.`
+                });
+
+                if (array1D[i] === target) {
+                    animationSteps.push({
+                        pointers: { curr: i },
+                        found: i,
+                        eliminated: [...eliminated],
+                        searchSpace: 1,
+                        status: 'FOUND',
+                        log: `Target ${target} found at index ${i} after ${i + 1} comparisons!`
+                    });
+                    return;
+                }
+                eliminated.push(i);
+            }
+
+            animationSteps.push({
+                eliminated: Array.from({length: array1D.length}, (_, i) => i),
+                searchSpace: 0,
+                status: 'NOT FOUND',
+                log: `Linear traversal completed. Target ${target} not found in array.`
+            });
+        }
+
+        function buildMatrixSearchSteps(target) {
+            let r = 0;
+            let c = matrix2D[0].length - 1;
+            let pruned = [];
+
+            while (r < matrix2D.length && c >= 0) {
+                const val = matrix2D[r][c];
+
+                animationSteps.push({
+                    current: [r, c],
+                    pruned: [...pruned],
+                    searchSpace: (matrix2D.length - r) * (c + 1),
+                    log: `Position (${r}, ${c}) = ${val}. Comparing against target ${target}.`
+                });
+
+                if (val === target) {
+                    animationSteps.push({
+                        found: [r, c],
+                        pruned: [...pruned],
+                        searchSpace: 1,
+                        status: 'FOUND',
+                        log: `Target ${target} found at matrix coordinate row ${r}, col ${c}!`
+                    });
+                    return;
+                } else if (val > target) {
+                    // All elements in column c below this are even greater! Prune column c
+                    for (let i = r; i < matrix2D.length; i++) pruned.push([i, c]);
+                    animationSteps.push({
+                        current: [r, c - 1 >= 0 ? c - 1 : c],
+                        pruned: [...pruned],
+                        searchSpace: (matrix2D.length - r) * c,
+                        log: `${val} > ${target}: prune entire column ${c} (all entries below are \u2265 ${val}). Move left to col ${c - 1}.`
+                    });
+                    c--;
+                } else {
+                    // All elements in row r to the left are even smaller! Prune row r
+                    for (let j = 0; j <= c; j++) pruned.push([r, j]);
+                    animationSteps.push({
+                        current: [r + 1 < matrix2D.length ? r + 1 : r, c],
+                        pruned: [...pruned],
+                        searchSpace: (matrix2D.length - (r + 1)) * (c + 1),
+                        log: `${val} < ${target}: prune remaining row ${r} (all entries to left are \u2264 ${val}). Move down to row ${r + 1}.`
+                    });
+                    r++;
+                }
+            }
+
+            animationSteps.push({
+                pruned: [...pruned],
+                searchSpace: 0,
+                status: 'NOT FOUND',
+                log: `Matrix bounds exceeded. Target ${target} is not in matrix.`
+            });
+        }
+
+        // ================= PLAYBACK CONTROLLER =================
+        function togglePlayPause() {
+            if (isRunning) {
+                stopAnimation();
+            } else {
+                startAnimation();
+            }
+        }
+
+        function startAnimation() {
+            if (animationSteps.length === 0 || currentStepIndex >= animationSteps.length) {
+                generateSteps();
+                currentStepIndex = 0;
+            }
+            isRunning = true;
+            document.getElementById('play-icon').className = "fa-solid fa-pause";
+            document.getElementById('play-text').innerText = "Pause";
+            document.getElementById('stat-status').innerText = "SEARCHING...";
+            playNextStep();
+        }
+
+        function stopAnimation() {
+            isRunning = false;
+            if (animationTimer) clearTimeout(animationTimer);
+            document.getElementById('play-icon').className = "fa-solid fa-play";
+            document.getElementById('play-text').innerText = "Resume Search";
+            document.getElementById('stat-status').innerText = "PAUSED";
+        }
+
+        function playNextStep() {
+            if (!isRunning) return;
+            if (currentStepIndex >= animationSteps.length) {
+                isRunning = false;
+                document.getElementById('play-icon').className = "fa-solid fa-play";
+                document.getElementById('play-text').innerText = "Start Search";
+                return;
+            }
+
+            executeStep(currentStepIndex);
+            currentStepIndex++;
+            animationTimer = setTimeout(playNextStep, delayMs);
+        }
+
+        function stepForward() {
+            stopAnimation();
+            if (animationSteps.length === 0 || currentStepIndex >= animationSteps.length) {
+                generateSteps();
+                currentStepIndex = 0;
+            }
+            if (currentStepIndex < animationSteps.length) {
+                executeStep(currentStepIndex);
+                currentStepIndex++;
+            }
+        }
+
+        function executeStep(idx) {
+            const step = animationSteps[idx];
+            comparisonsCount++;
+            document.getElementById('stat-comparisons').innerText = comparisonsCount;
+            document.getElementById('stat-remaining').innerText = animationSteps.length - idx - 1;
+
+            renderView(step);
+
+            if (step.status) {
+                document.getElementById('stat-status').innerText = step.status;
+                if (step.status === 'FOUND') document.getElementById('stat-status').style.color = '#34D399';
+                else if (step.status === 'NOT FOUND') document.getElementById('stat-status').style.color = '#F87171';
+            }
+
+            if (step.log) document.getElementById('step-log').innerText = step.log;
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

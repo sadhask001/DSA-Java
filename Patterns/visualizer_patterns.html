@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithmic Patterns Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            padding-top: 85px;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .14;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .14;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 6%;
+            background: rgba(10, 8, 25, .82);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 24px 60px 24px;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* Mode Selector Tabs */
+        .pattern-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .pattern-tab-btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #CBD5E1;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .pattern-tab-btn:hover {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(167, 139, 250, 0.3);
+            color: white;
+        }
+
+        .pattern-tab-btn.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.4));
+            border-color: #A78BFA;
+            color: #FFF;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Layout Grid */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+        }
+
+        @media (max-width: 1100px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Canvas Stage */
+        .stage-card {
+            background: rgba(20, 18, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            min-height: 480px;
+            position: relative;
+        }
+
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 16px;
+        }
+
+        .stage-title {
+            font-size: 19px;
+            font-weight: 600;
+            color: #F1F5F9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stage-badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 6px;
+            background: rgba(167, 139, 250, 0.15);
+            color: #C4B5FD;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Visual Arena */
+        .visual-arena {
+            background: rgba(10, 8, 24, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 40px 20px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        /* Array Elements styling */
+        .array-track {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            padding: 40px 20px 20px 20px;
+            position: relative;
+            min-width: max-content;
+        }
+
+        .array-cell {
+            width: 58px;
+            height: 64px;
+            background: rgba(30, 27, 60, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #F8FAFC;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .array-cell .cell-index {
+            position: absolute;
+            bottom: -24px;
+            font-size: 11px;
+            color: #64748B;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        .array-cell.pointer-left {
+            border-color: #38BDF8;
+            background: rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.4);
+        }
+
+        .array-cell.pointer-right {
+            border-color: #F43F5E;
+            background: rgba(244, 63, 94, 0.2);
+            box-shadow: 0 0 18px rgba(244, 63, 94, 0.4);
+        }
+
+        .array-cell.in-window {
+            border-color: #FBBF24;
+            background: rgba(251, 191, 36, 0.15);
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.25);
+        }
+
+        .array-cell.match-found {
+            border-color: #34D399;
+            background: rgba(52, 211, 153, 0.3);
+            box-shadow: 0 0 25px rgba(52, 211, 153, 0.6);
+            transform: scale(1.08);
+        }
+
+        /* Pointer Arrows */
+        .pointer-tag {
+            position: absolute;
+            top: -32px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            white-space: nowrap;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pointer-tag.left-tag {
+            background: #0284C7;
+            color: #E0F2FE;
+            border: 1px solid #38BDF8;
+        }
+
+        .pointer-tag.right-tag {
+            background: #BE123C;
+            color: #FFE4E6;
+            border: 1px solid #F43F5E;
+        }
+
+        .pointer-tag.slow-tag {
+            background: #059669;
+            color: #D1FAE5;
+            border: 1px solid #34D399;
+        }
+
+        .pointer-tag.fast-tag {
+            background: #D97706;
+            color: #FEF3C7;
+            border: 1px solid #FBBF24;
+        }
+
+        /* Status Narration Banner */
+        .narration-bar {
+            background: rgba(25, 22, 50, 0.85);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .narration-text {
+            font-size: 14px;
+            color: #E2E8F0;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .narration-text i {
+            font-size: 16px;
+            color: #A78BFA;
+        }
+
+        /* Controls Card */
+        .controls-card {
+            background: rgba(20, 18, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: #F8FAFC;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: #94A3B8;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-field {
+            background: rgba(10, 8, 24, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: white;
+            font-size: 13.5px;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-field:focus {
+            border-color: #A78BFA;
+        }
+
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-action {
+            padding: 11px 16px;
+            border-radius: 10px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            color: white;
+        }
+        .btn-primary:hover {
+            opacity: 0.95;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #CBD5E1;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Live Variables Panel */
+        .vars-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            background: rgba(10, 8, 24, 0.6);
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .var-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .var-name {
+            font-size: 11px;
+            color: #64748B;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .var-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #E2E8F0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Code trace box */
+        .code-trace {
+            background: #0B0A18;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.6;
+            color: #94A3B8;
+            overflow-x: auto;
+        }
+
+        .code-line {
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .code-line.active {
+            background: rgba(139, 92, 246, 0.25);
+            color: #E9D5FF;
+            font-weight: 600;
+            border-left: 3px solid #A78BFA;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../index.html" class="logo">
+            <i class="fa-solid fa-shapes"></i>
+            <span>DSA-Java</span>
+        </a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-book-bookmark"></i> Patterns Guide</a>
+            <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="nav-btn" style="background:none; border:none; cursor:pointer;">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Pattern Tabs -->
+        <div class="pattern-tabs">
+            <button class="pattern-tab-btn active" onclick="switchPattern('twoPointers')">
+                <i class="fa-solid fa-arrows-left-right-to-line"></i> Two Pointers (Target Sum)
+            </button>
+            <button class="pattern-tab-btn" onclick="switchPattern('slidingWindow')">
+                <i class="fa-solid fa-window-maximize"></i> Sliding Window (Max Sum K)
+            </button>
+            <button class="pattern-tab-btn" onclick="switchPattern('prefixSum')">
+                <i class="fa-solid fa-calculator"></i> Prefix Sum (O(1) Query)
+            </button>
+            <button class="pattern-tab-btn" onclick="switchPattern('fastSlow')">
+                <i class="fa-solid fa-gauge-high"></i> Fast & Slow (Cycle Detection)
+            </button>
+        </div>
+
+        <div class="workspace-grid">
+            <!-- Left: Visual Stage -->
+            <div class="stage-card">
+                <div class="stage-header">
+                    <div class="stage-title">
+                        <span id="pattern-display-title">Two Pointers: Converging Target Sum</span>
+                    </div>
+                    <span class="stage-badge" id="pattern-badge">O(N) Time · O(1) Space</span>
+                </div>
+
+                <!-- Visual Arena -->
+                <div class="visual-arena" id="visual-arena">
+                    <!-- Elements dynamically rendered here -->
+                </div>
+
+                <!-- Status & Narration Bar -->
+                <div class="narration-bar">
+                    <div class="narration-text">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <span id="narration-text">Initialized. Click 'Step Next' or 'Play' to trace execution.</span>
+                    </div>
+                    <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#A78BFA;" id="step-counter">
+                        Step: 0
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Controls & State -->
+            <div class="controls-card">
+                <div class="card-header">
+                    <i class="fa-solid fa-sliders"></i> Simulation Controls
+                </div>
+
+                <div id="dynamic-inputs">
+                    <!-- Rendered based on active pattern -->
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn-action btn-primary" id="play-pause-btn" onclick="togglePlay()">
+                        <i class="fa-solid fa-play"></i> Play
+                    </button>
+                    <button class="btn-action btn-secondary" onclick="stepSimulation()">
+                        <i class="fa-solid fa-forward-step"></i> Step Next
+                    </button>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn-action btn-secondary" onclick="resetCurrentSimulation()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button class="btn-action btn-secondary" onclick="loadRandomData()">
+                        <i class="fa-solid fa-shuffle"></i> Randomize
+                    </button>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-label">
+                        <span>Speed</span>
+                        <span id="speed-val">1.0x</span>
+                    </div>
+                    <input type="range" id="speed-slider" min="200" max="1800" value="900" style="accent-color:#A78BFA;" oninput="updateSpeed(this.value)">
+                </div>
+
+                <!-- Variables Display -->
+                <div class="vars-grid" id="vars-grid">
+                    <!-- Dynamic state variables -->
+                </div>
+
+                <!-- Java Code Snippet Trace -->
+                <div class="code-trace" id="code-trace">
+                    <!-- Rendered line by line -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        // State Machine
+        let currentPattern = 'twoPointers';
+        let isPlaying = false;
+        let timer = null;
+        let delayMs = 900;
+        let stepCount = 0;
+        let isDone = false;
+
+        // Specific pattern states
+        let tpState = {
+            array: [2, 4, 7, 11, 15, 18, 22],
+            target: 22,
+            left: 0,
+            right: 6,
+            found: false,
+            codeLine: 1
+        };
+
+        let swState = {
+            array: [2, 1, 5, 1, 3, 2, 7, 4],
+            k: 3,
+            left: 0,
+            right: 0,
+            currSum: 0,
+            maxSum: 0,
+            codeLine: 1
+        };
+
+        let prefState = {
+            array: [3, 1, 4, 1, 5, 9, 2],
+            prefix: [],
+            qL: 2,
+            qR: 5,
+            calculated: false,
+            codeLine: 1
+        };
+
+        let fsState = {
+            nodes: [0, 1, 2, 3, 4, 5, 6, 7],
+            cycleTarget: 3, // points back to index 3
+            slow: 0,
+            fast: 0,
+            met: false,
+            phase: 'detect', // 'detect' or 'met'
+            codeLine: 1
+        };
+
+        function switchPattern(pattern) {
+            pauseSimulation();
+            currentPattern = pattern;
+            stepCount = 0;
+            isDone = false;
+
+            document.querySelectorAll('.pattern-tab-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if (pattern === 'twoPointers') {
+                document.getElementById('pattern-display-title').innerText = "Two Pointers: Converging Target Sum";
+                document.getElementById('pattern-badge').innerText = "O(N) Time · O(1) Space";
+            } else if (pattern === 'slidingWindow') {
+                document.getElementById('pattern-display-title').innerText = "Sliding Window: Max Sum Subarray of Size K";
+                document.getElementById('pattern-badge').innerText = "O(N) Time · O(1) Space";
+            } else if (pattern === 'prefixSum') {
+                document.getElementById('pattern-display-title').innerText = "Prefix Sum: Constant-Time Range Queries";
+                document.getElementById('pattern-badge').innerText = "O(1) Query · O(N) Precompute";
+            } else if (pattern === 'fastSlow') {
+                document.getElementById('pattern-display-title').innerText = "Fast & Slow Pointers: Floyd's Cycle Finding";
+                document.getElementById('pattern-badge').innerText = "O(N) Time · O(1) Space";
+            }
+
+            renderInputControls();
+            resetCurrentSimulation();
+        }
+
+        function renderInputControls() {
+            const container = document.getElementById('dynamic-inputs');
+            if (currentPattern === 'twoPointers') {
+                container.innerHTML = `
+                    <div class="input-group">
+                        <div class="input-label">Sorted Array (comma separated)</div>
+                        <input type="text" id="tp-array-in" class="input-field" value="${tpState.array.join(', ')}">
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">Target Sum</div>
+                        <input type="number" id="tp-target-in" class="input-field" value="${tpState.target}">
+                    </div>
+                `;
+            } else if (currentPattern === 'slidingWindow') {
+                container.innerHTML = `
+                    <div class="input-group">
+                        <div class="input-label">Array (comma separated)</div>
+                        <input type="text" id="sw-array-in" class="input-field" value="${swState.array.join(', ')}">
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">Window Size K</div>
+                        <input type="number" id="sw-k-in" class="input-field" value="${swState.k}">
+                    </div>
+                `;
+            } else if (currentPattern === 'prefixSum') {
+                container.innerHTML = `
+                    <div class="input-group">
+                        <div class="input-label">Array (comma separated)</div>
+                        <input type="text" id="pref-array-in" class="input-field" value="${prefState.array.join(', ')}">
+                    </div>
+                    <div class="btn-row">
+                        <div class="input-group">
+                            <div class="input-label">Query Left (L)</div>
+                            <input type="number" id="pref-ql-in" class="input-field" value="${prefState.qL}">
+                        </div>
+                        <div class="input-group">
+                            <div class="input-label">Query Right (R)</div>
+                            <input type="number" id="pref-qr-in" class="input-field" value="${prefState.qR}">
+                        </div>
+                    </div>
+                `;
+            } else if (currentPattern === 'fastSlow') {
+                container.innerHTML = `
+                    <div class="input-group">
+                        <div class="input-label">Total Nodes Count (6 - 10)</div>
+                        <input type="number" id="fs-count-in" class="input-field" value="${fsState.nodes.length}">
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label">Cycle Destination Node Index</div>
+                        <input type="number" id="fs-target-in" class="input-field" value="${fsState.cycleTarget}">
+                    </div>
+                `;
+            }
+        }
+
+        // TWO POINTERS IMPLEMENTATION
+        function resetTwoPointers() {
+            const arrIn = document.getElementById('tp-array-in');
+            const tgtIn = document.getElementById('tp-target-in');
+            if (arrIn && tgtIn) {
+                tpState.array = arrIn.value.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n)).sort((a,b)=>a-b);
+                tpState.target = parseInt(tgtIn.value) || 0;
+            }
+            tpState.left = 0;
+            tpState.right = tpState.array.length - 1;
+            tpState.found = false;
+            tpState.codeLine = 1;
+            stepCount = 0;
+            isDone = false;
+            renderTwoPointersView();
+        }
+
+        function renderTwoPointersView() {
+            const arena = document.getElementById('visual-arena');
+            let cellsHtml = tpState.array.map((val, idx) => {
+                let pClass = '';
+                let tagHtml = '';
+
+                if (tpState.found && (idx === tpState.left || idx === tpState.right)) {
+                    pClass = 'match-found';
+                } else {
+                    if (idx === tpState.left) {
+                        pClass += ' pointer-left';
+                        tagHtml += `<div class="pointer-tag left-tag">L (${idx})</div>`;
+                    }
+                    if (idx === tpState.right) {
+                        pClass += ' pointer-right';
+                        tagHtml += `<div class="pointer-tag right-tag" style="${idx === tpState.left ? 'top:-58px;' : ''}">R (${idx})</div>`;
+                    }
+                }
+
+                return `
+                    <div class="array-cell ${pClass}">
+                        ${tagHtml}
+                        <span>${val}</span>
+                        <div class="cell-index">[${idx}]</div>
+                    </div>
+                `;
+            }).join('');
+
+            arena.innerHTML = `<div class="array-track">${cellsHtml}</div>`;
+
+            // Variables
+            const lVal = tpState.array[tpState.left] ?? '-';
+            const rVal = tpState.array[tpState.right] ?? '-';
+            const currentSum = (tpState.left <= tpState.right && !isDone) ? (lVal + rVal) : '-';
+
+            document.getElementById('vars-grid').innerHTML = `
+                <div class="var-box"><span class="var-name">Left [L]</span><span class="var-value">${tpState.left} (${lVal})</span></div>
+                <div class="var-box"><span class="var-name">Right [R]</span><span class="var-value">${tpState.right} (${rVal})</span></div>
+                <div class="var-box"><span class="var-name">nums[L] + nums[R]</span><span class="var-value" style="color:#A78BFA;">${currentSum}</span></div>
+                <div class="var-box"><span class="var-name">Target</span><span class="var-value" style="color:#34D399;">${tpState.target}</span></div>
+            `;
+
+            // Code Trace
+            document.getElementById('code-trace').innerHTML = `
+                <div class="code-line ${tpState.codeLine === 1 ? 'active' : ''}">int left = 0, right = nums.length - 1;</div>
+                <div class="code-line ${tpState.codeLine === 2 ? 'active' : ''}">while (left &lt; right) {</div>
+                <div class="code-line ${tpState.codeLine === 3 ? 'active' : ''}">    int sum = nums[left] + nums[right];</div>
+                <div class="code-line ${tpState.codeLine === 4 ? 'active' : ''}">    if (sum == target) return new int[]{left, right};</div>
+                <div class="code-line ${tpState.codeLine === 5 ? 'active' : ''}">    else if (sum &lt; target) left++; // Need larger sum</div>
+                <div class="code-line ${tpState.codeLine === 6 ? 'active' : ''}">    else right--; // Need smaller sum</div>
+                <div class="code-line ${tpState.codeLine === 7 ? 'active' : ''}">}</div>
+            `;
+        }
+
+        function stepTwoPointers() {
+            if (isDone) return;
+            stepCount++;
+            document.getElementById('step-counter').innerText = `Step: ${stepCount}`;
+
+            if (tpState.left >= tpState.right) {
+                document.getElementById('narration-text').innerHTML = `Pointers met without finding target. No valid pair exists!`;
+                isDone = true;
+                pauseSimulation();
+                return;
+            }
+
+            const sum = tpState.array[tpState.left] + tpState.array[tpState.right];
+            tpState.codeLine = 3;
+
+            if (sum === tpState.target) {
+                tpState.found = true;
+                tpState.codeLine = 4;
+                document.getElementById('narration-text').innerHTML = `<strong style="color:#34D399;">Match Found!</strong> nums[${tpState.left}] (${tpState.array[tpState.left]}) + nums[${tpState.right}] (${tpState.array[tpState.right]}) = ${tpState.target}`;
+                isDone = true;
+                pauseSimulation();
+                renderTwoPointersView();
+                return;
+            }
+
+            if (sum < tpState.target) {
+                tpState.codeLine = 5;
+                document.getElementById('narration-text').innerHTML = `Sum (${sum}) &lt; Target (${tpState.target}). In sorted array, incrementing <strong>left++</strong> (index ${tpState.left} &rarr; ${tpState.left + 1}) to increase sum.`;
+                tpState.left++;
+            } else {
+                tpState.codeLine = 6;
+                document.getElementById('narration-text').innerHTML = `Sum (${sum}) &gt; Target (${tpState.target}). In sorted array, decrementing <strong>right--</strong> (index ${tpState.right} &rarr; ${tpState.right - 1}) to decrease sum.`;
+                tpState.right--;
+            }
+
+            renderTwoPointersView();
+        }
+
+        // SLIDING WINDOW IMPLEMENTATION
+        function resetSlidingWindow() {
+            const arrIn = document.getElementById('sw-array-in');
+            const kIn = document.getElementById('sw-k-in');
+            if (arrIn && kIn) {
+                swState.array = arrIn.value.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+                swState.k = Math.max(1, Math.min(swState.array.length, parseInt(kIn.value) || 3));
+            }
+            swState.left = 0;
+            swState.right = 0;
+            swState.currSum = 0;
+            swState.maxSum = -Infinity;
+            swState.codeLine = 1;
+            stepCount = 0;
+            isDone = false;
+            renderSlidingWindowView();
+        }
+
+        function renderSlidingWindowView() {
+            const arena = document.getElementById('visual-arena');
+            let cellsHtml = swState.array.map((val, idx) => {
+                const inWin = idx >= swState.left && idx < swState.right;
+                let pClass = inWin ? 'in-window' : '';
+                let tagHtml = '';
+
+                if (idx === swState.left && !isDone) {
+                    tagHtml += `<div class="pointer-tag left-tag">L (${idx})</div>`;
+                }
+                if (idx === swState.right && idx < swState.array.length && !isDone) {
+                    tagHtml += `<div class="pointer-tag right-tag" style="${idx === swState.left ? 'top:-58px;' : ''}">R (${idx})</div>`;
+                }
+
+                return `
+                    <div class="array-cell ${pClass}">
+                        ${tagHtml}
+                        <span>${val}</span>
+                        <div class="cell-index">[${idx}]</div>
+                    </div>
+                `;
+            }).join('');
+
+            arena.innerHTML = `<div class="array-track">${cellsHtml}</div>`;
+
+            document.getElementById('vars-grid').innerHTML = `
+                <div class="var-box"><span class="var-name">Window [L..R)</span><span class="var-value">[${swState.left} .. ${swState.right})</span></div>
+                <div class="var-box"><span class="var-name">Window Size K</span><span class="var-value">${swState.k}</span></div>
+                <div class="var-box"><span class="var-name">Current Window Sum</span><span class="var-value" style="color:#FBBF24;">${swState.currSum}</span></div>
+                <div class="var-box"><span class="var-name">Max Sum Found</span><span class="var-value" style="color:#34D399;">${swState.maxSum === -Infinity ? '-' : swState.maxSum}</span></div>
+            `;
+
+            document.getElementById('code-trace').innerHTML = `
+                <div class="code-line ${swState.codeLine === 1 ? 'active' : ''}">int windowSum = 0, maxSum = Integer.MIN_VALUE;</div>
+                <div class="code-line ${swState.codeLine === 2 ? 'active' : ''}">for (int right = 0; right &lt; n; right++) {</div>
+                <div class="code-line ${swState.codeLine === 3 ? 'active' : ''}">    windowSum += nums[right]; // Expand window</div>
+                <div class="code-line ${swState.codeLine === 4 ? 'active' : ''}">    if (right &gt;= k - 1) { // Window size reached k</div>
+                <div class="code-line ${swState.codeLine === 5 ? 'active' : ''}">        maxSum = Math.max(maxSum, windowSum);</div>
+                <div class="code-line ${swState.codeLine === 6 ? 'active' : ''}">        windowSum -= nums[left++]; // Slide left edge</div>
+                <div class="code-line ${swState.codeLine === 7 ? 'active' : ''}">    }</div>
+                <div class="code-line ${swState.codeLine === 8 ? 'active' : ''}">}</div>
+            `;
+        }
+
+        function stepSlidingWindow() {
+            if (isDone) return;
+            stepCount++;
+            document.getElementById('step-counter').innerText = `Step: ${stepCount}`;
+
+            if (swState.right >= swState.array.length) {
+                document.getElementById('narration-text').innerHTML = `<strong style="color:#34D399;">Completed!</strong> Maximum subarray sum of size ${swState.k} is <strong>${swState.maxSum}</strong>.`;
+                isDone = true;
+                pauseSimulation();
+                renderSlidingWindowView();
+                return;
+            }
+
+            const incomingVal = swState.array[swState.right];
+            swState.currSum += incomingVal;
+            swState.right++;
+            swState.codeLine = 3;
+
+            if (swState.right - swState.left === swState.k) {
+                swState.codeLine = 5;
+                if (swState.currSum > swState.maxSum) {
+                    swState.maxSum = swState.currSum;
+                    document.getElementById('narration-text').innerHTML = `Window reached size ${swState.k}! Sum = ${swState.currSum}. <strong>New Maximum Sum: ${swState.maxSum}</strong>.`;
+                } else {
+                    document.getElementById('narration-text').innerHTML = `Window reached size ${swState.k}! Sum = ${swState.currSum} (Max remains ${swState.maxSum}).`;
+                }
+                renderSlidingWindowView();
+
+                // Prepare next step: drop left element
+                setTimeout(() => {
+                    if (swState.right <= swState.array.length) {
+                        const outgoingVal = swState.array[swState.left];
+                        swState.currSum -= outgoingVal;
+                        swState.left++;
+                        swState.codeLine = 6;
+                        renderSlidingWindowView();
+                    }
+                }, delayMs / 2);
+                return;
+            } else {
+                document.getElementById('narration-text').innerHTML = `Expanding window: added nums[${swState.right - 1}] (${incomingVal}). Current Window Size: ${swState.right - swState.left} / ${swState.k}.`;
+            }
+
+            renderSlidingWindowView();
+        }
+
+        // PREFIX SUM IMPLEMENTATION
+        function resetPrefixSum() {
+            const arrIn = document.getElementById('pref-array-in');
+            const qlIn = document.getElementById('pref-ql-in');
+            const qrIn = document.getElementById('pref-qr-in');
+            if (arrIn && qlIn && qrIn) {
+                prefState.array = arrIn.value.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+                prefState.qL = Math.max(0, parseInt(qlIn.value) || 0);
+                prefState.qR = Math.min(prefState.array.length - 1, parseInt(qrIn.value) || 0);
+            }
+            prefState.prefix = [0];
+            for (let i = 0; i < prefState.array.length; i++) {
+                prefState.prefix.push(prefState.prefix[i] + prefState.array[i]);
+            }
+            prefState.calculated = false;
+            prefState.codeLine = 1;
+            stepCount = 0;
+            isDone = false;
+            renderPrefixSumView();
+        }
+
+        function renderPrefixSumView() {
+            const arena = document.getElementById('visual-arena');
+            const arrHtml = prefState.array.map((val, idx) => {
+                const isSelected = idx >= prefState.qL && idx <= prefState.qR;
+                return `
+                    <div class="array-cell ${isSelected ? 'in-window' : ''}">
+                        <span>${val}</span>
+                        <div class="cell-index">A[${idx}]</div>
+                    </div>
+                `;
+            }).join('');
+
+            const prefHtml = prefState.prefix.map((val, idx) => {
+                let pClass = '';
+                let tag = '';
+                if (idx === prefState.qR + 1) {
+                    pClass = 'match-found';
+                    tag = '<div class="pointer-tag right-tag">P[R+1]</div>';
+                } else if (idx === prefState.qL) {
+                    pClass = 'pointer-left';
+                    tag = '<div class="pointer-tag left-tag">P[L]</div>';
+                }
+                return `
+                    <div class="array-cell ${pClass}">
+                        ${tag}
+                        <span>${val}</span>
+                        <div class="cell-index">P[${idx}]</div>
+                    </div>
+                `;
+            }).join('');
+
+            arena.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:30px; width:100%; align-items:center;">
+                    <div>
+                        <div style="font-size:12px; color:#A78BFA; font-weight:600; margin-bottom:8px; text-align:center;">ORIGINAL ARRAY A (Range [${prefState.qL} .. ${prefState.qR}] highlighted)</div>
+                        <div class="array-track" style="padding-top:10px;">${arrHtml}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:12px; color:#34D399; font-weight:600; margin-bottom:8px; text-align:center;">PRECOMPUTED PREFIX SUM ARRAY P (P[i] = sum of A[0..i-1])</div>
+                        <div class="array-track">${prefHtml}</div>
+                    </div>
+                </div>
+            `;
+
+            const ans = prefState.prefix[prefState.qR + 1] - prefState.prefix[prefState.qL];
+            document.getElementById('vars-grid').innerHTML = `
+                <div class="var-box"><span class="var-name">Query Range [L..R]</span><span class="var-value">[${prefState.qL} .. ${prefState.qR}]</span></div>
+                <div class="var-box"><span class="var-name">P[R + 1]</span><span class="var-value" style="color:#F43F5E;">${prefState.prefix[prefState.qR + 1]}</span></div>
+                <div class="var-box"><span class="var-name">P[L]</span><span class="var-value" style="color:#38BDF8;">${prefState.prefix[prefState.qL]}</span></div>
+                <div class="var-box"><span class="var-name">Result = P[R+1] - P[L]</span><span class="var-value" style="color:#34D399;">${ans}</span></div>
+            `;
+
+            document.getElementById('code-trace').innerHTML = `
+                <div class="code-line ${prefState.codeLine === 1 ? 'active' : ''}">// Precomputation O(N):</div>
+                <div class="code-line ${prefState.codeLine === 2 ? 'active' : ''}">int[] prefix = new int[n + 1];</div>
+                <div class="code-line ${prefState.codeLine === 3 ? 'active' : ''}">for (int i = 0; i &lt; n; i++) prefix[i+1] = prefix[i] + nums[i];</div>
+                <div class="code-line ${prefState.codeLine === 4 ? 'active' : ''}">// Range Query [L, R] in O(1):</div>
+                <div class="code-line ${prefState.codeLine === 5 ? 'active' : ''}">return prefix[R + 1] - prefix[L];</div>
+            `;
+        }
+
+        function stepPrefixSum() {
+            if (isDone) return;
+            stepCount++;
+            document.getElementById('step-counter').innerText = `Step: ${stepCount}`;
+
+            prefState.codeLine = 5;
+            const pRight = prefState.prefix[prefState.qR + 1];
+            const pLeft = prefState.prefix[prefState.qL];
+            const ans = pRight - pLeft;
+
+            document.getElementById('narration-text').innerHTML = `
+                <strong>O(1) Range Evaluation:</strong><br>
+                Sum of subarray A[${prefState.qL}..${prefState.qR}] = 
+                <code>P[${prefState.qR + 1}] (${pRight}) - P[${prefState.qL}] (${pLeft}) = <strong>${ans}</strong></code>
+            `;
+            isDone = true;
+            pauseSimulation();
+            renderPrefixSumView();
+        }
+
+        // FAST & SLOW (FLOYD'S CYCLE) IMPLEMENTATION
+        function resetFastSlow() {
+            const countIn = document.getElementById('fs-count-in');
+            const targetIn = document.getElementById('fs-target-in');
+            let n = 8;
+            let dest = 3;
+            if (countIn && targetIn) {
+                n = Math.max(5, Math.min(10, parseInt(countIn.value) || 8));
+                dest = Math.max(0, Math.min(n - 2, parseInt(targetIn.value) || 3));
+            }
+            fsState.nodes = Array.from({length: n}, (_, i) => i);
+            fsState.cycleTarget = dest;
+            fsState.slow = 0;
+            fsState.fast = 0;
+            fsState.met = false;
+            fsState.phase = 'detect';
+            fsState.codeLine = 1;
+            stepCount = 0;
+            isDone = false;
+            renderFastSlowView();
+        }
+
+        function getNextNode(curr) {
+            if (curr === fsState.nodes.length - 1) {
+                return fsState.cycleTarget; // Cycle loops back
+            }
+            return curr + 1;
+        }
+
+        function renderFastSlowView() {
+            const arena = document.getElementById('visual-arena');
+            let nodesHtml = fsState.nodes.map((node, idx) => {
+                let pClass = '';
+                let tags = '';
+
+                if (fsState.met && idx === fsState.slow) {
+                    pClass = 'match-found';
+                    tags += `<div class="pointer-tag match-tag" style="background:#059669; color:white;">MET HERE!</div>`;
+                } else {
+                    if (idx === fsState.slow) {
+                        pClass += ' pointer-left';
+                        tags += `<div class="pointer-tag slow-tag">Slow (${idx})</div>`;
+                    }
+                    if (idx === fsState.fast) {
+                        pClass += ' pointer-right';
+                        tags += `<div class="pointer-tag fast-tag" style="${idx === fsState.slow ? 'top:-58px;' : ''}">Fast (${idx})</div>`;
+                    }
+                }
+
+                const isCycleEntry = idx === fsState.cycleTarget;
+                const isCycleTail = idx === fsState.nodes.length - 1;
+
+                return `
+                    <div style="display:flex; align-items:center;">
+                        <div class="array-cell ${pClass}" style="position:relative;">
+                            ${tags}
+                            <span>${node}</span>
+                            <div class="cell-index">${isCycleEntry ? '★ ENTRY' : (isCycleTail ? '⤸ LOOPS' : `node ${idx}`)}</div>
+                        </div>
+                        ${idx < fsState.nodes.length - 1 ? '<i class="fa-solid fa-arrow-right" style="color:#64748B; margin:0 8px;"></i>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            arena.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
+                    <div class="array-track" style="align-items:center;">${nodesHtml}</div>
+                    <div style="font-size:12px; color:#F59E0B; background:rgba(245,158,11,0.1); padding:6px 14px; border-radius:8px; border:1px solid rgba(245,158,11,0.3);">
+                        <i class="fa-solid fa-rotate"></i> Node ${fsState.nodes.length - 1} links back to Node ${fsState.cycleTarget} (Creating a Cycle!)
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('vars-grid').innerHTML = `
+                <div class="var-box"><span class="var-name">Slow Pointer (1 step)</span><span class="var-value" style="color:#34D399;">Node ${fsState.slow}</span></div>
+                <div class="var-box"><span class="var-name">Fast Pointer (2 steps)</span><span class="var-value" style="color:#F59E0B;">Node ${fsState.fast}</span></div>
+                <div class="var-box"><span class="var-name">Loop Entry Node</span><span class="var-value">Node ${fsState.cycleTarget}</span></div>
+                <div class="var-box"><span class="var-name">Cycle Status</span><span class="var-value" style="color:${fsState.met ? '#34D399' : '#A78BFA'}">${fsState.met ? 'Cycle Confirmed!' : 'Searching...'}</span></div>
+            `;
+
+            document.getElementById('code-trace').innerHTML = `
+                <div class="code-line ${fsState.codeLine === 1 ? 'active' : ''}">ListNode slow = head, fast = head;</div>
+                <div class="code-line ${fsState.codeLine === 2 ? 'active' : ''}">while (fast != null && fast.next != null) {</div>
+                <div class="code-line ${fsState.codeLine === 3 ? 'active' : ''}">    slow = slow.next; // 1 step</div>
+                <div class="code-line ${fsState.codeLine === 4 ? 'active' : ''}">    fast = fast.next.next; // 2 steps</div>
+                <div class="code-line ${fsState.codeLine === 5 ? 'active' : ''}">    if (slow == fast) return true; // Cycle Detected!</div>
+                <div class="code-line ${fsState.codeLine === 6 ? 'active' : ''}">}</div>
+                <div class="code-line ${fsState.codeLine === 7 ? 'active' : ''}">return false;</div>
+            `;
+        }
+
+        function stepFastSlow() {
+            if (isDone) return;
+            stepCount++;
+            document.getElementById('step-counter').innerText = `Step: ${stepCount}`;
+
+            fsState.codeLine = 3;
+            // Advance slow 1 step
+            fsState.slow = getNextNode(fsState.slow);
+            // Advance fast 2 steps
+            fsState.fast = getNextNode(getNextNode(fsState.fast));
+
+            if (fsState.slow === fsState.fast) {
+                fsState.met = true;
+                fsState.codeLine = 5;
+                document.getElementById('narration-text').innerHTML = `<strong style="color:#34D399;">Floyd's Cycle Detected!</strong> Slow and Fast pointers collided at <strong>Node ${fsState.slow}</strong>. In each step, relative distance decreases by 1 until collision!`;
+                isDone = true;
+                pauseSimulation();
+                renderFastSlowView();
+                return;
+            }
+
+            document.getElementById('narration-text').innerHTML = `Slow moved 1 step &rarr; Node ${fsState.slow}. Fast moved 2 steps &rarr; Node ${fsState.fast}. Distance closing!`;
+            renderFastSlowView();
+        }
+
+        // SIMULATION DRIVER
+        function stepSimulation() {
+            if (currentPattern === 'twoPointers') stepTwoPointers();
+            else if (currentPattern === 'slidingWindow') stepSlidingWindow();
+            else if (currentPattern === 'prefixSum') stepPrefixSum();
+            else if (currentPattern === 'fastSlow') stepFastSlow();
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                pauseSimulation();
+            } else {
+                startSimulation();
+            }
+        }
+
+        function startSimulation() {
+            if (isDone) {
+                resetCurrentSimulation();
+            }
+            isPlaying = true;
+            document.getElementById('play-pause-btn').innerHTML = `<i class="fa-solid fa-pause"></i> Pause`;
+            document.getElementById('play-pause-btn').classList.remove('btn-primary');
+            document.getElementById('play-pause-btn').style.background = '#E11D48';
+            runLoop();
+        }
+
+        function pauseSimulation() {
+            isPlaying = false;
+            clearTimeout(timer);
+            const btn = document.getElementById('play-pause-btn');
+            if (btn) {
+                btn.innerHTML = `<i class="fa-solid fa-play"></i> Play`;
+                btn.style.background = '';
+                btn.classList.add('btn-primary');
+            }
+        }
+
+        function runLoop() {
+            if (!isPlaying || isDone) {
+                pauseSimulation();
+                return;
+            }
+            stepSimulation();
+            if (!isDone) {
+                timer = setTimeout(runLoop, delayMs);
+            }
+        }
+
+        function resetCurrentSimulation() {
+            pauseSimulation();
+            if (currentPattern === 'twoPointers') resetTwoPointers();
+            else if (currentPattern === 'slidingWindow') resetSlidingWindow();
+            else if (currentPattern === 'prefixSum') resetPrefixSum();
+            else if (currentPattern === 'fastSlow') resetFastSlow();
+            document.getElementById('narration-text').innerText = "Simulation reset. Ready to step.";
+        }
+
+        function loadRandomData() {
+            if (currentPattern === 'twoPointers') {
+                const len = 7;
+                let arr = [];
+                for (let i = 0; i < len; i++) arr.push(Math.floor(Math.random() * 25) + 1);
+                arr.sort((a,b)=>a-b);
+                const target = arr[1] + arr[len - 2];
+                document.getElementById('tp-array-in').value = arr.join(', ');
+                document.getElementById('tp-target-in').value = target;
+                resetTwoPointers();
+            } else if (currentPattern === 'slidingWindow') {
+                let arr = [];
+                for (let i = 0; i < 8; i++) arr.push(Math.floor(Math.random() * 12) + 1);
+                document.getElementById('sw-array-in').value = arr.join(', ');
+                document.getElementById('sw-k-in').value = 3;
+                resetSlidingWindow();
+            } else if (currentPattern === 'prefixSum') {
+                let arr = [];
+                for (let i = 0; i < 7; i++) arr.push(Math.floor(Math.random() * 10) + 1);
+                document.getElementById('pref-array-in').value = arr.join(', ');
+                document.getElementById('pref-ql-in').value = 1;
+                document.getElementById('pref-qr-in').value = 4;
+                resetPrefixSum();
+            } else if (currentPattern === 'fastSlow') {
+                document.getElementById('fs-count-in').value = 8;
+                document.getElementById('fs-target-in').value = Math.floor(Math.random() * 4) + 1;
+                resetFastSlow();
+            }
+        }
+
+        function updateSpeed(val) {
+            delayMs = 2000 - parseInt(val);
+            const factor = (1000 / delayMs).toFixed(1);
+            document.getElementById('speed-val').innerText = `${factor}x`;
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderInputControls();
+            resetTwoPointers();
+        });
+    </script>
+</body>
+</html>

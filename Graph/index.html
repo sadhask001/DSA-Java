@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Graph Algorithms in Java | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar a:hover { color: #A78BFA; padding-left: 5px; }
+
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .module-section {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 40px;
+        }
+
+        .module-section h1 {
+            font-size: 38px;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .card {
+            background: rgba(20, 18, 40, .65);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .2);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #D8B4FE;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p {
+            color: #CBD5E1;
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .op-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .op-block {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .op-block h4 {
+            font-size: 13px;
+            color: #A78BFA;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        pre {
+            background: #0B1120 !important;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            color: #A5F3FC;
+            font-size: 13px;
+            border: 1px solid rgba(255,255,255,0.03);
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        .tip-callout {
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 4px solid #3B82F6;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #93C5FD;
+            line-height: 1.6;
+        }
+
+        ul.bullet-list {
+            padding-left: 20px;
+            line-height: 1.8;
+            color: #CBD5E1;
+            font-size: 14px;
+        }
+
+        .visualizer-float-btn {
+            position: fixed;
+            right: 40px;
+            bottom: 40px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            text-decoration: none;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 20px 40px rgba(167, 139, 250, .4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .visualizer-float-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(167, 139, 250, .55);
+        }
+
+        @media (max-width: 1100px) {
+            .layout-grid { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .op-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="../Heap/index.html" class="nav-btn"><i class="fa-solid fa-layer-group"></i> Heap</a>
+            <a href="visualizer_graph.html" class="nav-btn"><i class="fa-solid fa-play"></i> Graph Visualizer</a>
+            <button id="graph-complete-btn" class="complete-toggle-btn" style="padding:6px 14px; font-size:12px;" onclick="handleGraphCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="graph-complete-txt">Mark Complete</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Floating Action Visualizer Trigger -->
+    <a href="visualizer_graph.html" class="visualizer-float-btn">
+        <i class="fa-solid fa-play"></i> (Visualizer)
+    </a>
+
+    <main class="layout-grid">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <h3>📑 Graph Syllabus</h3>
+            <ul>
+                <li><a href="#sec-intro"><i class="fa-solid fa-circle-nodes"></i> 1. Graph Terminology</a></li>
+                <li><a href="#sec-rep"><i class="fa-solid fa-table-cells"></i> 2. Representations</a></li>
+                <li><a href="#sec-traversals"><i class="fa-solid fa-shoe-prints"></i> 3. BFS & DFS</a></li>
+                <li><a href="#sec-cycle"><i class="fa-solid fa-arrows-spin"></i> 4. Cycle Detection</a></li>
+                <li><a href="#sec-topo"><i class="fa-solid fa-arrow-down-wide-short"></i> 5. Topological Sort</a></li>
+                <li><a href="#sec-shortest"><i class="fa-solid fa-route"></i> 6. Dijkstra Algorithm</a></li>
+                <li><a href="#sec-dsu"><i class="fa-solid fa-diagram-project"></i> 7. Disjoint Set Union</a></li>
+                <li><a href="#sec-problems"><i class="fa-solid fa-circle-check"></i> 8. Important Problems</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            
+            <!-- SECTION 1: GRAPH TERMINOLOGY -->
+            <section id="sec-intro" class="module-section">
+                <h1>Graph Fundamentals & Terminology</h1>
+                
+                <div class="card">
+                    <h2><i class="fa-solid fa-circle-nodes"></i> What is a Graph?</h2>
+                    <p>
+                        A <strong>Graph</strong> is a non-linear data structure consisting of a finite set of <strong>Vertices ($V$)</strong> (or nodes) and a collection of <strong>Edges ($E$)</strong> connecting pairs of vertices: $G = (V, E)$.
+                    </p>
+
+                    <div class="op-grid">
+                        <div class="op-block">
+                            <h4>Direction & Cycles</h4>
+                            <ul class="bullet-list">
+                                <li><strong style="color:#60A5FA;">Undirected Graph:</strong> Edges are bidirectional ($u - v$).</li>
+                                <li><strong style="color:#FBBF24;">Directed Graph (Digraph):</strong> Edges have a direction ($u \to v$).</li>
+                                <li><strong style="color:#34D399;">DAG (Directed Acyclic Graph):</strong> Directed with no cycles (crucial for build systems, git commits, task dependencies).</li>
+                            </ul>
+                        </div>
+                        <div class="op-block">
+                            <h4>Weights & Degrees</h4>
+                            <ul class="bullet-list">
+                                <li><strong style="color:#C084FC;">Weighted:</strong> Each edge has an associated numerical cost/distance.</li>
+                                <li><strong>In-degree:</strong> Count of edges entering a vertex.</li>
+                                <li><strong>Out-degree:</strong> Count of edges leaving a vertex.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: REPRESENTATIONS -->
+            <section id="sec-rep" class="module-section">
+                <h1>Graph Representations in Java</h1>
+                
+                <div class="card">
+                    <h2>1. Adjacency Matrix ($V \times V$ 2D Array)</h2>
+                    <p>Space: $O(V^2)$. Fast $O(1)$ query to test if edge $(u, v)$ exists, but wastes memory for sparse graphs.</p>
+                    <pre><code class="language-java">int V = 5;
+int[][] adjMatrix = new int[V][V];
+// Add edge (u, v) with weight w
+adjMatrix[u][v] = w;
+adjMatrix[v][u] = w; // If undirected</code></pre>
+                </div>
+
+                <div class="card">
+                    <h2>2. Adjacency List (Industry Standard)</h2>
+                    <p>Space: $O(V + E)$. An array of lists storing only actual existing edges. Optimal for sparse graphs.</p>
+                    <pre><code class="language-java">int V = 5;
+List&lt;List&lt;Integer&gt;&gt; adj = new ArrayList&lt;&gt;();
+for (int i = 0; i < V; i++) adj.add(new ArrayList&lt;&gt;());
+
+// Add edge u -> v
+adj.get(u).add(v);
+adj.get(v).add(u); // If undirected</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 3: BFS & DFS -->
+            <section id="sec-traversals" class="module-section">
+                <h1>Graph Traversals: BFS & DFS</h1>
+                
+                <div class="card">
+                    <h2>1. Breadth-First Search (BFS) via Queue</h2>
+                    <p>Explores neighbors level-by-level in concentric rings. Computes the <strong>shortest path</strong> in unweighted graphs.</p>
+
+                    <pre><code class="language-java">public void bfs(int start, List&lt;List&lt;Integer&gt;&gt; adj, int V) {
+    boolean[] visited = new boolean[V];
+    Queue&lt;Integer&gt; queue = new ArrayDeque&lt;&gt;();
+
+    visited[start] = true;
+    queue.offer(start);
+
+    while (!queue.isEmpty()) {
+        int u = queue.poll();
+        System.out.print(u + " ");
+
+        for (int v : adj.get(u)) {
+            if (!visited[v]) {
+                visited[v] = true;
+                queue.offer(v);
+            }
+        }
+    }
+}</code></pre>
+                </div>
+
+                <div class="card">
+                    <h2>2. Depth-First Search (DFS) via Recursion</h2>
+                    <p>Explores as deep as possible along each branch before backtracking. Used for connected components, path finding, and topological sorting.</p>
+
+                    <pre><code class="language-java">public void dfs(int u, List&lt;List&lt;Integer&gt;&gt; adj, boolean[] visited) {
+    visited[u] = true;
+    System.out.print(u + " ");
+
+    for (int v : adj.get(u)) {
+        if (!visited[v]) {
+            dfs(v, adj, visited);
+        }
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 4: CYCLE DETECTION -->
+            <section id="sec-cycle" class="module-section">
+                <h1>Cycle Detection</h1>
+                
+                <div class="card">
+                    <h2>1. In Undirected Graph (Parent Pointer)</h2>
+                    <p>During DFS traversal, if a neighbor is already visited and is <strong>not the direct parent</strong>, a cycle exists.</p>
+
+                    <h2>2. In Directed Graph (3-Color DFS States)</h2>
+                    <ul class="bullet-list">
+                        <li><code>0 (UNVISITED)</code>: Node not yet reached.</li>
+                        <li><code>1 (VISITING)</code>: Node is on the current DFS recursive call stack! If an edge leads back to state 1, a <strong>Back Edge / Cycle</strong> is found!</li>
+                        <li><code>2 (VISITED)</code>: Node and all descendants fully explored.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SECTION 5: TOPOLOGICAL SORT -->
+            <section id="sec-topo" class="module-section">
+                <h1>Topological Sort (Kahn's Algorithm)</h1>
+                
+                <div class="card">
+                    <h2><i class="fa-solid fa-arrow-down-wide-short"></i> Linear Dependency Ordering for DAGs</h2>
+                    <p>A linear ordering of vertices such that for every directed edge $u \to v$, vertex $u$ comes before $v$. Only exists for <strong>DAGs</strong>.</p>
+
+                    <pre><code class="language-java">public int[] topologicalSort(int V, List&lt;List&lt;Integer&gt;&gt; adj) {
+    int[] inDegree = new int[V];
+    for (int u = 0; u < V; u++) {
+        for (int v : adj.get(u)) inDegree[v]++;
+    }
+
+    Queue&lt;Integer&gt; q = new ArrayDeque&lt;&gt;();
+    for (int i = 0; i < V; i++) {
+        if (inDegree[i] == 0) q.offer(i);
+    }
+
+    int[] order = new int[V];
+    int idx = 0;
+
+    while (!q.isEmpty()) {
+        int u = q.poll();
+        order[idx++] = u;
+
+        for (int v : adj.get(u)) {
+            if (--inDegree[v] == 0) q.offer(v);
+        }
+    }
+
+    // If idx != V, the graph contains a cycle!
+    return idx == V ? order : new int[0];
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 6: DIJKSTRA ALGORITHM -->
+            <section id="sec-shortest" class="module-section">
+                <h1>Dijkstra's Shortest Path Algorithm</h1>
+                
+                <div class="card">
+                    <h2><i class="fa-solid fa-route"></i> Single-Source Shortest Path (Non-Negative Weights)</h2>
+                    <p>Greedy algorithm utilizing a Min-Heap / <code>PriorityQueue</code> to always settle the vertex with the minimum tentative distance.</p>
+
+                    <pre><code class="language-java">static class Edge {
+    int to, weight;
+    Edge(int to, int weight) { this.to = to; this.weight = weight; }
+}
+
+public int[] dijkstra(int start, List&lt;List&lt;Edge&gt;&gt; adj, int V) {
+    int[] dist = new int[V];
+    Arrays.fill(dist, Integer.MAX_VALUE);
+    dist[start] = 0;
+
+    // Pair of {node, distance}
+    PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;&gt;((a, b) -> a[1] - b[1]);
+    pq.offer(new int[]{start, 0});
+
+    while (!pq.isEmpty()) {
+        int[] curr = pq.poll();
+        int u = curr[0];
+        int d = curr[1];
+
+        if (d > dist[u]) continue; // Stale queue entry
+
+        for (Edge e : adj.get(u)) {
+            if (dist[u] + e.weight < dist[e.to]) {
+                dist[e.to] = dist[u] + e.weight;
+                pq.offer(new int[]{e.to, dist[e.to]});
+            }
+        }
+    }
+    return dist;
+}</code></pre>
+                    <span class="complexity-tag" style="background:rgba(16,185,129,0.1); color:#10B981; padding:3px 8px; border-radius:4px; font-size:12px; font-family:'JetBrains Mono';">Time Complexity: O((V + E) log V)</span>
+                </div>
+            </section>
+
+            <!-- SECTION 7: DISJOINT SET UNION (DSU) -->
+            <section id="sec-dsu" class="module-section">
+                <h1>Disjoint Set Union (DSU / Union-Find)</h1>
+                
+                <div class="card">
+                    <h2><i class="fa-solid fa-diagram-project"></i> Near $O(1)$ Dynamic Connectivity</h2>
+                    <p>Tracks partitioned sets. With <strong>Path Compression</strong> and <strong>Union by Rank</strong>, operations run in nearly $O(1)$ amortized time ($\alpha(n)$ Inverse Ackermann function).</p>
+
+                    <pre><code class="language-java">class DSU {
+    int[] parent, rank;
+
+    public DSU(int n) {
+        parent = new int[n];
+        rank = new int[n];
+        for (int i = 0; i < n; i++) parent[i] = i;
+    }
+
+    public int find(int i) {
+        if (parent[i] == i) return i;
+        return parent[i] = find(parent[i]); // Path compression!
+    }
+
+    public boolean union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        if (rootX == rootY) return false; // Already connected -> Cycle!
+
+        // Union by rank
+        if (rank[rootX] < rank[rootY]) parent[rootX] = rootY;
+        else if (rank[rootX] > rank[rootY]) parent[rootY] = rootX;
+        else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+        return true;
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 8: IMPORTANT CODING PROBLEMS -->
+            <section id="sec-problems" class="module-section">
+                <h1>Important Coding Problems</h1>
+                <div class="card">
+                    <p style="margin-bottom:20px;">
+                        The top 10 verified LeetCode problems essential for mastering Graphs, BFS/DFS, Dijkstra, Topological Sort, and Union-Find in coding interviews. Check "Mark Solved" to track your real progress.
+                    </p>
+                    <div id="graph-problems-grid" class="dsa-problems-grid">
+                        <!-- Populated dynamically by problem-db.js -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TOPIC COMPLETION & NAVIGATION CARD -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered Graphs?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to update your overall roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleGraphCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_graph.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open Graph Visualizer
+                    </a>
+                </div>
+            </div>
+
+            <!-- NEXT TOPIC CARD -->
+            <div style="background:linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9)); border:1px solid rgba(167, 139, 250, 0.25); border-radius:20px; padding:35px; text-align:right; margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:13px; color:#A78BFA; text-transform:uppercase; letter-spacing:1px;">Ready for Hash Tables?</span>
+                <h2 style="font-size:24px; margin:5px 0 10px; color:#FFF;">Explore Hashing & HashMaps</h2>
+                <p style="margin-bottom:0; text-align:right; max-width:600px; color:#CBD5E1;">Master Hash Functions, Collision Resolution (Chaining vs Open Addressing), Java's HashMap internal architecture, and Load Factors.</p>
+                <a href="../Hashing/index.html" class="dsa-btn-primary" style="margin-top:15px; display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+                    Next Topic: Hashing <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
+    </footer>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function updateGraphButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('graph') === 'COMPLETED';
+            const hBtn = document.getElementById('graph-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const hTxt = document.getElementById('graph-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (hBtn) hBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (hTxt) hTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (hBtn) hBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (hTxt) hTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleGraphCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('graph');
+                updateGraphButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('graph-problems-grid', 'Graph');
+            }
+            updateGraphButtonsState();
+        });
+    </script>
+</body>
+</html>

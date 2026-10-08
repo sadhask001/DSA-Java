@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Bit Manipulation | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(167, 139, 250, .15);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 27, 55, 0.9), rgba(15, 12, 35, 0.9));
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #FFFFFF, #C4B5FD);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .hero-banner p {
+            color: #CBD5E1;
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #E9D5FF;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p, .card li {
+            color: #CBD5E1;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .code-container {
+            background: #0B0A17;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 18px 0;
+            overflow-x: auto;
+        }
+
+        .code-container pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            color: #E2E8F0;
+            line-height: 1.6;
+        }
+
+        .keyword { color: #F43F5E; }
+        .type { color: #38BDF8; }
+        .func { color: #A78BFA; }
+        .comment { color: #64748B; font-style: italic; }
+        .string { color: #34D399; }
+        .number { color: #FBBF24; }
+
+        .algo-subcard {
+            background: rgba(10, 8, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="visualizer_bits.html" class="nav-btn"><i class="fa-solid fa-play"></i> Visualizer</a>
+            <a href="../Strings/index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Strings</a>
+            <a href="../Patterns/index.html" class="nav-btn"><i class="fa-solid fa-arrow-right"></i> Patterns</a>
+            <button id="bit-complete-btn" class="topic-complete-toggle-btn" onclick="handleBitCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="bit-complete-txt">Mark Complete</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="layout-grid">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-microchip"></i> Bit Guide</h3>
+            <ul>
+                <li><a href="#sec-intro"><i class="fa-solid fa-book-open"></i> Two's Complement & Ops</a></li>
+                <li><a href="#sec-tricks"><i class="fa-solid fa-wand-magic-sparkles"></i> Essential Bit Tricks</a></li>
+                <li><a href="#sec-kernighan"><i class="fa-solid fa-calculator"></i> Brian Kernighan's Algo</a></li>
+                <li><a href="#sec-bitmask"><i class="fa-solid fa-layer-group"></i> Bitmasking Subsets</a></li>
+                <li><a href="#sec-code"><i class="fa-solid fa-code"></i> Java Implementations</a></li>
+                <li><a href="#sec-problems"><i class="fa-solid fa-trophy"></i> Practice Problems</a></li>
+            </ul>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+                <a href="visualizer_bits.html" style="background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; color: #E9D5FF; text-decoration: none; font-weight: 500;">
+                    <i class="fa-solid fa-play" style="color: #A78BFA;"></i> Open Bit Visualizer
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+
+            <!-- HERO BANNER -->
+            <section class="hero-banner" id="sec-intro">
+                <span class="badge-tag"><i class="fa-solid fa-bolt"></i> Low-Level Hardware Speed</span>
+                <h1>Mastering Bit Manipulation</h1>
+                <p>
+                    Bitwise operators manipulate data directly at the silicon register level, executing in a single CPU cycle. Master Two's Complement, Brian Kernighan's bit clearing, XOR cancellation properties, digital logic half-adders, and state space bitmasking.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="visualizer_bits.html" class="dsa-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-play"></i> Launch Interactive Bit Register
+                    </a>
+                    <a href="#sec-tricks" class="dsa-btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Bit Tricks Cheat Sheet
+                    </a>
+                </div>
+            </section>
+
+            <!-- SECTION 1: TWO'S COMPLEMENT & OPERATORS -->
+            <section class="card">
+                <h2><i class="fa-solid fa-microchip"></i> Two's Complement & Java Bitwise Operators</h2>
+                <p>
+                    Java integers are 32-bit signed integers stored using <strong>Two's Complement</strong>. To negate a number \(n\): invert all bits and add 1.
+                    \[-n = \sim n + 1\]
+                </p>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:15px; margin-top:15px;">
+                    <div style="background:rgba(10,8,25,0.6); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                        <code style="color:#A78BFA; font-size:14px; font-weight:700;">a &amp; b (AND)</code>
+                        <p style="font-size:13px; margin-top:6px;">Returns 1 only where both bits are 1. Used for masking and checking bit presence.</p>
+                    </div>
+                    <div style="background:rgba(10,8,25,0.6); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                        <code style="color:#A78BFA; font-size:14px; font-weight:700;">a | b (OR)</code>
+                        <p style="font-size:13px; margin-top:6px;">Returns 1 if at least one bit is 1. Used for setting bits.</p>
+                    </div>
+                    <div style="background:rgba(10,8,25,0.6); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                        <code style="color:#A78BFA; font-size:14px; font-weight:700;">a ^ b (XOR)</code>
+                        <p style="font-size:13px; margin-top:6px;">Returns 1 if bits differ. Key properties: \(a \oplus a = 0\) and \(a \oplus 0 = a\).</p>
+                    </div>
+                    <div style="background:rgba(10,8,25,0.6); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                        <code style="color:#A78BFA; font-size:14px; font-weight:700;">a &gt;&gt; k vs a &gt;&gt;&gt; k</code>
+                        <p style="font-size:13px; margin-top:6px;"><code>&gt;&gt;</code> preserves the sign bit (arithmetic shift). <code>&gt;&gt;&gt;</code> always pads high bits with 0 (logical unsigned shift).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: BIT TRICKS CHEAT SHEET -->
+            <section class="card" id="sec-tricks">
+                <h2><i class="fa-solid fa-wand-magic-sparkles"></i> The 10 Essential Bit Manipulation Tricks</h2>
+                <div class="code-container">
+                    <pre><code><span class="comment">// 1. Check if number is odd or even:</span>
+<span class="keyword">boolean</span> isOdd = (n &amp; <span class="number">1</span>) != <span class="number">0</span>;
+
+<span class="comment">// 2. Check if k-th bit is set:</span>
+<span class="keyword">boolean</span> isKthSet = (n &amp; (<span class="number">1</span> &lt;&lt; k)) != <span class="number">0</span>;
+
+<span class="comment">// 3. Set k-th bit to 1:</span>
+n = n | (<span class="number">1</span> &lt;&lt; k);
+
+<span class="comment">// 4. Clear k-th bit to 0:</span>
+n = n &amp; ~(<span class="number">1</span> &lt;&lt; k);
+
+<span class="comment">// 5. Toggle k-th bit (0 -> 1 or 1 -> 0):</span>
+n = n ^ (<span class="number">1</span> &lt;&lt; k);
+
+<span class="comment">// 6. Clear the lowest set bit (Brian Kernighan):</span>
+n = n &amp; (n - <span class="number">1</span>);
+
+<span class="comment">// 7. Extract / Isolate the lowest set bit:</span>
+<span class="type">int</span> lowestBit = n &amp; (-n);
+
+<span class="comment">// 8. Check if n is a power of 2:</span>
+<span class="keyword">boolean</span> isPowerOf2 = n &gt; <span class="number">0</span> &amp;&amp; (n &amp; (n - <span class="number">1</span>)) == <span class="number">0</span>;
+
+<span class="comment">// 9. Swap two variables without temporary variable:</span>
+a ^= b; b ^= a; a ^= b;
+
+<span class="comment">// 10. Turn off all bits except the lowest set bit:</span>
+<span class="type">int</span> isolated = n &amp; ~(n - <span class="number">1</span>);</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 3: BRIAN KERNIGHAN'S ALGO -->
+            <section class="card" id="sec-kernighan">
+                <h2><i class="fa-solid fa-calculator"></i> Brian Kernighan's Algorithm</h2>
+                <p>
+                    Subtracting 1 from an integer flips all bits from the rightmost set bit to the end. Therefore, <code>n &amp; (n - 1)</code> turns off the lowest set bit in exactly one operation.
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="keyword">public int</span> <span class="func">hammingWeight</span>(<span class="type">int</span> n) {
+    <span class="type">int</span> count = <span class="number">0</span>;
+    <span class="keyword">while</span> (n != <span class="number">0</span>) {
+        n &amp;= (n - <span class="number">1</span>); <span class="comment">// Clears lowest set bit in O(1)</span>
+        count++;
+    }
+    <span class="keyword">return</span> count; <span class="comment">// Loops ONLY as many times as set bits exist!</span>
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 4: BITMASKING -->
+            <section class="card" id="sec-bitmask">
+                <h2><i class="fa-solid fa-layer-group"></i> Bitmasking & Subsets Generation</h2>
+                <p>
+                    An array of size \(n\) has \(2^n\) subsets. Each integer from \(0\) to \(2^n - 1\) in binary represents a unique subset configuration where bit \(i = 1\) signifies including \(arr[i]\).
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="keyword">public static List</span>&lt;<span class="type">List</span>&lt;<span class="type">Integer</span>&gt;&gt; <span class="func">subsetsBitmask</span>(<span class="type">int</span>[] nums) {
+    <span class="type">int</span> n = nums.length;
+    <span class="type">int</span> total = <span class="number">1</span> &lt;&lt; n; <span class="comment">// 2^n subsets</span>
+    <span class="type">List</span>&lt;<span class="type">List</span>&lt;<span class="type">Integer</span>&gt;&gt; res = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;();
+
+    <span class="keyword">for</span> (<span class="type">int</span> mask = <span class="number">0</span>; mask &lt; total; mask++) {
+        <span class="type">List</span>&lt;<span class="type">Integer</span>&gt; subset = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;();
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) {
+            <span class="keyword">if</span> ((mask &amp; (<span class="number">1</span> &lt;&lt; i)) != <span class="number">0</span>) subset.add(nums[i]);
+        }
+        res.add(subset);
+    }
+    <span class="keyword">return</span> res;
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 5: PRACTICE PROBLEMS -->
+            <section class="card" id="sec-problems">
+                <h2><i class="fa-solid fa-trophy"></i> Top 10 Bit Manipulation LeetCode Problems</h2>
+                <p style="margin-bottom:20px;">
+                    These 10 verified LeetCode problems test Hamming weight, XOR cancellation, digital logic modulo 3, bit reversing, and binary state masks. Check "Mark Solved" to track your real progress.
+                </p>
+                <div id="bit-problems-grid" class="dsa-problems-grid">
+                    <!-- Populated dynamically via problem-db.js -->
+                </div>
+            </section>
+
+            <!-- COMPLETION BAR -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered Bit Manipulation?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to update your overall roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleBitCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_bits.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open Bit Visualizer
+                    </a>
+                </div>
+            </div>
+
+            <!-- NEXT TOPIC CARD -->
+            <div style="background:linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9)); border:1px solid rgba(167, 139, 250, 0.25); border-radius:20px; padding:35px; text-align:right; margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:13px; color:#A78BFA; text-transform:uppercase; letter-spacing:1px;">Next in Curriculum:</span>
+                <h2 style="font-size:24px; margin:5px 0 10px; color:#FFF;">Explore Algorithmic Patterns</h2>
+                <p style="margin-bottom:0; text-align:right; max-width:600px; color:#CBD5E1;">Master Two Pointers, Fixed & Dynamic Sliding Windows, Fast & Slow Pointers, Monotonic Stack/Queue, and Prefix Sums.</p>
+                <a href="../Patterns/index.html" class="dsa-btn-primary" style="margin-top:15px; display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+                    Next Topic: Patterns & Problem Solving <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
+    </footer>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function updateBitButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('bit') === 'COMPLETED';
+            const bBtn = document.getElementById('bit-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const bTxt = document.getElementById('bit-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (bBtn) bBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (bTxt) bTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (bBtn) bBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (bTxt) bTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleBitCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('bit');
+                updateBitButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('bit-problems-grid', 'Bit Manipulation');
+            }
+            updateBitButtonsState();
+        });
+    </script>
+</body>
+</html>

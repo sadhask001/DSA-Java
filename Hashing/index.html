@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Hashing & HashMaps | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(167, 139, 250, .15);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 27, 55, 0.9), rgba(15, 12, 35, 0.9));
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #FFFFFF, #C4B5FD);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .hero-banner p {
+            color: #CBD5E1;
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #E9D5FF;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p, .card li {
+            color: #CBD5E1;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .code-container {
+            background: #0B0A17;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 18px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-container pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            color: #E2E8F0;
+            line-height: 1.6;
+        }
+
+        .keyword { color: #F43F5E; }
+        .type { color: #38BDF8; }
+        .func { color: #A78BFA; }
+        .comment { color: #64748B; font-style: italic; }
+        .string { color: #34D399; }
+        .number { color: #FBBF24; }
+
+        .complexity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .complexity-box {
+            background: rgba(10, 8, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .complexity-box .op-name {
+            font-size: 12px;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .complexity-box .op-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 600;
+            color: #34D399;
+        }
+
+        .complexity-box.worst .op-val {
+            color: #F87171;
+        }
+
+        .dsa-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .dsa-table th, .dsa-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .dsa-table th {
+            color: #C4B5FD;
+            background: rgba(167, 139, 250, 0.08);
+            font-weight: 600;
+        }
+
+        .dsa-table td {
+            color: #CBD5E1;
+        }
+
+        .dsa-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-green {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34D399;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge-yellow {
+            background: rgba(251, 191, 36, 0.15);
+            color: #FBBF24;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge-red {
+            background: rgba(248, 113, 113, 0.15);
+            color: #F87171;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="visualizer_hashmap.html" class="nav-btn"><i class="fa-solid fa-play"></i> Visualizer</a>
+            <a href="../Graph/index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Graph</a>
+            <a href="../Sorting/index.html" class="nav-btn"><i class="fa-solid fa-arrow-right"></i> Sorting</a>
+            <button id="hashing-complete-btn" class="topic-complete-toggle-btn" onclick="handleHashingCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="hashing-complete-txt">Mark Complete</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="layout-grid">
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-hashtag"></i> Hashing Guide</h3>
+            <ul>
+                <li><a href="#sec-intro"><i class="fa-solid fa-book-open"></i> Introduction & Theory</a></li>
+                <li><a href="#sec-functions"><i class="fa-solid fa-calculator"></i> Hash Functions</a></li>
+                <li><a href="#sec-collisions"><i class="fa-solid fa-diagram-project"></i> Collision Resolution</a></li>
+                <li><a href="#sec-internals"><i class="fa-solid fa-microchip"></i> Java HashMap Internals</a></li>
+                <li><a href="#sec-contract"><i class="fa-solid fa-handshake"></i> equals() & hashCode()</a></li>
+                <li><a href="#sec-comparison"><i class="fa-solid fa-table-cells"></i> Collection Comparison</a></li>
+                <li><a href="#sec-implementation"><i class="fa-solid fa-code"></i> Java Implementation</a></li>
+                <li><a href="#sec-problems"><i class="fa-solid fa-trophy"></i> Practice Problems</a></li>
+            </ul>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+                <a href="visualizer_hashmap.html" style="background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; color: #E9D5FF; text-decoration: none; font-weight: 500;">
+                    <i class="fa-solid fa-play" style="color: #A78BFA;"></i> Open HashMap Visualizer
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN ARTICLE -->
+        <div class="content">
+
+            <!-- HERO BANNER -->
+            <section class="hero-banner" id="sec-intro">
+                <span class="badge-tag"><i class="fa-solid fa-bolt"></i> Constant Time Lookup</span>
+                <h1>Hashing & Hash Tables</h1>
+                <p>
+                    Hashing is an algorithmic paradigm that maps arbitrary keys to fixed-size integer indices in constant average time \(O(1)\). Dive deep into polynomial hash codes, open addressing vs separate chaining, Java 8 Red-Black Tree treeification, and the critical <code>equals()</code> / <code>hashCode()</code> contract.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="visualizer_hashmap.html" class="dsa-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-play"></i> Launch Interactive Visualizer
+                    </a>
+                    <a href="#sec-internals" class="dsa-btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-microchip"></i> Java 8+ Internals
+                    </a>
+                </div>
+            </section>
+
+            <!-- SECTION 1: THEORY & ASYMPTOTIC COMPLEXITY -->
+            <section class="card">
+                <h2><i class="fa-solid fa-chart-line"></i> Time & Space Complexity</h2>
+                <p>
+                    Under the <strong>Simple Uniform Hashing Assumption (SUHA)</strong>, each key is equally likely to hash to any of the \(m\) slots, resulting in blistering \(O(1)\) average-case operational complexity.
+                </p>
+
+                <div class="complexity-grid">
+                    <div class="complexity-box">
+                        <div class="op-name">Search (Average)</div>
+                        <div class="op-val">O(1)</div>
+                    </div>
+                    <div class="complexity-box">
+                        <div class="op-name">Insert (Average)</div>
+                        <div class="op-val">O(1)</div>
+                    </div>
+                    <div class="complexity-box">
+                        <div class="op-name">Delete (Average)</div>
+                        <div class="op-val">O(1)</div>
+                    </div>
+                    <div class="complexity-box worst">
+                        <div class="op-name">Search (Worst Case)</div>
+                        <div class="op-val">O(n) / O(log n)*</div>
+                    </div>
+                </div>
+                <p style="font-size:13px; color:#94A3B8;">
+                    *Note: In Java 8+, if a bucket's chain length exceeds 8 nodes and table capacity \(\ge 64\), the linked list converts to a balanced Red-Black Tree, capping worst-case lookups at \(O(\log n)\).
+                </p>
+            </section>
+
+            <!-- SECTION 2: HASH FUNCTIONS -->
+            <section class="card" id="sec-functions">
+                <h2><i class="fa-solid fa-calculator"></i> Anatomy of a High-Quality Hash Function</h2>
+                <p>
+                    A hash function maps an arbitrary object \(K\) to an integer. A production-grade hash function must satisfy four non-negotiable criteria:
+                </p>
+                <ul style="margin: 15px 0 20px 20px; display:flex; flex-direction:column; gap:8px;">
+                    <li><strong>Determinism:</strong> Given the same input, it must always return the exact same integer hash code within the program run.</li>
+                    <li><strong>Uniform Distribution:</strong> It must disperse keys uniformly across all available buckets to prevent clustering and chain bottlenecking.</li>
+                    <li><strong>Speed:</strong> Computing the hash must execute in \(O(1)\) time relative to the size of the key.</li>
+                    <li><strong>Avalanche Effect:</strong> Flipping a single bit in the key should alter approximately 50% of the bits in the output hash code.</li>
+                </ul>
+
+                <h3>Polynomial Rolling Hash (Standard for Strings)</h3>
+                <p>
+                    For strings of characters, standard implementations use a polynomial rolling hash with a prime multiplier \(p\) (commonly 31 or 37):
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="comment">// Standard Java String.hashCode() implementation: s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]</span>
+<span class="keyword">public static int</span> <span class="func">computeStringHashCode</span>(<span class="type">String</span> s) {
+    <span class="type">int</span> h = <span class="number">0</span>;
+    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) {
+        h = <span class="number">31</span> * h + s.charAt(i); <span class="comment">// 31 * h can be optimized by JVM as (h &lt;&lt; 5) - h</span>
+    }
+    <span class="keyword">return</span> h;
+}</code></pre>
+                </div>
+                <p>
+                    Why <strong>31</strong>? 31 is an odd prime, so multiplication does not lose information (multiplying by an even number shifts bits left, dropping high bits). Furthermore, modern compilers optimize <code>31 * i</code> into bit-shift operations: <code>(i &lt;&lt; 5) - i</code>.
+                </p>
+            </section>
+
+            <!-- SECTION 3: COLLISION RESOLUTION -->
+            <section class="card" id="sec-collisions">
+                <h2><i class="fa-solid fa-diagram-project"></i> Collision Resolution Techniques</h2>
+                <p>
+                    By the <strong>Pigeonhole Principle</strong>, since keyspace is virtually infinite and bucket array size \(m\) is finite, collisions are mathematically inevitable.
+                </p>
+
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-top:15px;">
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#A78BFA; font-size:17px; margin-bottom:10px;"><i class="fa-solid fa-link"></i> 1. Separate Chaining</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            Each bucket in the array holds the head of a linked list (or balanced BST). Colliding items are appended to the bucket's list.
+                        </p>
+                        <p style="font-size:13px; color:#34D399; margin-top:8px;">
+                            <strong>Pros:</strong> Simple deletion; load factor \(\alpha\) can exceed 1.0; table never overflows.<br>
+                            <strong>Cons:</strong> Pointer overhead; poor CPU cache locality due to heap node hopping.
+                        </p>
+                    </div>
+
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#FBBF24; font-size:17px; margin-bottom:10px;"><i class="fa-solid fa-magnifying-glass"></i> 2. Linear Probing</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            If slot \(h(k)\) is occupied, probe sequentially: \(h(k, i) = (h(k) + i) \bmod m\).
+                        </p>
+                        <p style="font-size:13px; color:#FBBF24; margin-top:8px;">
+                            <strong>Pros:</strong> Superior CPU cache locality; zero pointer overhead.<br>
+                            <strong>Cons:</strong> Primary clustering (long contiguous runs of occupied slots slow down lookups).
+                        </p>
+                    </div>
+
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#38BDF8; font-size:17px; margin-bottom:10px;"><i class="fa-solid fa-crosshairs"></i> 3. Double Hashing</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            Uses a secondary hash function for probe offset: \(h(k, i) = (h_1(k) + i \cdot h_2(k)) \bmod m\).
+                        </p>
+                        <p style="font-size:13px; color:#38BDF8; margin-top:8px;">
+                            <strong>Pros:</strong> Virtually eliminates primary and secondary clustering.<br>
+                            <strong>Cons:</strong> Requires two good hash functions; \(h_2(k)\) must be coprime to \(m\).
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: JAVA HASHMAP INTERNALS -->
+            <section class="card" id="sec-internals">
+                <h2><i class="fa-solid fa-microchip"></i> Deep Dive: Java HashMap Internals</h2>
+                <p>
+                    Java's <code>java.util.HashMap</code> is one of the most engineered data structures in the JDK. Here is how it operates under the hood:
+                </p>
+
+                <h3 style="margin-top:20px;">1. The Table and Power-of-Two Sizing</h3>
+                <p>
+                    The backing storage is an array of nodes: <code>Node&lt;K, V&gt;[] table</code>. In Java, table capacity is <strong>always a power of two</strong> (\(2^n\), e.g., 16, 32, 64). This allows the expensive modulo operator <code>hash % capacity</code> to be replaced with lightning-fast bitwise AND:
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="comment">// Faster bitwise equivalence: when capacity is power of 2:</span>
+<span class="type">int</span> index = (capacity - <span class="number">1</span>) &amp; hash;
+<span class="comment">// Example: capacity = 16 (0001 0000), capacity - 1 = 15 (0000 1111)</span>
+<span class="comment">// (hash &amp; 15) isolates the lowest 4 bits, exactly mirroring hash % 16</span></code></pre>
+                </div>
+
+                <h3 style="margin-top:20px;">2. The Hash Perturbation Function</h3>
+                <p>
+                    Because <code>(capacity - 1) &amp; hash</code> inspects only the lowest bits, poor hash codes could collide heavily. Java applies a perturbation step to XOR the higher 16 bits into the lower 16 bits:
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="keyword">static final int</span> <span class="func">hash</span>(<span class="type">Object</span> key) {
+    <span class="type">int</span> h;
+    <span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);
+}</code></pre>
+                </div>
+
+                <h3 style="margin-top:20px;">3. Load Factor & Rehashing</h3>
+                <ul style="margin: 10px 0 15px 20px; display:flex; flex-direction:column; gap:6px;">
+                    <li><strong>Default Initial Capacity:</strong> 16</li>
+                    <li><strong>Default Load Factor (\(\alpha\)):</strong> 0.75 (optimal trade-off between time and space)</li>
+                    <li><strong>Threshold:</strong> \(\text{capacity} \times \text{loadFactor} = 16 \times 0.75 = 12\) elements.</li>
+                    <li>When <code>size &gt; threshold</code>, the table doubles to \(2 \times \text{capacity}\) (e.g., 32). In Java, elements either stay at their current index <code>i</code> or move to <code>i + oldCapacity</code>, tested by a single bit <code>(hash &amp; oldCapacity) == 0</code>!</li>
+                </ul>
+
+                <h3 style="margin-top:20px;">4. Java 8+ Treeification</h3>
+                <p>
+                    To defend against Hash Collision DoS attacks where an attacker crafts keys with identical hash codes, Java 8 replaces long linked lists with balanced Red-Black Trees (<code>TreeNode&lt;K,V&gt;</code>):
+                </p>
+                <table class="dsa-table">
+                    <thead>
+                        <tr>
+                            <th>Constant</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>TREEIFY_THRESHOLD</code></td>
+                            <td><span class="badge-green">8</span></td>
+                            <td>When a single bucket chain exceeds 8 nodes, it is converted to a Red-Black Tree.</td>
+                        </tr>
+                        <tr>
+                            <td><code>UNTREEIFY_THRESHOLD</code></td>
+                            <td><span class="badge-yellow">6</span></td>
+                            <td>When nodes in a bucket drop to 6 during resizing or deletion, it converts back to a linked list.</td>
+                        </tr>
+                        <tr>
+                            <td><code>MIN_TREEIFY_CAPACITY</code></td>
+                            <td><span class="badge-green">64</span></td>
+                            <td>Treeification will NOT occur unless total table capacity is at least 64. Below 64, it resizes instead.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SECTION 5: EQUALS AND HASHCODE CONTRACT -->
+            <section class="card" id="sec-contract">
+                <h2><i class="fa-solid fa-handshake"></i> The equals() and hashCode() Contract</h2>
+                <p>
+                    Whenever you use a custom object as a HashMap key or in a HashSet, you <strong>MUST</strong> adhere to the official Java Object specification:
+                </p>
+
+                <div style="background: rgba(139, 92, 246, 0.08); border-left: 4px solid #A78BFA; padding: 18px; border-radius: 8px; margin: 15px 0;">
+                    <p style="margin: 0; color: #E9D5FF; font-weight: 500;">
+                        1. If two objects are equal via <code>a.equals(b) == true</code>, their hash codes <strong>MUST</strong> be equal: <code>a.hashCode() == b.hashCode()</code>.<br><br>
+                        2. If two objects have equal hash codes, they are <strong>NOT REQUIRED</strong> to be equal via <code>equals()</code> (this is merely a hash collision).<br><br>
+                        3. If you override <code>equals()</code>, you <strong>MUST</strong> override <code>hashCode()</code>.
+                    </p>
+                </div>
+
+                <div class="code-container">
+                    <pre><code><span class="keyword">class</span> <span class="type">Student</span> {
+    <span class="keyword">private int</span> id;
+    <span class="keyword">private</span> <span class="type">String</span> name;
+
+    <span class="keyword">public</span> <span class="func">Student</span>(<span class="type">int</span> id, <span class="type">String</span> name) {
+        <span class="keyword">this</span>.id = id;
+        <span class="keyword">this</span>.name = name;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">public boolean</span> <span class="func">equals</span>(<span class="type">Object</span> o) {
+        <span class="keyword">if</span> (<span class="keyword">this</span> == o) <span class="keyword">return true</span>;
+        <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) <span class="keyword">return false</span>;
+        <span class="type">Student</span> student = (<span class="type">Student</span>) o;
+        <span class="keyword">return</span> id == student.id &amp;&amp; Objects.equals(name, student.name);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">public int</span> <span class="func">hashCode</span>() {
+        <span class="keyword">return</span> Objects.hash(id, name);
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 6: COMPARISON TABLE -->
+            <section class="card" id="sec-comparison">
+                <h2><i class="fa-solid fa-table-cells"></i> Java Map & Set Implementations Compared</h2>
+                <table class="dsa-table">
+                    <thead>
+                        <tr>
+                            <th>Data Structure</th>
+                            <th>Underlying Engine</th>
+                            <th>Time Complexity</th>
+                            <th>Ordering</th>
+                            <th>Null Keys/Values</th>
+                            <th>Thread-Safe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>HashMap</strong></td>
+                            <td>Array + Linked List / RB-Tree</td>
+                            <td><span class="badge-green">O(1)</span> average</td>
+                            <td>Unordered</td>
+                            <td>1 null key, multiple null vals</td>
+                            <td><span class="badge-red">No</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>LinkedHashMap</strong></td>
+                            <td>HashMap + Doubly Linked List</td>
+                            <td><span class="badge-green">O(1)</span> average</td>
+                            <td>Insertion / Access Order</td>
+                            <td>1 null key, multiple null vals</td>
+                            <td><span class="badge-red">No</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>TreeMap</strong></td>
+                            <td>Red-Black Tree</td>
+                            <td><span class="badge-yellow">O(log n)</span> guaranteed</td>
+                            <td>Natural or Comparator sorted</td>
+                            <td>No null keys (throws NPE)</td>
+                            <td><span class="badge-red">No</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>ConcurrentHashMap</strong></td>
+                            <td>Synchronized Buckets / CAS</td>
+                            <td><span class="badge-green">O(1)</span> average</td>
+                            <td>Unordered</td>
+                            <td>No null keys or values</td>
+                            <td><span class="badge-green">Yes (Lock-free)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>HashSet</strong></td>
+                            <td>Backing HashMap (dummy values)</td>
+                            <td><span class="badge-green">O(1)</span> average</td>
+                            <td>Unordered</td>
+                            <td>1 null element permitted</td>
+                            <td><span class="badge-red">No</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SECTION 7: FULL PRODUCTION IMPLEMENTATION -->
+            <section class="card" id="sec-implementation">
+                <h2><i class="fa-solid fa-code"></i> Complete Custom HashMap in Java</h2>
+                <p>
+                    Below is a robust, production-quality implementation of a generic <code>MyHashMap&lt;K, V&gt;</code> utilizing separate chaining with dynamic load factor rehashing.
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="keyword">import</span> java.util.LinkedList;
+
+<span class="keyword">public class</span> <span class="type">MyHashMap</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt; {
+    <span class="keyword">private static class</span> <span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt; {
+        <span class="type">K</span> key;
+        <span class="type">V</span> value;
+        <span class="func">Node</span>(<span class="type">K</span> key, <span class="type">V</span> value) {
+            <span class="keyword">this</span>.key = key;
+            <span class="keyword">this</span>.value = value;
+        }
+    }
+
+    <span class="keyword">private int</span> capacity;
+    <span class="keyword">private int</span> size;
+    <span class="keyword">private static final double</span> DEFAULT_LOAD_FACTOR = <span class="number">0.75</span>;
+    <span class="keyword">private</span> <span class="type">LinkedList</span>&lt;<span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt;&gt;[] buckets;
+
+    <span class="annotation">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)
+    <span class="keyword">public</span> <span class="func">MyHashMap</span>(<span class="type">int</span> initialCapacity) {
+        <span class="keyword">this</span>.capacity = initialCapacity;
+        <span class="keyword">this</span>.size = <span class="number">0</span>;
+        <span class="keyword">this</span>.buckets = <span class="keyword">new</span> <span class="type">LinkedList</span>[capacity];
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; capacity; i++) {
+            buckets[i] = <span class="keyword">new</span> <span class="type">LinkedList</span>&lt;&gt;();
+        }
+    }
+
+    <span class="keyword">public</span> <span class="func">MyHashMap</span>() {
+        <span class="keyword">this</span>(<span class="number">16</span>);
+    }
+
+    <span class="keyword">private int</span> <span class="func">getBucketIndex</span>(<span class="type">K</span> key) {
+        <span class="type">int</span> hashCode = (key == <span class="keyword">null</span>) ? <span class="number">0</span> : key.hashCode();
+        <span class="keyword">return</span> Math.abs(hashCode) % capacity;
+    }
+
+    <span class="keyword">public void</span> <span class="func">put</span>(<span class="type">K</span> key, <span class="type">V</span> value) {
+        <span class="type">int</span> bi = getBucketIndex(key);
+        <span class="type">LinkedList</span>&lt;<span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt;&gt; bucket = buckets[bi];
+
+        <span class="keyword">for</span> (<span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt; node : bucket) {
+            <span class="keyword">if</span> ((key == <span class="keyword">null</span> &amp;&amp; node.key == <span class="keyword">null</span>) || (key != <span class="keyword">null</span> &amp;&amp; key.equals(node.key))) {
+                node.value = value; <span class="comment">// update existing key</span>
+                <span class="keyword">return</span>;
+            }
+        }
+
+        bucket.add(<span class="keyword">new</span> <span class="type">Node</span>&lt;&gt;(key, value));
+        size++;
+
+        <span class="keyword">if</span> ((<span class="type">double</span>) size / capacity &gt; DEFAULT_LOAD_FACTOR) {
+            rehash();
+        }
+    }
+
+    <span class="keyword">public</span> <span class="type">V</span> <span class="func">get</span>(<span class="type">K</span> key) {
+        <span class="type">int</span> bi = getBucketIndex(key);
+        <span class="keyword">for</span> (<span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt; node : buckets[bi]) {
+            <span class="keyword">if</span> ((key == <span class="keyword">null</span> &amp;&amp; node.key == <span class="keyword">null</span>) || (key != <span class="keyword">null</span> &amp;&amp; key.equals(node.key))) {
+                <span class="keyword">return</span> node.value;
+            }
+        }
+        <span class="keyword">return null</span>;
+    }
+
+    <span class="keyword">public</span> <span class="type">V</span> <span class="func">remove</span>(<span class="type">K</span> key) {
+        <span class="type">int</span> bi = getBucketIndex(key);
+        <span class="type">LinkedList</span>&lt;<span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt;&gt; bucket = buckets[bi];
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; bucket.size(); i++) {
+            <span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt; node = bucket.get(i);
+            <span class="keyword">if</span> ((key == <span class="keyword">null</span> &amp;&amp; node.key == <span class="keyword">null</span>) || (key != <span class="keyword">null</span> &amp;&amp; key.equals(node.key))) {
+                bucket.remove(i);
+                size--;
+                <span class="keyword">return</span> node.value;
+            }
+        }
+        <span class="keyword">return null</span>;
+    }
+
+    <span class="annotation">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)
+    <span class="keyword">private void</span> <span class="func">rehash</span>() {
+        <span class="type">LinkedList</span>&lt;<span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt;&gt;[] oldBuckets = buckets;
+        capacity *= <span class="number">2</span>;
+        buckets = <span class="keyword">new</span> <span class="type">LinkedList</span>[capacity];
+        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; capacity; i++) {
+            buckets[i] = <span class="keyword">new</span> <span class="type">LinkedList</span>&lt;&gt;();
+        }
+
+        size = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="type">LinkedList</span>&lt;<span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt;&gt; bucket : oldBuckets) {
+            <span class="keyword">for</span> (<span class="type">Node</span>&lt;<span class="type">K</span>, <span class="type">V</span>&gt; node : bucket) {
+                put(node.key, node.value);
+            }
+        }
+    }
+
+    <span class="keyword">public int</span> <span class="func">size</span>() { <span class="keyword">return</span> size; }
+    <span class="keyword">public boolean</span> <span class="func">containsKey</span>(<span class="type">K</span> key) { <span class="keyword">return</span> get(key) != <span class="keyword">null</span>; }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 8: PRACTICE PROBLEMS -->
+            <section class="card" id="sec-problems">
+                <h2><i class="fa-solid fa-trophy"></i> Top 10 Hashing LeetCode Problems</h2>
+                <p style="margin-bottom:20px;">
+                    Solve these 10 curated interview problems to solidify your mastery of hash tables, hash sets, frequency arrays, and the complement lookup pattern.
+                </p>
+                <div id="hashing-problems-grid" class="dsa-problems-grid">
+                    <!-- Loaded dynamically via problem-db.js -->
+                </div>
+            </section>
+
+            <!-- COMPLETION BAR -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered Hashing & HashMaps?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to advance your DSA roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleHashingCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_hashmap.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open HashMap Visualizer
+                    </a>
+                </div>
+            </div>
+
+            <!-- NEXT TOPIC CARD -->
+            <div style="background:linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9)); border:1px solid rgba(167, 139, 250, 0.25); border-radius:20px; padding:35px; text-align:right; margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:13px; color:#A78BFA; text-transform:uppercase; letter-spacing:1px;">Next in Curriculum:</span>
+                <h2 style="font-size:24px; margin:5px 0 10px; color:#FFF;">Explore Sorting Algorithms</h2>
+                <p style="margin-bottom:0; text-align:right; max-width:600px; color:#CBD5E1;">Master Bubble, Selection, Insertion, Merge Sort, Quick Sort, and Heap Sort with asymptotic comparisons and real visualizers.</p>
+                <a href="../Sorting/index.html" class="dsa-btn-primary" style="margin-top:15px; display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+                    Next Topic: Sorting <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
+    </footer>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function updateHashingButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('hashing') === 'COMPLETED';
+            const hBtn = document.getElementById('hashing-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const hTxt = document.getElementById('hashing-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (hBtn) hBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (hTxt) hTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (hBtn) hBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (hTxt) hTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleHashingCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('hashing');
+                updateHashingButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('hashing-problems-grid', 'Hashing');
+            }
+            updateHashingButtonsState();
+        });
+    </script>
+</body>
+</html>

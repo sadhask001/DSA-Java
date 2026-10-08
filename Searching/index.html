@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Searching Algorithms | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(167, 139, 250, .15);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 27, 55, 0.9), rgba(15, 12, 35, 0.9));
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #FFFFFF, #C4B5FD);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .hero-banner p {
+            color: #CBD5E1;
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #E9D5FF;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p, .card li {
+            color: #CBD5E1;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .code-container {
+            background: #0B0A17;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 18px 0;
+            overflow-x: auto;
+        }
+
+        .code-container pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            color: #E2E8F0;
+            line-height: 1.6;
+        }
+
+        .keyword { color: #F43F5E; }
+        .type { color: #38BDF8; }
+        .func { color: #A78BFA; }
+        .comment { color: #64748B; font-style: italic; }
+        .string { color: #34D399; }
+        .number { color: #FBBF24; }
+
+        .dsa-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 13.5px;
+        }
+
+        .dsa-table th, .dsa-table td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .dsa-table th {
+            color: #C4B5FD;
+            background: rgba(167, 139, 250, 0.08);
+            font-weight: 600;
+        }
+
+        .dsa-table td {
+            color: #CBD5E1;
+        }
+
+        .dsa-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-green {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34D399;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge-yellow {
+            background: rgba(251, 191, 36, 0.15);
+            color: #FBBF24;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .algo-subcard {
+            background: rgba(10, 8, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="visualizer_searching.html" class="nav-btn"><i class="fa-solid fa-play"></i> Visualizer</a>
+            <a href="../Sorting/index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Sorting</a>
+            <a href="../Recursion/index.html" class="nav-btn"><i class="fa-solid fa-arrow-right"></i> Recursion</a>
+            <button id="searching-complete-btn" class="topic-complete-toggle-btn" onclick="handleSearchingCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="searching-complete-txt">Mark Complete</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="layout-grid">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-magnifying-glass"></i> Searching Guide</h3>
+            <ul>
+                <li><a href="#sec-intro"><i class="fa-solid fa-book-open"></i> Overview & Paradigms</a></li>
+                <li><a href="#sec-templates"><i class="fa-solid fa-layer-group"></i> 3 Binary Search Templates</a></li>
+                <li><a href="#sec-bounds"><i class="fa-solid fa-arrows-split-up-and-left"></i> Lower & Upper Bound</a></li>
+                <li><a href="#sec-specialized"><i class="fa-solid fa-crosshairs"></i> Ternary & Exponential Search</a></li>
+                <li><a href="#sec-matrix"><i class="fa-solid fa-table-cells"></i> 2D Matrix Searching</a></li>
+                <li><a href="#sec-answer"><i class="fa-solid fa-brain"></i> Binary Search on Answer</a></li>
+                <li><a href="#sec-problems"><i class="fa-solid fa-trophy"></i> Practice Problems</a></li>
+            </ul>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+                <a href="visualizer_searching.html" style="background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; color: #E9D5FF; text-decoration: none; font-weight: 500;">
+                    <i class="fa-solid fa-play" style="color: #A78BFA;"></i> Open Searching Visualizer
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+
+            <!-- HERO BANNER -->
+            <section class="hero-banner" id="sec-intro">
+                <span class="badge-tag"><i class="fa-solid fa-compass"></i> Search Space Pruning</span>
+                <h1>Mastering Searching Algorithms</h1>
+                <p>
+                    From linear scans to logarithmic boundaries and binary search across abstract monotonic solution spaces. Learn the famous integer overflow bug, three foolproof boundary templates, lower/upper bounds, 2D matrix staircases, and answer-space optimization.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="visualizer_searching.html" class="dsa-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-play"></i> Launch Search Visualizer
+                    </a>
+                    <a href="#sec-templates" class="dsa-btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-layer-group"></i> Study Templates
+                    </a>
+                </div>
+            </section>
+
+            <!-- SECTION 1: THE OVERFLOW BUG & PREREQUISITES -->
+            <section class="card">
+                <h2><i class="fa-solid fa-bug"></i> The Infamous Integer Overflow Bug</h2>
+                <p>
+                    For decades, textbooks wrote binary search midpoint calculation as:
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="comment">// BUGGY FORMULA:</span>
+<span class="type">int</span> mid = (low + high) / <span class="number">2</span>; <span class="comment">// Vulnerable to 32-bit signed integer overflow!</span></code></pre>
+                </div>
+                <p>
+                    In 2006, Joshua Bloch documented that when \(low + high > 2^{31} - 1\) (\(\approx 2.14 \times 10^9\)), the sum overflows into a negative value, triggering an <code>ArrayIndexOutOfBoundsException</code>. The mathematically identical and overflow-safe formula is:
+                </p>
+                <div class="code-container">
+                    <pre><code><span class="comment">// OVERFLOW-SAFE FORMULA:</span>
+<span class="type">int</span> mid = low + (high - low) / <span class="number">2</span>;
+<span class="comment">// Alternatively using unsigned bit shift:</span>
+<span class="type">int</span> mid = (low + high) &gt;&gt;&gt; <span class="number">1</span>;</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 2: 3 CORE TEMPLATES -->
+            <section class="card" id="sec-templates">
+                <h2><i class="fa-solid fa-layer-group"></i> The Three Fundamental Binary Search Templates</h2>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#34D399;">Template 1: Exact Element Search (<code>low &lt;= high</code>)</h3>
+                    <p>
+                        Used when searching for a definite target in an array without duplicates. Ends when <code>low > high</code>.
+                    </p>
+                    <div class="code-container">
+                        <pre><code><span class="keyword">public static int</span> <span class="func">binarySearchExact</span>(<span class="type">int</span>[] arr, <span class="type">int</span> target) {
+    <span class="type">int</span> low = <span class="number">0</span>, high = arr.length - <span class="number">1</span>;
+    <span class="keyword">while</span> (low &lt;= high) {
+        <span class="type">int</span> mid = low + (high - low) / <span class="number">2</span>;
+        <span class="keyword">if</span> (arr[mid] == target) <span class="keyword">return</span> mid;
+        <span class="keyword">else if</span> (arr[mid] &lt; target) low = mid + <span class="number">1</span>;
+        <span class="keyword">else</span> high = mid - <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#FBBF24;">Template 2: Boundary / Inflection Point (<code>low &lt; high</code>)</h3>
+                    <p>
+                        Used when finding the boundary where a condition flips (e.g., minimum in rotated array, first bad version). Search space is never empty; terminates with <code>low == high</code>.
+                    </p>
+                    <div class="code-container">
+                        <pre><code><span class="keyword">public static int</span> <span class="func">findMinInRotated</span>(<span class="type">int</span>[] nums) {
+    <span class="type">int</span> low = <span class="number">0</span>, high = nums.length - <span class="number">1</span>;
+    <span class="keyword">while</span> (low &lt; high) {
+        <span class="type">int</span> mid = low + (high - low) / <span class="number">2</span>;
+        <span class="keyword">if</span> (nums[mid] &gt; nums[high]) {
+            low = mid + <span class="number">1</span>; <span class="comment">// Inflection point lies strictly in right half</span>
+        } <span class="keyword">else</span> {
+            high = mid;    <span class="comment">// mid could be the minimum, preserve it</span>
+        }
+    }
+    <span class="keyword">return</span> nums[low];
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#A78BFA;">Template 3: Neighbor Comparisons (<code>low + 1 &lt; high</code>)</h3>
+                    <p>
+                        Guarantees search space has at least 3 elements so <code>mid - 1</code> and <code>mid + 1</code> are always valid without boundary checks. Useful for Peak Element (LeetCode 162).
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 3: LOWER & UPPER BOUND -->
+            <section class="card" id="sec-bounds">
+                <h2><i class="fa-solid fa-arrows-split-up-and-left"></i> Lower Bound & Upper Bound</h2>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+                    <div>
+                        <h3 style="color:#A78BFA;">Lower Bound (\(\ge \text{target}\))</h3>
+                        <p style="font-size:13.5px;">
+                            Returns the first index where \(arr[i] \ge \text{target}\).
+                        </p>
+                        <div class="code-container">
+                            <pre><code><span class="keyword">public static int</span> <span class="func">lowerBound</span>(<span class="type">int</span>[] arr, <span class="type">int</span> target) {
+    <span class="type">int</span> low = <span class="number">0</span>, high = arr.length;
+    <span class="keyword">while</span> (low &lt; high) {
+        <span class="type">int</span> mid = low + (high - low) / <span class="number">2</span>;
+        <span class="keyword">if</span> (arr[mid] &gt;= target) high = mid;
+        <span class="keyword">else</span> low = mid + <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> low;
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color:#38BDF8;">Upper Bound (\(> \text{target}\))</h3>
+                        <p style="font-size:13.5px;">
+                            Returns the first index where \(arr[i] > \text{target}\).
+                        </p>
+                        <div class="code-container">
+                            <pre><code><span class="keyword">public static int</span> <span class="func">upperBound</span>(<span class="type">int</span>[] arr, <span class="type">int</span> target) {
+    <span class="type">int</span> low = <span class="number">0</span>, high = arr.length;
+    <span class="keyword">while</span> (low &lt; high) {
+        <span class="type">int</span> mid = low + (high - low) / <span class="number">2</span>;
+        <span class="keyword">if</span> (arr[mid] &gt; target) high = mid;
+        <span class="keyword">else</span> low = mid + <span class="number">1</span>;
+    }
+    <span class="keyword">return</span> low;
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: 2D MATRIX SEARCHING -->
+            <section class="card" id="sec-matrix">
+                <h2><i class="fa-solid fa-table-cells"></i> 2D Matrix Searching</h2>
+                <div class="algo-subcard">
+                    <h3 style="color:#34D399;">Type 1: Row-Major Sorted Matrix (LeetCode 74)</h3>
+                    <p>
+                        Each row is sorted, and the first integer of each row is greater than the last of the previous. Treat the \(m \times n\) grid as a virtual 1D array of length \(m \cdot n\):
+                        \[\text{row} = \text{mid} / n, \quad \text{col} = \text{mid} \bmod n\]
+                        Time complexity: \(O(\log(m \cdot n))\), Space: \(O(1)\).
+                    </p>
+                </div>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#FBBF24;">Type 2: Independent Row & Column Sorted (LeetCode 240)</h3>
+                    <p>
+                        Start at the <strong>Top-Right corner</strong> \((0, n - 1)\). If \(matrix[r][c] > \text{target}\), prune the entire column \(c\) (\(c--\)). If \(matrix[r][c] < \text{target}\), prune row \(r\) (\(r++\)). Runs in linear \(O(m + n)\) time!
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 5: BINARY SEARCH ON ANSWER -->
+            <section class="card" id="sec-answer">
+                <h2><i class="fa-solid fa-brain"></i> Binary Search on Answer Space</h2>
+                <p>
+                    One of the most powerful paradigms in competitive programming and FAANG interviews. When asked to "minimize the maximum" or "maximize the minimum", check if the feasibility function <code>canAchieve(speed)</code> is monotonic:
+                </p>
+                <div style="background:rgba(139,92,246,0.1); border-left:4px solid #A78BFA; padding:15px; border-radius:8px; margin:15px 0;">
+                    <p style="margin:0; font-family:'JetBrains Mono'; font-size:13px; color:#E9D5FF;">
+                        If canAchieve(k) is TRUE, then canAchieve(k + 1), canAchieve(k + 2)... are also TRUE.<br>
+                        This monotonicity allows binary searching directly on the numeric answer range [1, maxPile]!
+                    </p>
+                </div>
+
+                <div class="code-container">
+                    <pre><code><span class="comment">// Koko Eating Bananas (LeetCode 875)</span>
+<span class="keyword">public int</span> <span class="func">minEatingSpeed</span>(<span class="type">int</span>[] piles, <span class="type">int</span> h) {
+    <span class="type">int</span> low = <span class="number">1</span>, high = <span class="number">1_000_000_000</span>;
+    <span class="keyword">while</span> (low &lt; high) {
+        <span class="type">int</span> speed = low + (high - low) / <span class="number">2</span>;
+        <span class="keyword">if</span> (canEatAll(piles, speed, h)) {
+            high = speed; <span class="comment">// Try smaller speed</span>
+        } <span class="keyword">else</span> {
+            low = speed + <span class="number">1</span>;
+        }
+    }
+    <span class="keyword">return</span> low;
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 6: IMPORTANT CODING PROBLEMS -->
+            <section class="card" id="sec-problems">
+                <h2><i class="fa-solid fa-trophy"></i> Top 10 Searching LeetCode Problems</h2>
+                <p style="margin-bottom:20px;">
+                    These 10 verified problems test standard binary search, rotated inflection points, 2D staircases, and binary search on monotonic predicates. Check "Mark Solved" to update your learning roadmap.
+                </p>
+                <div id="searching-problems-grid" class="dsa-problems-grid">
+                    <!-- Loaded dynamically via problem-db.js -->
+                </div>
+            </section>
+
+            <!-- COMPLETION BAR -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered Searching Algorithms?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to update your overall roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleSearchingCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_searching.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open Searching Visualizer
+                    </a>
+                </div>
+            </div>
+
+            <!-- NEXT TOPIC CARD -->
+            <div style="background:linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9)); border:1px solid rgba(167, 139, 250, 0.25); border-radius:20px; padding:35px; text-align:right; margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:13px; color:#A78BFA; text-transform:uppercase; letter-spacing:1px;">Next in Curriculum:</span>
+                <h2 style="font-size:24px; margin:5px 0 10px; color:#FFF;">Explore Recursion & Backtracking</h2>
+                <p style="margin-bottom:0; text-align:right; max-width:600px; color:#CBD5E1;">Master recursion call stacks, base cases, state-space tree traversal, backtracking prune conditions, Subsets, Permutations, and N-Queens.</p>
+                <a href="../Recursion/index.html" class="dsa-btn-primary" style="margin-top:15px; display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+                    Next Topic: Recursion & Backtracking <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
+    </footer>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function updateSearchingButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('searching') === 'COMPLETED';
+            const sBtn = document.getElementById('searching-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const sTxt = document.getElementById('searching-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (sBtn) sBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (sTxt) sTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (sBtn) sBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (sTxt) sTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleSearchingCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('searching');
+                updateSearchingButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('searching-problems-grid', 'Searching');
+            }
+            updateSearchingButtonsState();
+        });
+    </script>
+</body>
+</html>

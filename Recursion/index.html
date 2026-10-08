@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Recursion & Backtracking | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            overflow-x: hidden;
+            padding-top: 90px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            left: -250px;
+            top: -250px;
+            background: #A78BFA;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            right: -250px;
+            bottom: -250px;
+            background: #7C3AED;
+            opacity: .15;
+            filter: blur(160px);
+            z-index: -2;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .nav-btn:hover { color: #C4B5FD; }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            padding: 40px 6%;
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sidebar {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 24px;
+            padding: 25px;
+            height: max-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .sidebar h3 {
+            color: #C4B5FD;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar a {
+            color: #CBD5E1;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: .3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(167, 139, 250, .15);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 27, 55, 0.9), rgba(15, 12, 35, 0.9));
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner h1 {
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #FFFFFF, #C4B5FD);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .hero-banner p {
+            color: #CBD5E1;
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #E9D5FF;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card p, .card li {
+            color: #CBD5E1;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .code-container {
+            background: #0B0A17;
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 18px 0;
+            overflow-x: auto;
+        }
+
+        .code-container pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            color: #E2E8F0;
+            line-height: 1.6;
+        }
+
+        .keyword { color: #F43F5E; }
+        .type { color: #38BDF8; }
+        .func { color: #A78BFA; }
+        .comment { color: #64748B; font-style: italic; }
+        .string { color: #34D399; }
+        .number { color: #FBBF24; }
+
+        .algo-subcard {
+            background: rgba(10, 8, 25, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div class="nav-links">
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="visualizer_recursion.html" class="nav-btn"><i class="fa-solid fa-play"></i> Visualizer</a>
+            <a href="../Searching/index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Searching</a>
+            <a href="../DP/index.html" class="nav-btn"><i class="fa-solid fa-arrow-right"></i> Dynamic Programming</a>
+            <button id="recursion-complete-btn" class="topic-complete-toggle-btn" onclick="handleRecursionCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="recursion-complete-txt">Mark Complete</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="layout-grid">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3><i class="fa-solid fa-tree"></i> Recursion Guide</h3>
+            <ul>
+                <li><a href="#sec-intro"><i class="fa-solid fa-book-open"></i> Recursion Fundamentals</a></li>
+                <li><a href="#sec-stack"><i class="fa-solid fa-layer-group"></i> Call Stack Mechanics</a></li>
+                <li><a href="#sec-backtracking"><i class="fa-solid fa-rotate-left"></i> Backtracking Template</a></li>
+                <li><a href="#sec-archetypes"><i class="fa-solid fa-shapes"></i> Canonical Archetypes</a></li>
+                <li><a href="#sec-code"><i class="fa-solid fa-code"></i> Java Implementations</a></li>
+                <li><a href="#sec-problems"><i class="fa-solid fa-trophy"></i> Practice Problems</a></li>
+            </ul>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+                <a href="visualizer_recursion.html" style="background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; color: #E9D5FF; text-decoration: none; font-weight: 500;">
+                    <i class="fa-solid fa-play" style="color: #A78BFA;"></i> Open Recursion Visualizer
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+
+            <!-- HERO BANNER -->
+            <section class="hero-banner" id="sec-intro">
+                <span class="badge-tag"><i class="fa-solid fa-diagram-project"></i> State Space Exploration</span>
+                <h1>Mastering Recursion & Backtracking</h1>
+                <p>
+                    Recursion breaks complex problems down into self-similar sub-problems, unwinding decisions across JVM stack frames. Backtracking supercharges recursion with exhaustive tree search and intelligent branch pruning: <strong>Choose, Explore, and Unchoose</strong>.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="visualizer_recursion.html" class="dsa-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-play"></i> Launch Call Stack Visualizer
+                    </a>
+                    <a href="#sec-backtracking" class="dsa-btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-rotate-left"></i> Master Template
+                    </a>
+                </div>
+            </section>
+
+            <!-- SECTION 1: RECURSION ESSENTIALS -->
+            <section class="card">
+                <h2><i class="fa-solid fa-arrows-spin"></i> The Anatomy of a Recursive Function</h2>
+                <p>
+                    Every valid recursive method is defined by two mandatory invariants:
+                </p>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-top:15px;">
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#34D399; font-size:16px; margin-bottom:8px;"><i class="fa-solid fa-flag-checkered"></i> 1. The Base Case (Termination)</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            The condition where the subproblem is small enough to solve directly without further recursive calls. Omitting or erroneously framing the base case causes infinite stack descent, triggering JVM <code>StackOverflowError</code>.
+                        </p>
+                    </div>
+
+                    <div style="background:rgba(10,8,25,0.6); padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+                        <h3 style="color:#A78BFA; font-size:16px; margin-bottom:8px;"><i class="fa-solid fa-shoe-prints"></i> 2. The Recursive Step (Progress)</h3>
+                        <p style="font-size:13.5px; line-height:1.6;">
+                            The self-call with transformed arguments that <strong>strictly converges toward the base case</strong> (e.g. \(n - 1\), \(\lfloor n / 2 \rfloor\), or moving to child pointer).
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: CALL STACK & ACTIVATION RECORDS -->
+            <section class="card" id="sec-stack">
+                <h2><i class="fa-solid fa-layer-group"></i> Under the Hood: The JVM Call Stack</h2>
+                <p>
+                    Each method invocation allocates an <strong>Activation Record (Stack Frame)</strong> on the thread's call stack. A stack frame stores:
+                </p>
+                <ul style="margin:12px 0 16px 20px; display:flex; flex-direction:column; gap:6px;">
+                    <li><strong>Method Parameters</strong> passed by value.</li>
+                    <li><strong>Local Variables</strong> initialized within the scope.</li>
+                    <li><strong>Return Address:</strong> pointer in bytecode bytecode where execution resumes after return.</li>
+                    <li><strong>Return Value</strong> evaluated back to the caller frame.</li>
+                </ul>
+                <div style="background:rgba(244,63,94,0.1); border-left:4px solid #F43F5E; padding:15px; border-radius:8px;">
+                    <p style="margin:0; font-size:13.5px; color:#FECDD3;">
+                        <strong>StackOverflowError:</strong> By default on 64-bit JVMs, thread stack size is 1024 KB (configured with <code>-Xss</code>). A recursive depth exceeding ~10,000 frames typically causes a stack overflow!
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 3: THE BACKTRACKING TEMPLATE -->
+            <section class="card" id="sec-backtracking">
+                <h2><i class="fa-solid fa-rotate-left"></i> The Universal Backtracking Framework</h2>
+                <p>
+                    Backtracking is Depth-First Search on a conceptual <strong>State Space Tree</strong>. When a branch cannot lead to a valid solution, we prune it and <em>backtrack</em> (revert state) to try the next alternative.
+                </p>
+
+                <div class="code-container">
+                    <pre><code><span class="comment">// The Universal Choose - Explore - Unchoose Template</span>
+<span class="keyword">void</span> <span class="func">backtrack</span>(<span class="type">State</span> state, <span class="type">List</span>&lt;<span class="type">Solution</span>&gt; results) {
+    <span class="keyword">if</span> (isGoal(state)) {
+        results.add(<span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;(state.current)); <span class="comment">// DEEP COPY snapshot</span>
+        <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">for</span> (<span class="type">Choice</span> choice : state.getAvailableChoices()) {
+        <span class="keyword">if</span> (isValid(choice, state)) {
+            <span class="comment">// 1. CHOOSE (Mutate state)</span>
+            state.apply(choice);
+
+            <span class="comment">// 2. EXPLORE (Recursive DFS descent)</span>
+            backtrack(state, results);
+
+            <span class="comment">// 3. UNCHOOSE (Revert state mutation for next branch)</span>
+            state.undo(choice);
+        }
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 4: CANONICAL ARCHETYPES -->
+            <section class="card" id="sec-archetypes">
+                <h2><i class="fa-solid fa-shapes"></i> Canonical Problem Archetypes</h2>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#A78BFA;">1. Subsets / Power Set (\(O(2^n)\))</h3>
+                    <p>
+                        At each index \(i\), binary decision: either <strong>Include</strong> candidate \(nums[i]\) or <strong>Exclude</strong> it. To handle duplicates without duplicate sets (Subsets II), sort the array first and skip when <code>i &gt; start &amp;&amp; nums[i] == nums[i-1]</code>.
+                    </p>
+                </div>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#38BDF8;">2. Permutations (\(O(n!)\))</h3>
+                    <p>
+                        Order matters. Generate all arrangements of \(n\) items. Use a boolean array <code>boolean[] visited</code> to track items currently inside the partial permutation.
+                    </p>
+                </div>
+
+                <div class="algo-subcard">
+                    <h3 style="color:#34D399;">3. Constraint Satisfaction (N-Queens & Sudoku)</h3>
+                    <p>
+                        In N-Queens, place a queen in row \(r\) only if no previously placed queen shares the same column \(c\), main diagonal \((r - c)\), or anti-diagonal \((r + c)\). Prune immediately on collision!
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 5: JAVA IMPLEMENTATIONS -->
+            <section class="card" id="sec-code">
+                <h2><i class="fa-solid fa-code"></i> Complete Java Implementations</h2>
+
+                <h3>N-Queens (Bitmask Optimized Backtracking)</h3>
+                <div class="code-container">
+                    <pre><code><span class="keyword">public class</span> <span class="type">NQueensSolver</span> {
+    <span class="keyword">public</span> <span class="type">List</span>&lt;<span class="type">List</span>&lt;<span class="type">String</span>&gt;&gt; <span class="func">solveNQueens</span>(<span class="type">int</span> n) {
+        <span class="type">List</span>&lt;<span class="type">List</span>&lt;<span class="type">String</span>&gt;&gt; solutions = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;();
+        <span class="type">char</span>[][] board = <span class="keyword">new</span> <span class="type">char</span>[n][n];
+        <span class="keyword">for</span> (<span class="type">char</span>[] row : board) Arrays.fill(row, <span class="string">'.'</span>);
+
+        <span class="func">backtrack</span>(<span class="number">0</span>, n, board, <span class="keyword">new boolean</span>[n], <span class="keyword">new boolean</span>[<span class="number">2</span> * n], <span class="keyword">new boolean</span>[<span class="number">2</span> * n], solutions);
+        <span class="keyword">return</span> solutions;
+    }
+
+    <span class="keyword">private void</span> <span class="func">backtrack</span>(<span class="type">int</span> r, <span class="type">int</span> n, <span class="type">char</span>[][] board,
+                           <span class="keyword">boolean</span>[] cols, <span class="keyword">boolean</span>[] diag1, <span class="keyword">boolean</span>[] diag2,
+                           <span class="type">List</span>&lt;<span class="type">List</span>&lt;<span class="type">String</span>&gt;&gt; res) {
+        <span class="keyword">if</span> (r == n) {
+            <span class="type">List</span>&lt;<span class="type">String</span>&gt; snapshot = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;();
+            <span class="keyword">for</span> (<span class="type">char</span>[] row : board) snapshot.add(<span class="keyword">new</span> <span class="type">String</span>(row));
+            res.add(snapshot);
+            <span class="keyword">return</span>;
+        }
+
+        <span class="keyword">for</span> (<span class="type">int</span> c = <span class="number">0</span>; c &lt; n; c++) {
+            <span class="type">int</span> d1 = r - c + n; <span class="comment">// main diagonal index</span>
+            <span class="type">int</span> d2 = r + c;     <span class="comment">// anti diagonal index</span>
+            <span class="keyword">if</span> (cols[c] || diag1[d1] || diag2[d2]) <span class="keyword">continue</span>; <span class="comment">// PRUNE</span>
+
+            board[r][c] = <span class="string">'Q'</span>;
+            cols[c] = diag1[d1] = diag2[d2] = <span class="keyword">true</span>;   <span class="comment">// CHOOSE</span>
+
+            <span class="func">backtrack</span>(r + <span class="number">1</span>, n, board, cols, diag1, diag2, res); <span class="comment">// EXPLORE</span>
+
+            board[r][c] = <span class="string">'.'</span>;
+            cols[c] = diag1[d1] = diag2[d2] = <span class="keyword">false</span>;  <span class="comment">// UNCHOOSE</span>
+        }
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 6: IMPORTANT CODING PROBLEMS -->
+            <section class="card" id="sec-problems">
+                <h2><i class="fa-solid fa-trophy"></i> Top 10 Backtracking Interview Problems</h2>
+                <p style="margin-bottom:20px;">
+                    These 10 verified LeetCode problems test Power Set generation, duplicate filtering, combinations, grid flooding, and constraint satisfiability. Check "Mark Solved" to track your real progress.
+                </p>
+                <div id="backtracking-problems-grid" class="dsa-problems-grid">
+                    <!-- Populated dynamically via problem-db.js -->
+                </div>
+            </section>
+
+            <!-- COMPLETION BAR -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered Recursion & Backtracking?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to update your overall roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleRecursionCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_recursion.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open Call Stack Visualizer
+                    </a>
+                </div>
+            </div>
+
+            <!-- NEXT TOPIC CARD -->
+            <div style="background:linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9)); border:1px solid rgba(167, 139, 250, 0.25); border-radius:20px; padding:35px; text-align:right; margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:13px; color:#A78BFA; text-transform:uppercase; letter-spacing:1px;">Next in Curriculum:</span>
+                <h2 style="font-size:24px; margin:5px 0 10px; color:#FFF;">Explore Dynamic Programming</h2>
+                <p style="margin-bottom:0; text-align:right; max-width:600px; color:#CBD5E1;">Turn exponential recursive time O(2ⁿ) into polynomial linear time O(n) via Memoization (Top-Down) and Tabulation (Bottom-Up).</p>
+                <a href="../DP/index.html" class="dsa-btn-primary" style="margin-top:15px; display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+                    Next Topic: Dynamic Programming <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
+    </footer>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        function updateRecursionButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('recursion') === 'COMPLETED';
+            const rBtn = document.getElementById('recursion-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const rTxt = document.getElementById('recursion-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (rBtn) rBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (rTxt) rTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (rBtn) rBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (rTxt) rTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleRecursionCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('recursion');
+                updateRecursionButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('backtracking-problems-grid', 'Backtracking');
+            }
+            updateRecursionButtonsState();
+        });
+    </script>
+</body>
+</html>

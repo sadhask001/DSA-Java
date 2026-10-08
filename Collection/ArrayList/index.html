@@ -6,6 +6,7 @@
     <title>Mastering ArrayList in Java | DSA Learning Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../../shared/css/design-system.css">
     <style>
         * {
             margin: 0;
@@ -386,10 +387,14 @@
 <body>
 
     <header>
-        <a href="../index.html" class="logo">DSA Learning Platform</a>
+        <a href="../../index.html" class="logo">DSA-Java Platform</a>
         <div class="nav-links">
-            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Back to Collection</a>
+            <a href="../../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="../index.html" class="nav-btn"><i class="fa-solid fa-layer-group"></i> Collections</a>
+            <a href="visualizer_arraylist.html" class="nav-btn"><i class="fa-solid fa-play"></i> Visualizer</a>
+            <button id="arraylist-complete-btn" class="complete-toggle-btn" style="padding:6px 14px; font-size:12px;" onclick="handleArrayListCompleteToggle()">
+                <i class="fa-regular fa-circle-check"></i> <span id="arraylist-complete-txt">Mark Complete</span>
+            </button>
         </div>
     </header>
 
@@ -411,6 +416,7 @@
                 <li><a href="#code-playground"><i class="fa-solid fa-laptop-code"></i> Code Playground</a></li>
                 <li><a href="#complexity-matrix"><i class="fa-solid fa-chart-line"></i> Complexity Bounds</a></li>
                 <li><a href="#interview-metrics"><i class="fa-solid fa-circle-question"></i> Interview Guide</a></li>
+                <li><a href="#problems-section"><i class="fa-solid fa-circle-check"></i> Important Problems</a></li>
             </ul>
         </aside>
 
@@ -660,15 +666,57 @@ public class ArrayListExample {
                 </div>
             </section>
 
+            <!-- SECTION 8: IMPORTANT CODING PROBLEMS -->
+            <section id="problems-section" class="module-section">
+                <h1>Important Coding Problems</h1>
+                <div class="card">
+                    <p style="margin-bottom:20px;">
+                        Curated LeetCode problems practicing dynamic arrays, resizing amortized analysis, list operations, and matrix generation.
+                    </p>
+                    <div id="arraylist-problems-grid" class="dsa-problems-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TOPIC COMPLETION & NAVIGATION CARD -->
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; border:1px solid rgba(167, 139, 250, 0.3); background:linear-gradient(135deg, rgba(20, 18, 40, 0.9), rgba(30, 27, 55, 0.7));">
+                <div>
+                    <h3 style="color:#FFF; font-size:20px; margin-bottom:6px;">Mastered ArrayList?</h3>
+                    <p style="color:#94A3B8; font-size:13px; margin:0;">Mark this topic complete to update your overall roadmap progress.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button id="footer-complete-btn" class="dsa-btn-primary" style="display:inline-flex; align-items:center; gap:8px;" onclick="handleArrayListCompleteToggle()">
+                        <i class="fa-regular fa-circle-check"></i> <span id="footer-btn-text">Mark Complete</span>
+                    </button>
+                    <a href="visualizer_arraylist.html" class="inline-visualizer-btn" style="padding:12px 20px;">
+                        <i class="fa-solid fa-play"></i> Open Visualizer
+                    </a>
+                </div>
+            </div>
+
+            <!-- NEXT TOPIC CARD -->
+            <div style="background:linear-gradient(135deg, rgba(30, 27, 55, 0.8), rgba(20, 18, 40, 0.9)); border:1px solid rgba(167, 139, 250, 0.25); border-radius:20px; padding:35px; text-align:right; margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+                <span style="font-size:13px; color:#A78BFA; text-transform:uppercase; letter-spacing:1px;">Ready for Pointer-Based DS?</span>
+                <h2 style="font-size:24px; margin:5px 0 10px; color:#FFF;">Explore Linked Lists in Java</h2>
+                <p style="margin-bottom:0; text-align:right; max-width:600px; color:#CBD5E1;">Say goodbye to contiguous memory constraints. Discover nodes, next pointers, Singly, Doubly, and Circular Linked Lists.</p>
+                <a href="../LinkedList/visualizer_linkedlist.html" class="dsa-btn-primary" style="margin-top:15px; display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+                    Next Topic: Linked List <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
         </div>
     </main>
 
-    <footer>
-        That's it.<br>
-        © 2026 DSA Learning Platform
+    <footer style="text-align:center; padding:30px; border-top:1px solid rgba(255,255,255,0.08); color:#CBD5E1; font-size:14px;">
+        DSA-Java — Interactive Data Structures & Algorithms Learning Platform<br>
+        © 2026
     </footer>
 
     <!-- INTERACTIVE EVENT TRIGGERS SCRIPTS ROUTINES -->
+    <script src="../../shared/js/problem-db.js"></script>
+    <script src="../../shared/js/progress-manager.js"></script>
+    <script src="../../shared/js/global-search.js"></script>
     <script>
         function traceArrayListMemory(layer) {
             document.querySelectorAll('.mem-interactive-node').forEach(el => el.classList.remove('active-focus'));
@@ -689,6 +737,40 @@ public class ArrayListExample {
                 text.innerText = "The active integer data payloads (10, 20, 30) sit stored in continuous indices locations at the front of a resizable 10-cell raw object array block, allowing fast lookups.";
             }
         }
+
+        function updateArrayListButtonsState() {
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('arraylist') === 'COMPLETED';
+            const hBtn = document.getElementById('arraylist-complete-btn');
+            const fBtn = document.getElementById('footer-complete-btn');
+            const hTxt = document.getElementById('arraylist-complete-txt');
+            const fTxt = document.getElementById('footer-btn-text');
+
+            if (isDone) {
+                if (hBtn) hBtn.classList.add('is-completed');
+                if (fBtn) fBtn.classList.add('is-completed');
+                if (hTxt) hTxt.innerText = "✓ Completed";
+                if (fTxt) fTxt.innerText = "✓ Completed";
+            } else {
+                if (hBtn) hBtn.classList.remove('is-completed');
+                if (fBtn) fBtn.classList.remove('is-completed');
+                if (hTxt) hTxt.innerText = "Mark Complete";
+                if (fTxt) fTxt.innerText = "Mark Complete";
+            }
+        }
+
+        function handleArrayListCompleteToggle() {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete('arraylist');
+                updateArrayListButtonsState();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof renderProblemCards === 'function') {
+                renderProblemCards('arraylist-problems-grid', 'Arrays');
+            }
+            updateArrayListButtonsState();
+        });
     </script>
 </body>
 </html>

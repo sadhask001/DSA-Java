@@ -3,70 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java & DSA Architecture Roadmap | Interactive Learning Path</title>
+    <title>Java DSA Interactive Learning Roadmap | Master Data Structures & Algorithms</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="shared/css/design-system.css">
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body {
             background: #06050f;
             color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
-            padding-top: 100px;
-            padding-bottom: 80px;
+            padding-top: 90px;
+            padding-bottom: 90px;
         }
 
-        /* Ambient Cyber Glow Effects */
-        body::before, body::after {
-            content: ""; position: fixed; width: 800px; height: 700px; border-radius: 50%; opacity: .1; filter: blur(160px); z-index: -2;
+        /* Roadmap Stats Dashboard Header */
+        .roadmap-hero {
+            max-width: 1050px;
+            margin: 20px auto 30px;
+            padding: 0 20px;
+            text-align: center;
         }
-        body::before { left: -300px; top: -200px; background: #a78bfa; }
-        body::after { right: -300px; bottom: -200px; background: #6366f1; }
 
-        /* Fixed Navigation Header */
-        header {
-            position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 6%; background: rgba(6, 5, 15, 0.75); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, .06); z-index: 999;
+        .roadmap-hero h1 {
+            font-size: 38px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f3e8ff, #c4b5fd, #8b5cf6);
+            -webkit-background-clip: text;
+            color: transparent;
         }
-        .logo-wrap { display: flex; align-items: center; gap: 10px; }
-        .logo-icon { color: #8b5cf6; font-size: 24px; animation: pulse 2s infinite; }
-        .logo { font-size: 22px; font-weight: 700; background: linear-gradient(90deg, #f3e8ff, #a78bfa); -webkit-background-clip: text; color: transparent; text-decoration: none; }
 
-        /* Search Filter Controls */
-        .search-area { max-width: 600px; margin: 30px auto; padding: 0 20px; text-align: center; }
-        .search-area p { color: #94a3b8; font-size: 14px; margin-bottom: 15px; }
-        .search-box { position: relative; width: 100%; }
+        .roadmap-hero p {
+            color: #94a3b8;
+            font-size: 15px;
+            max-width: 750px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+
+        /* Stats Counter Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            background: rgba(20, 18, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 18px 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-item-label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-item-value {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+
+        .stat-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .stat-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #34d399);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Search Filter Box */
+        .search-area {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
         .search-box input {
-            width: 100%; padding: 14px 20px 14px 45px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.04); color: white; font-size: 14px; outline: none; transition: all 0.3s;
+            width: 100%;
+            padding: 14px 20px 14px 45px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
         }
-        .search-box input:focus { border-color: #8b5cf6; background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); }
-        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 16px; }
 
-        /* Roadmap.sh-Style Node Graph Track Container */
+        .search-box input:focus {
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        /* Roadmap Vector Track */
         .roadmap-viewport {
-            max-width: 1000px;
-            margin: 50px auto 0;
+            max-width: 950px;
+            margin: 0 auto;
             padding: 0 20px;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 40px;
+            gap: 45px;
         }
 
-        /* Central Continuous Vector Pathway Connection Line */
         .roadmap-viewport::before {
             content: '';
             position: absolute;
-            left: 50%; top: 0; bottom: 0; width: 3px;
-            background: linear-gradient(to bottom, #8b5cf6 0%, #6366f1 50%, rgba(99, 102, 241, 0.05) 100%);
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #8b5cf6 0%, #3b82f6 20%, #34d399 45%, #f59e0b 70%, #ec4899 90%, #8b5cf6 100%);
             transform: translateX(-50%);
             z-index: 1;
         }
 
-        /* Main Conceptual Pipeline Station Blocks */
         .roadmap-station {
             position: relative;
             width: 100%;
@@ -75,12 +165,12 @@
             z-index: 2;
         }
 
-        /* Node Core Wrapper Box Layout */
         .node-wrapper {
             background: #110f24;
             border: 2px solid #312e5c;
-            border-radius: 16px;
-            width: 580px;
+            border-radius: 18px;
+            width: 640px;
+            max-width: 95%;
             padding: 24px;
             position: relative;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
@@ -93,11 +183,12 @@
             box-shadow: 0 15px 35px rgba(139, 92, 246, 0.25);
         }
 
-        /* Roadmap.sh Connective Central Pin-Dots */
         .node-pin {
             position: absolute;
-            left: 50%; top: 32px;
-            width: 14px; height: 14px;
+            left: 50%;
+            top: 32px;
+            width: 16px;
+            height: 16px;
             background: #06050f;
             border: 3px solid #312e5c;
             border-radius: 50%;
@@ -105,42 +196,144 @@
             z-index: 4;
             transition: all 0.3s;
         }
+
         .roadmap-station:hover .node-pin {
             border-color: #a78bfa;
             background: #a78bfa;
-            box-shadow: 0 0 12px #8b5cf6;
-            scale: 1.2;
+            box-shadow: 0 0 15px #8b5cf6;
+            scale: 1.25;
         }
 
-        /* Station Text Content Specifications */
-        .node-info-zone { margin-bottom: 15px; }
-        .node-info-zone h3 { font-size: 18px; color: #f1f5f9; display: flex; align-items: center; gap: 8px; font-weight: 600; }
-        .node-info-zone h3 i { font-size: 16px; width: 24px; }
-        .node-info-zone p { font-size: 13px; color: #94a3b8; margin-top: 4px; line-height: 1.5; }
+        /* Node Top Header Meta */
+        .node-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-        /* Clickable Nested Sub-Topics Group Cards Array */
+        .node-status-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .node-status-badge.not-started { background: rgba(148, 163, 184, 0.12); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
+        .node-status-badge.completed { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+
+        .node-info-zone h3 {
+            font-size: 19px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .node-info-zone p {
+            font-size: 13.5px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Action Links & Visualizer Chips */
+        .node-actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .visualizer-chip-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            color: #c4b5fd;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-family: var(--font-mono);
+        }
+
+        .visualizer-chip-link:hover {
+            background: #8b5cf6;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .learn-button-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .learn-button-link:hover {
+            transform: translateX(3px);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Milestone Checkpoints */
+        .milestone-checkpoint {
+            position: relative;
+            z-index: 3;
+            background: #191436;
+            border: 2px solid #a78bfa;
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #e9d5ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.4);
+        }
+
         .sub-links-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
             gap: 8px;
             margin-top: 12px;
-            padding-top: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .topic-route-link {
             background: #181635;
             border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-family: var(--font-mono);
+            font-size: 11px;
             color: #c4b5fd;
             text-decoration: none;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             transition: all 0.2s;
         }
 
@@ -148,209 +341,695 @@
             background: #8b5cf6;
             color: white;
             border-color: #a78bfa;
-            transform: scale(1.03);
-        }
-
-        /* Master Global Redirect Module Trigger */
-        .master-access-overlay-link {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; cursor: pointer; border-radius: 16px;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
         }
 
         @media (max-width: 640px) {
             .node-wrapper { width: 100%; margin-left: 20px; }
             .roadmap-viewport::before { left: 10px; transform: none; }
             .node-pin { left: 10px; transform: translateX(-50%); }
+            .milestone-checkpoint { font-size: 10px; padding: 6px 14px; margin-left: 10px; }
         }
     </style>
 </head>
-<body>
+<body class="ambient-glow">
 
-    <header>
-        <div class="logo-wrap">
-            <i class="fa-solid fa-network-wired logo-icon"></i>
-            <a href="index.html" class="logo">DSA Learning Platform</a>
-        </div>
+    <!-- PLATFORM HEADER -->
+    <header class="platform-header">
+        <a href="index.html" class="platform-logo-wrap">
+            <i class="fa-solid fa-shapes platform-logo-icon"></i>
+            <span class="platform-logo-text">DSA-Java Platform</span>
+        </a>
+
+        <nav class="platform-nav-links">
+            <a href="index.html" class="platform-nav-btn active"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="Patterns/index.html" class="platform-nav-btn"><i class="fa-solid fa-shapes"></i> Patterns</a>
+            <a href="ProblemSolving/index.html" class="platform-nav-btn"><i class="fa-solid fa-lightbulb"></i> Frameworks</a>
+            <a href="InterviewPrep/index.html" class="platform-nav-btn"><i class="fa-solid fa-trophy"></i> Interview Prep</a>
+            <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="platform-nav-btn" style="background:none; border:none; cursor:pointer;">
+                <i class="fa-solid fa-magnifying-glass"></i> Search (Ctrl+K)
+            </button>
+        </nav>
     </header>
 
     <main style="width: 100%;">
         
-        <div class="search-area">
-            <p>Interactive tree guide maps checking structural Java environments configurations. Click nodes to trace sub-modules.</p>
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="roadmap-filter" placeholder="Search milestones, algorithms or collections..." onkeyup="filterRoadmapTree()">
+        <!-- ROADMAP HERO & METRICS -->
+        <div class="roadmap-hero">
+            <h1>Interactive Java DSA Roadmap</h1>
+            <p>
+                A structured, step-by-step curriculum for mastering Data Structures & Algorithms using Java. Follow the path, learn theory, simulate code with visualizers, and solve verified interview problems.
+            </p>
+
+            <!-- STATS DASHBOARD -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-item-label">Overall Progress</span>
+                    <span class="stat-item-value" id="stat-overall-val">0%</span>
+                    <div class="stat-progress-bar"><div class="stat-progress-fill" id="stat-overall-bar"></div></div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-item-label">Data Structures</span>
+                    <span class="stat-item-value" id="stat-ds-val" style="color:#60A5FA;">0%</span>
+                    <div class="stat-progress-bar"><div class="stat-progress-fill" id="stat-ds-bar" style="background:#60A5FA;"></div></div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-item-label">Algorithms</span>
+                    <span class="stat-item-value" id="stat-algo-val" style="color:#FBBF24;">0%</span>
+                    <div class="stat-progress-bar"><div class="stat-progress-fill" id="stat-algo-bar" style="background:#FBBF24;"></div></div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-item-label">Problems Solved</span>
+                    <span class="stat-item-value" id="stat-probs-val" style="color:#34D399;">0 / 190</span>
+                    <div class="stat-progress-bar"><div class="stat-progress-fill" id="stat-probs-bar" style="background:#34D399;"></div></div>
+                </div>
+            </div>
+
+            <!-- SEARCH FILTER -->
+            <div class="search-area">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="roadmap-filter" placeholder="Search milestones, algorithms or data structures..." onkeyup="filterRoadmapTree()">
+                </div>
             </div>
         </div>
 
-        <!-- Node Graph Workspace Blueprint Layout -->
+        <!-- ROADMAP GRAPH TRACK -->
         <div class="roadmap-viewport" id="roadmap-tree-canvas">
 
-            <!-- Checkpoint 1: Complexity -->
-            <div class="roadmap-station">
+            <!-- CHECKPOINT 1: COMPLEXITY ANALYSIS -->
+            <div class="roadmap-station" data-topic-id="complexity">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="Complexity/index.html" class="master-access-overlay-link" title="Open Complexity Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-chart-line" style="color: #60a5fa;"></i> Complexity Analysis</h3>
-                        <p>Mathematical framework metrics evaluating program processing bounds.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill easy">Beginner &middot; Foundation</span>
+                        <span class="node-status-badge not-started" id="status-badge-complexity" onclick="handleStationStatusToggle('complexity')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Complexity/index.html#time" class="topic-route-link">Time Complexity</a>
-                        <a href="Complexity/index.html#space" class="topic-route-link">Space Complexity</a>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-chart-line" style="color: #60a5fa;"></i> Time & Space Complexity</h3>
+                        <p>Mathematical framework evaluating algorithmic bounds (O, &Omega;, &Theta;). Clickable ladder, multi-curve graph, and memory simulator.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Complexity/index.html" class="topic-route-link">Big-O Guide</a>
+                        <a href="Complexity/visualizer.html" class="topic-route-link">Curves Sim</a>
+                        <a href="Complexity/index.html#problems" class="topic-route-link">Problems</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Complexity/visualizer.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Visualizer Engine
+                        </a>
+                        <a href="Complexity/index.html" class="learn-button-link">
+                            Open Notes &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Checkpoint 2: Arrays -->
-            <div class="roadmap-station">
+            <!-- MILESTONE BADGE 1 -->
+            <div class="milestone-checkpoint">
+                <i class="fa-solid fa-flag-checkered"></i> Foundation Milestone Complete
+            </div>
+
+            <!-- CHECKPOINT 2: ARRAYS -->
+            <div class="roadmap-station" data-topic-id="arrays">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="Array/index.html" class="master-access-overlay-link" title="Open Arrays Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-table-cells" style="color: #34d399;"></i> Array Architectures</h3>
-                        <p>Contiguous physical memory blocks layout parameters random lookups formulas.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill easy">Beginner &middot; Data Structure</span>
+                        <span class="node-status-badge not-started" id="status-badge-arrays" onclick="handleStationStatusToggle('arrays')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Array/index.html" class="topic-route-link">1D-Array</a>
-                        <a href="Array/index.html" class="topic-route-link">2D-Matrix</a>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-table-cells" style="color: #34d399;"></i> Array Architectures (1D & 2D)</h3>
+                        <p>Contiguous physical memory blocks, random access hardware formula, cache locality, and matrix translations.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Array/index.html" class="topic-route-link">1D-Array Theory</a>
+                        <a href="Array/array2D_theory.html" class="topic-route-link">2D-Matrix Theory</a>
+                        <a href="Array/visualizer_array1D.html" class="topic-route-link">1D Visualizer</a>
+                        <a href="Array/visualizer_array2D.html" class="topic-route-link">2D Visualizer</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Array/visualizer_array1D.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> 1D Visualizer
+                        </a>
+                        <a href="Array/index.html" class="learn-button-link">
+                            Open Notes &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Checkpoint 3: Searching Checkpoint Link -->
-            <div class="roadmap-station">
+            <!-- CHECKPOINT 3: ARRAYLIST -->
+            <div class="roadmap-station" data-topic-id="arraylist">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="Searching/index.html" class="master-access-overlay-link" title="Open Searching Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-magnifying-glass" style="color: #f59e0b;"></i> Searching Routines</h3>
-                        <p>Scanning sweeps methodologies isolating precise value positions elements criteria.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill easy">Intermediate &middot; Java Collections</span>
+                        <span class="node-status-badge not-started" id="status-badge-arraylist" onclick="handleStationStatusToggle('arraylist')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Searching/index.html#linear" class="topic-route-link">Linear Search</a>
-                        <a href="Searching/index.html#binary" class="topic-route-link">Binary Search</a>
-                        <a href="Searching/index.html#jump" class="topic-route-link">Jump Search</a>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-layer-group" style="color: #a78bfa;"></i> ArrayList & Collections Hierarchy</h3>
+                        <p>Dynamic resizing mechanisms, capacity vs size, generics, and Stack reference to Heap array object allocation.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Collection/index.html" class="topic-route-link">Hierarchy Tree</a>
+                        <a href="Collection/ArrayList/index.html" class="topic-route-link">ArrayList Guide</a>
+                        <a href="Collection/iterable.html" class="topic-route-link">Iterable API</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Collection/ArrayList/visualizer_arraylist.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> ArrayList Engine
+                        </a>
+                        <a href="Collection/ArrayList/index.html" class="learn-button-link">
+                            Open Notes &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Checkpoint 4: Sorting Frameworks -->
-            <div class="roadmap-station">
+            <!-- CHECKPOINT 4: LINKED LIST -->
+            <div class="roadmap-station" data-topic-id="linked-list">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="sorting/index.html" class="master-access-overlay-link" title="Open Sorting Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-arrow-down-1-9" style="color: #ec4899;"></i> Sorting Engines</h3>
-                        <p>Data reorganization pipelines implementing strategic elements swapping partitions.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill medium">Intermediate &middot; Data Structure</span>
+                        <span class="node-status-badge not-started" id="status-badge-linked-list" onclick="handleStationStatusToggle('linked-list')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="sorting/index.html#selection" class="topic-route-link">Selection Sort</a>
-                        <a href="sorting/index.html#insertion" class="topic-route-link">Insertion Sort</a>
-                        <a href="sorting/index.html#bubble" class="topic-route-link">Bubble Sort</a>
-                        <a href="sorting/index.html#count" class="topic-route-link">Count Sort</a>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-link" style="color: #ec4899;"></i> Linked Lists (SLL, DLL, CLL)</h3>
+                        <p>Non-contiguous pointer nodes, pointer rewiring, in-place reversal, Floyd's cycle detection, and memory allocation dumps.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Collection/LinkedList/index.html" class="topic-route-link">List Theory</a>
+                        <a href="Collection/LinkedList/visualizer_linkedlist.html" class="topic-route-link">Interactive Engine</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Collection/LinkedList/visualizer_linkedlist.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Linked List Engine
+                        </a>
+                        <a href="Collection/LinkedList/index.html" class="learn-button-link">
+                            Study Topic &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Checkpoint 5: Collection Utilities Framework -->
-            <div class="roadmap-station">
+            <!-- CHECKPOINT 5: STACK -->
+            <div class="roadmap-station" data-topic-id="stack">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="Collection/index.html" class="master-access-overlay-link" title="Open Collections Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-layer-group" style="color: #a78bfa;"></i> Java Collections Framework</h3>
-                        <p>Engineered container templates optimizing object collection allocations dynamically.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill medium">Intermediate &middot; Linear Structures</span>
+                        <span class="node-status-badge not-started" id="status-badge-stack" onclick="handleStationStatusToggle('stack')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Collection/index.html#list" class="topic-route-link">List API</a>
-                        <a href="Collection/index.html#set" class="topic-route-link">Set API</a>
-                        <a href="Collection/index.html#queue" class="topic-route-link">Queue API</a>
-                        <a href="Collection/index.html#map" class="topic-route-link">Map Registers</a>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-cubes-stacked" style="color: #f59e0b;"></i> Stack Architecture</h3>
+                        <p>LIFO operations, call stack simulation, balanced parentheses verification, and infix-to-postfix conversion.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Collection/Stack/index.html" class="topic-route-link">Stack Notes</a>
+                        <a href="Collection/Stack/visualizer_stack.html" class="topic-route-link">Stack Engine</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Collection/Stack/visualizer_stack.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Stack Visualizer
+                        </a>
+                        <a href="Collection/Stack/index.html" class="learn-button-link">
+                            Study Stack &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Checkpoint 6: Trees Hierarchies -->
-            <div class="roadmap-station">
+            <!-- CHECKPOINT 6: QUEUE & DEQUE -->
+            <div class="roadmap-station" data-topic-id="queue">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="Trees/index.html" class="master-access-overlay-link" title="Open Trees Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-tree" style="color: #10b981;"></i> Hierarchical Trees</h3>
-                        <p>Branching non-linear structures managing linked node pointer references maps.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill medium">Intermediate &middot; Linear Structures</span>
+                        <span class="node-status-badge not-started" id="status-badge-queue" onclick="handleStationStatusToggle('queue')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Trees/index.html#binary" class="topic-route-link">Binary Tree</a>
-                        <a href="Trees/index.html#bst" class="topic-route-link">Binary Search (BST)</a>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-arrows-split-up-and-left" style="color: #06b6d4;"></i> Queue & Deque Systems</h3>
+                        <p>FIFO buffers, circular array queue with modulo arithmetic, and double-ended ArrayDeque sliding window operations.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Collection/Queue/index.html" class="topic-route-link">Queue Notes</a>
+                        <a href="Collection/Queue/visualizer_queue.html" class="topic-route-link">Queue Engine</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Collection/Queue/visualizer_queue.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Queue Visualizer
+                        </a>
+                        <a href="Collection/Queue/index.html" class="learn-button-link">
+                            Study Queue &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Checkpoint 7: Graph Connected Networks -->
-            <div class="roadmap-station">
+            <!-- CHECKPOINT 7: TREES -->
+            <div class="roadmap-station" data-topic-id="trees">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="Graph/index.html" class="master-access-overlay-link" title="Open Graphs Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-circle-nodes" style="color: #2563eb;"></i> Graphs & Topologies</h3>
-                        <p>Interconnected vertex coordinate architectures handling network routing problems maps.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Advanced &middot; Hierarchical Structures</span>
+                        <span class="node-status-badge not-started" id="status-badge-trees" onclick="handleStationStatusToggle('trees')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Graph/index.html#matrix" class="topic-route-link">Adj Matrix</a>
-                        <a href="Graph/index.html#list" class="topic-route-link">Adj List</a>
-                        <a href="Graph/index.html#bfs" class="topic-route-link">BFS Traversal</a>
-                        <a href="Graph/index.html#dfs" class="topic-route-link">DFS Traversal</a>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-tree" style="color: #10b981;"></i> Hierarchical Trees & BST</h3>
+                        <p>Binary trees, recursive traversals (Inorder, Preorder, Postorder, Level-Order), BST insertion/deletion, and AVL rotations.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Trees/index.html" class="topic-route-link">Tree Theory</a>
+                        <a href="Trees/visualizer_tree.html" class="topic-route-link">Tree Visualizer</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Trees/visualizer_tree.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Tree Visualizer
+                        </a>
+                        <a href="Trees/index.html" class="learn-button-link">
+                            Study Trees &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Checkpoint 8: Algorithmic Core Paradigms -->
-            <div class="roadmap-station">
+            <!-- CHECKPOINT 8: HEAP -->
+            <div class="roadmap-station" data-topic-id="heap">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="Algorithm/index.html" class="master-access-overlay-link" title="Open Algorithms Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-brain" style="color: #f43f5e;"></i> Algorithmic Core Paradigms</h3>
-                        <p>Advanced algorithmic solution blueprints sorting complex mathematical issues.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Advanced &middot; Priority Structures</span>
+                        <span class="node-status-badge not-started" id="status-badge-heap" onclick="handleStationStatusToggle('heap')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <a href="Algorithm/index.html#bruteforce" class="topic-route-link">Brute Force</a>
-                        <a href="Algorithm/index.html#recursion" class="topic-route-link">Recursive Strategy</a>
-                        <a href="Algorithm/index.html#dp" class="topic-route-link">Dynamic Prog</a>
-                        <a href="Algorithm/index.html#divide" class="topic-route-link">Divide & Conquer</a>
-                        <a href="Algorithm/index.html#greedy" class="topic-route-link">Greedy Strategy</a>
-                        <a href="Algorithm/index.html#backtrack" class="topic-route-link">Backtracking</a>
-                        <a href="Algorithm/index.html#random" class="topic-route-link">Randomized</a>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-cubes" style="color: #f59e0b;"></i> Binary Heap & PriorityQueue</h3>
+                        <p>Complete binary trees mapped to 1D arrays, sift-up, sift-down heapify in O(N), and HeapSort mechanics.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Heap/index.html" class="topic-route-link">Heap Theory</a>
+                        <a href="Heap/visualizer_heap.html" class="topic-route-link">Heap Engine</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Heap/visualizer_heap.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Heap Visualizer
+                        </a>
+                        <a href="Heap/index.html" class="learn-button-link">
+                            Study Heap &rarr;
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Checkpoint 9: Advanced Concepts -->
-            <div class="roadmap-station">
+            <!-- CHECKPOINT 9: GRAPHS -->
+            <div class="roadmap-station" data-topic-id="graph">
                 <div class="node-pin"></div>
                 <div class="node-wrapper">
-                    <a href="Advance/index.html" class="master-access-overlay-link" title="Open Advanced Concepts Index"></a>
-                    <div class="node-info-zone">
-                        <h3><i class="fa-solid fa-wand-magic-sparkles" style="color: #fbbf24;"></i> Advance Engineering Concepts</h3>
-                        <p>Advanced data modifications rules, masking tricks, and complex metadata parsing engines.</p>
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Advanced &middot; Networks & Topologies</span>
+                        <span class="node-status-badge not-started" id="status-badge-graph" onclick="handleStationStatusToggle('graph')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
                     </div>
-                    <div class="sub-links-container" style="position: relative; z-index: 5;">
-                        <span class="topic-route-link">Bit Masking</span>
-                        <span class="topic-route-link">Segment Trees</span>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-circle-nodes" style="color: #2563eb;"></i> Graphs & Network Topologies</h3>
+                        <p>Vertices, edges, Adjacency List/Matrix, BFS, DFS, Dijkstra shortest path, and topological ordering.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Graph/index.html" class="topic-route-link">Graph Theory</a>
+                        <a href="Graph/visualizer_graph.html" class="topic-route-link">Graph Visualizer</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Graph/visualizer_graph.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Graph Visualizer
+                        </a>
+                        <a href="Graph/index.html" class="learn-button-link">
+                            Study Graph &rarr;
+                        </a>
                     </div>
                 </div>
+            </div>
+
+            <!-- CHECKPOINT 10: HASHING -->
+            <div class="roadmap-station" data-topic-id="hashing">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill medium">Core &middot; Data Structure</span>
+                        <span class="node-status-badge not-started" id="status-badge-hashing" onclick="handleStationStatusToggle('hashing')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-hashtag" style="color: #8b5cf6;"></i> Hashing & HashMap Internals</h3>
+                        <p>Hash functions, collision resolution via chaining, bucket arrays, load factor rehashing, and treeification to Red-Black trees.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Hashing/index.html" class="topic-route-link">HashMap Theory</a>
+                        <a href="Hashing/visualizer_hashmap.html" class="topic-route-link">Buckets Visualizer</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Hashing/visualizer_hashmap.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> HashMap Visualizer
+                        </a>
+                        <a href="Hashing/index.html" class="learn-button-link">
+                            Study Hashing &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MILESTONE BADGE 2 -->
+            <div class="milestone-checkpoint">
+                <i class="fa-solid fa-flag-checkered"></i> Data Structures Mastery Achieved
+            </div>
+
+            <!-- CHECKPOINT 11: SORTING -->
+            <div class="roadmap-station" data-topic-id="sorting">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill medium">Core &middot; Algorithms</span>
+                        <span class="node-status-badge not-started" id="status-badge-sorting" onclick="handleStationStatusToggle('sorting')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-arrow-down-a-z" style="color: #ec4899;"></i> Sorting Algorithms</h3>
+                        <p>Comparison and non-comparison sorting: Merge Sort, Quick Sort, Insertion, Selection, Bubble, HeapSort, and Radix Sort.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Sorting/index.html" class="topic-route-link">Sorting Theory</a>
+                        <a href="Sorting/visualizer_sorting.html" class="topic-route-link">Sorting Engine</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Sorting/visualizer_sorting.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Sorting Visualizer
+                        </a>
+                        <a href="Sorting/index.html" class="learn-button-link">
+                            Study Sorting &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKPOINT 12: SEARCHING -->
+            <div class="roadmap-station" data-topic-id="searching">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill easy">Core &middot; Algorithms</span>
+                        <span class="node-status-badge not-started" id="status-badge-searching" onclick="handleStationStatusToggle('searching')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-magnifying-glass" style="color: #38bdf8;"></i> Searching Routines</h3>
+                        <p>Linear search vs logarithmic Binary Search, boundary conditions, lower_bound, upper_bound, and Binary Search on monotonic answer spaces.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Searching/index.html" class="topic-route-link">Search Theory</a>
+                        <a href="Searching/visualizer_searching.html" class="topic-route-link">Search Engine</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Searching/visualizer_searching.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Search Visualizer
+                        </a>
+                        <a href="Searching/index.html" class="learn-button-link">
+                            Study Searching &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKPOINT 13: RECURSION -->
+            <div class="roadmap-station" data-topic-id="recursion">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Core &middot; Algorithmic Paradigm</span>
+                        <span class="node-status-badge not-started" id="status-badge-recursion" onclick="handleStationStatusToggle('recursion')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-arrows-spin" style="color: #a78bfa;"></i> Recursion & Backtracking</h3>
+                        <p>Call stack frame management, recurrence relations, State Space Trees, pruning, Subsets, Permutations, and N-Queens.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Recursion/index.html" class="topic-route-link">Recursion Guide</a>
+                        <a href="Recursion/visualizer_recursion.html" class="topic-route-link">Call Stack Sim</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Recursion/visualizer_recursion.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Recursion Visualizer
+                        </a>
+                        <a href="Recursion/index.html" class="learn-button-link">
+                            Study Recursion &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKPOINT 14: DYNAMIC PROGRAMMING -->
+            <div class="roadmap-station" data-topic-id="dp">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Advanced &middot; Algorithms</span>
+                        <span class="node-status-badge not-started" id="status-badge-dp" onclick="handleStationStatusToggle('dp')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-table" style="color: #10b981;"></i> Dynamic Programming</h3>
+                        <p>Overlapping subproblems, optimal substructure, Top-Down Memoization vs Bottom-Up Tabulation, Knapsack, LCS, and LIS.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="DP/index.html" class="topic-route-link">DP Guide</a>
+                        <a href="DP/visualizer_dp.html" class="topic-route-link">DP Grid Engine</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="DP/visualizer_dp.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> DP Visualizer
+                        </a>
+                        <a href="DP/index.html" class="learn-button-link">
+                            Study DP &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKPOINT 15: GREEDY -->
+            <div class="roadmap-station" data-topic-id="greedy">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill medium">Core &middot; Algorithms</span>
+                        <span class="node-status-badge not-started" id="status-badge-greedy" onclick="handleStationStatusToggle('greedy')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-hand-holding-dollar" style="color: #f59e0b;"></i> Greedy Algorithms</h3>
+                        <p>Locally optimal choices yielding global optima, Exchange Arguments, Activity Selection, Huffman Coding, and Gas Station.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Greedy/index.html" class="topic-route-link">Greedy Guide</a>
+                        <a href="Greedy/visualizer_greedy.html" class="topic-route-link">Intervals Sim</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Greedy/visualizer_greedy.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Greedy Visualizer
+                        </a>
+                        <a href="Greedy/index.html" class="learn-button-link">
+                            Study Greedy &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKPOINT 16: STRINGS -->
+            <div class="roadmap-station" data-topic-id="strings">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill medium">Core &middot; Data Structure</span>
+                        <span class="node-status-badge not-started" id="status-badge-strings" onclick="handleStationStatusToggle('strings')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-font" style="color: #ec4899;"></i> String Algorithms</h3>
+                        <p>String immutability, StringBuilder, KMP (Knuth-Morris-Pratt) LPS array, Rabin-Karp polynomial rolling hash, and Trie structures.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Strings/index.html" class="topic-route-link">Strings Guide</a>
+                        <a href="Strings/visualizer_strings.html" class="topic-route-link">Pattern Matcher</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Strings/visualizer_strings.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Strings Visualizer
+                        </a>
+                        <a href="Strings/index.html" class="learn-button-link">
+                            Study Strings &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKPOINT 17: BIT MANIPULATION -->
+            <div class="roadmap-station" data-topic-id="bit">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Low-Level &middot; Algorithms</span>
+                        <span class="node-status-badge not-started" id="status-badge-bit" onclick="handleStationStatusToggle('bit')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-microchip" style="color: #818cf8;"></i> Bit Manipulation</h3>
+                        <p>Bitwise operators (AND, OR, XOR, NOT, Shifts), Brian Kernighan's bit-counting, power of two tests, and subset generation with bitmasks.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="BitManipulation/index.html" class="topic-route-link">Bits Guide</a>
+                        <a href="BitManipulation/visualizer_bits.html" class="topic-route-link">Bitwise Visualizer</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="BitManipulation/visualizer_bits.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Bits Visualizer
+                        </a>
+                        <a href="BitManipulation/index.html" class="learn-button-link">
+                            Study Bits &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MILESTONE BADGE 3 -->
+            <div class="milestone-checkpoint">
+                <i class="fa-solid fa-flag-checkered"></i> Core Algorithmic Mastery Complete
+            </div>
+
+            <!-- CHECKPOINT 18: PATTERNS -->
+            <div class="roadmap-station" data-topic-id="patterns">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Meta &middot; Interview Blueprints</span>
+                        <span class="node-status-badge not-started" id="status-badge-patterns" onclick="handleStationStatusToggle('patterns')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-shapes" style="color: #a78bfa;"></i> Algorithmic Patterns (10 Canonical Models)</h3>
+                        <p>Two Pointers, Sliding Window, Fast & Slow, Prefix Sum, Monotonic Stack, In-place Reversal, Two Heaps, Top K, Merge Intervals, Modified Binary Search.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="Patterns/index.html" class="topic-route-link">10 Patterns Guide</a>
+                        <a href="Patterns/visualizer_patterns.html" class="topic-route-link">Patterns Sim</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="Patterns/visualizer_patterns.html" class="visualizer-chip-link">
+                            <i class="fa-solid fa-play"></i> Patterns Engine
+                        </a>
+                        <a href="Patterns/index.html" class="learn-button-link">
+                            Study Patterns &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKPOINT 19: PROBLEM SOLVING -->
+            <div class="roadmap-station" data-topic-id="problemsolving">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Strategy &middot; Engineering Mindset</span>
+                        <span class="node-status-badge not-started" id="status-badge-problemsolving" onclick="handleStationStatusToggle('problemsolving')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i> Problem Solving Frameworks</h3>
+                        <p>The UMPIRE Method (Understand, Match, Plan, Implement, Review, Evaluate), Universal Edge Case Matrix, and 45-Minute Interview Battle Plan.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="ProblemSolving/index.html#umpire" class="topic-route-link">UMPIRE System</a>
+                        <a href="ProblemSolving/index.html#edge-cases" class="topic-route-link">Edge Defense</a>
+                        <a href="ProblemSolving/index.html#checker" class="topic-route-link">Audit Tool</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="ProblemSolving/index.html#checker" class="visualizer-chip-link">
+                            <i class="fa-solid fa-microscope"></i> Edge Case Tool
+                        </a>
+                        <a href="ProblemSolving/index.html" class="learn-button-link">
+                            Explore Strategy &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKPOINT 20: INTERVIEW PREPARATION -->
+            <div class="roadmap-station" data-topic-id="interviewprep">
+                <div class="node-pin"></div>
+                <div class="node-wrapper">
+                    <div class="node-top-bar">
+                        <span class="badge-pill hard">Culmination &middot; Placement Ready</span>
+                        <span class="node-status-badge not-started" id="status-badge-interviewprep" onclick="handleStationStatusToggle('interviewprep')">
+                            <i class="fa-regular fa-circle"></i> Not Started
+                        </span>
+                    </div>
+                    <div class="node-info-zone">
+                        <h3><i class="fa-solid fa-trophy" style="color: #34d399;"></i> Interview Prep & Curated Sheets</h3>
+                        <p>Blind 75, NeetCode 150, Striver SDE Sheet, Company-specific interview profiles (Google, Amazon, Meta, Microsoft), and Mock Interview Readiness Rubric.</p>
+                    </div>
+                    <div class="sub-links-container">
+                        <a href="InterviewPrep/index.html#curated-sheets" class="topic-route-link">Blind 75 / NeetCode</a>
+                        <a href="InterviewPrep/index.html#company-tracks" class="topic-route-link">Company Tracks</a>
+                        <a href="InterviewPrep/index.html#checklist" class="topic-route-link">Readiness Score</a>
+                        <a href="InterviewPrep/index.html#visualizers-hub" class="topic-route-link">All Visualizers</a>
+                    </div>
+                    <div class="node-actions-bar">
+                        <a href="InterviewPrep/index.html#visualizers-hub" class="visualizer-chip-link">
+                            <i class="fa-solid fa-display"></i> All Visualizers
+                        </a>
+                        <a href="InterviewPrep/index.html" class="learn-button-link">
+                            Open Prep Hub &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FINAL MILESTONE BADGE -->
+            <div class="milestone-checkpoint" style="border-color:#34d399; box-shadow:0 0 25px rgba(52,211,153,0.5);">
+                <i class="fa-solid fa-trophy"></i> FAANG &amp; Tier-1 Placement Ready
             </div>
 
         </div>
     </main>
 
+    <!-- SCRIPTS -->
+    <script src="shared/js/problem-db.js"></script>
+    <script src="shared/js/progress-manager.js"></script>
+    <script src="shared/js/global-search.js"></script>
     <script>
         function filterRoadmapTree() {
             let val = document.getElementById("roadmap-filter").value.toLowerCase();
@@ -360,6 +1039,54 @@
                 st.style.display = textBlock.includes(val) ? "flex" : "none";
             });
         }
+
+        function refreshRoadmapStats() {
+            if (typeof getProgressStats !== 'function') return;
+            const stats = getProgressStats();
+
+            document.getElementById('stat-overall-val').innerText = stats.overallPercent + "%";
+            document.getElementById('stat-overall-bar').style.width = stats.overallPercent + "%";
+
+            document.getElementById('stat-ds-val').innerText = stats.dsPercent + "%";
+            document.getElementById('stat-ds-bar').style.width = stats.dsPercent + "%";
+
+            document.getElementById('stat-algo-val').innerText = stats.algoPercent + "%";
+            document.getElementById('stat-algo-bar').style.width = stats.algoPercent + "%";
+
+            document.getElementById('stat-probs-val').innerText = `${stats.solvedProblems} / ${stats.totalProblems}`;
+            document.getElementById('stat-probs-bar').style.width = Math.min(100, Math.round((stats.solvedProblems / stats.totalProblems) * 100)) + "%";
+
+            // Update all node status badges
+            const topicIds = [
+                'complexity', 'arrays', 'arraylist', 'linked-list', 'stack', 'queue',
+                'trees', 'heap', 'graph', 'hashing', 'sorting', 'searching',
+                'recursion', 'dp', 'greedy', 'strings', 'bit', 'patterns',
+                'problemsolving', 'interviewprep'
+            ];
+
+            topicIds.forEach(id => {
+                const badge = document.getElementById(`status-badge-${id}`);
+                if (!badge) return;
+                const status = getTopicStatus(id);
+                if (status === 'COMPLETED') {
+                    badge.className = "node-status-badge completed";
+                    badge.innerHTML = `<i class="fa-solid fa-check"></i> Completed`;
+                } else {
+                    badge.className = "node-status-badge not-started";
+                    badge.innerHTML = `<i class="fa-regular fa-circle"></i> Not Started`;
+                }
+            });
+        }
+
+        function handleStationStatusToggle(topicId) {
+            if (typeof toggleTopicComplete === 'function') {
+                toggleTopicComplete(topicId);
+                refreshRoadmapStats();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', refreshRoadmapStats);
+        window.addEventListener('dsa-progress-updated', refreshRoadmapStats);
     </script>
 </body>
 </html>

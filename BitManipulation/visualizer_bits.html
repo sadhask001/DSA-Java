@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit Manipulation & Binary Engine Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        select, input[type="text"], input[type="number"], input[type="range"] {
+            background: #0D0B1C;
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus, input[type="number"]:focus { border-color: #A78BFA; }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            background: #231C4D;
+            color: #E9D5FF;
+            border: 1px solid rgba(167, 139, 250, .2);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn:hover:not(:disabled) {
+            background: #3B2E7E;
+            color: white;
+            border-color: #A78BFA;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            border: none;
+        }
+        .btn.primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        }
+
+        .btn.accent {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
+            border: 1px solid rgba(52, 211, 153, 0.4);
+        }
+
+        /* Viewport Canvas */
+        .bits-viewport {
+            background: #0B1120;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            padding: 30px 20px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            overflow-x: auto;
+        }
+
+        /* Bit Register Strip */
+        .bit-strip {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .bit-cell {
+            width: 46px;
+            height: 60px;
+            background: rgba(20, 18, 40, 0.8);
+            border: 2px solid rgba(167, 139, 250, 0.25);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .bit-cell:hover {
+            border-color: #A78BFA;
+            transform: translateY(-2px);
+        }
+
+        .bit-cell .bit-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .bit-cell .bit-idx {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.5px;
+            color: #475569;
+        }
+
+        .bit-cell.is-set {
+            border-color: #34D399;
+            background: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);
+        }
+        .bit-cell.is-set .bit-val {
+            color: #34D399;
+        }
+
+        .bit-cell.highlight {
+            border-color: #FBBF24;
+            background: rgba(245, 158, 11, 0.2);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+        }
+
+        .log-box {
+            background: #090814;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #A78BFA;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> Bit Notes</a>
+            <a href="../Strings/index.html" class="back-btn"><i class="fa-solid fa-i-cursor"></i> Strings</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Bit Operations</span>
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+
+                <div class="form-group">
+                    <label>Trick / Operator Simulation</label>
+                    <select id="bit-trick-select" onchange="handleTrickChange()">
+                        <option value="KERNIGHAN" selected>Brian Kernighan's n & (n - 1) (Count Set Bits)</option>
+                        <option value="LOWEST">Extract Lowest Set Bit: n & (-n)</option>
+                        <option value="POWER2">Check Power of 2: n > 0 && (n & (n - 1)) == 0</option>
+                        <option value="XOR">XOR Swap: a ^= b; b ^= a; a ^= b</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Input Integer (0 to 255)</label>
+                    <input type="number" id="input-num" min="0" max="255" value="44" oninput="handleNumInput()">
+                </div>
+
+                <div class="btn-grid">
+                    <button class="btn primary" id="play-pause-btn" onclick="togglePlayPause()">
+                        <i class="fa-solid fa-play" id="play-icon"></i> <span id="play-text">Step Trick</span>
+                    </button>
+                    <button class="btn" onclick="resetRegister()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                    <button class="btn accent" onclick="loadRandomNum()">
+                        <i class="fa-solid fa-shuffle"></i> Random
+                    </button>
+                    <button class="btn" onclick="invertAllBits()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Invert (~n)
+                    </button>
+                </div>
+            </div>
+
+            <!-- DECIMAL / HEX / BINARY CONVERSION -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Number Representation</span>
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px; font-family:'JetBrains Mono'; font-size:12px;">
+                    <div style="display:flex; justify-content:space-between; padding:6px 10px; background:#090814; border-radius:6px;">
+                        <span style="color:#94A3B8;">DECIMAL</span>
+                        <span id="rep-dec" style="color:#FBBF24; font-weight:700;">44</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:6px 10px; background:#090814; border-radius:6px;">
+                        <span style="color:#94A3B8;">HEXADECIMAL</span>
+                        <span id="rep-hex" style="color:#38BDF8; font-weight:700;">0x2C</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:6px 10px; background:#090814; border-radius:6px;">
+                        <span style="color:#94A3B8;">BINARY (8-bit)</span>
+                        <span id="rep-bin" style="color:#34D399; font-weight:700;">00101100</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div style="font-size:12px; color:#94A3B8; line-height:1.6;">
+                    <strong style="color:#C4B5FD;">Interactive Bits:</strong> Click directly on any bit in the register to toggle it between 0 and 1!
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT VIEWPORT -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="bits-viewport">
+                <div style="font-size:12px; color:#A78BFA; font-family:'JetBrains Mono';">8-BIT REGISTER (CLICK BITS TO TOGGLE)</div>
+                <div class="bit-strip" id="register-strip">
+                    <!-- 8 Bit cells -->
+                </div>
+
+                <div id="sub-register-area" style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+                    <!-- Second register or calculation line -->
+                </div>
+            </div>
+
+            <!-- LIVE STEP LOG -->
+            <div class="log-box" id="step-log">
+                Click on any bit to toggle state, or choose a trick and click "Step Trick".
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        let currentNum = 44;
+        let animationSteps = [];
+        let currentStepIndex = 0;
+
+        function init() {
+            renderRegister(currentNum);
+            updateRepresentation(currentNum);
+        }
+
+        function handleNumInput() {
+            let val = parseInt(document.getElementById('input-num').value) || 0;
+            val = Math.max(0, Math.min(255, val));
+            currentNum = val;
+            renderRegister(currentNum);
+            updateRepresentation(currentNum);
+            document.getElementById('step-log').innerText = `Register updated to decimal ${currentNum}.`;
+        }
+
+        function handleTrickChange() {
+            document.getElementById('sub-register-area').innerHTML = '';
+            document.getElementById('step-log').innerText = `Selected trick: ${document.getElementById('bit-trick-select').value}. Click "Step Trick" to execute.`;
+        }
+
+        function toggleBit(bitIdx) {
+            currentNum ^= (1 << bitIdx);
+            document.getElementById('input-num').value = currentNum;
+            renderRegister(currentNum);
+            updateRepresentation(currentNum);
+            document.getElementById('step-log').innerText = `Toggled bit ${bitIdx}. New value: ${currentNum}.`;
+        }
+
+        function invertAllBits() {
+            currentNum = (~currentNum) & 0xFF;
+            document.getElementById('input-num').value = currentNum;
+            renderRegister(currentNum);
+            updateRepresentation(currentNum);
+            document.getElementById('step-log').innerText = `Inverted all 8 bits (~n & 0xFF): ${currentNum}.`;
+        }
+
+        function loadRandomNum() {
+            currentNum = Math.floor(Math.random() * 256);
+            document.getElementById('input-num').value = currentNum;
+            renderRegister(currentNum);
+            updateRepresentation(currentNum);
+            document.getElementById('step-log').innerText = `Loaded random integer: ${currentNum}.`;
+        }
+
+        function resetRegister() {
+            currentNum = 44;
+            document.getElementById('input-num').value = 44;
+            document.getElementById('sub-register-area').innerHTML = '';
+            renderRegister(currentNum);
+            updateRepresentation(currentNum);
+            document.getElementById('step-log').innerText = `Reset register to default 44.`;
+        }
+
+        function updateRepresentation(n) {
+            document.getElementById('rep-dec').innerText = n;
+            document.getElementById('rep-hex').innerText = '0x' + n.toString(16).toUpperCase().padStart(2, '0');
+            document.getElementById('rep-bin').innerText = n.toString(2).padStart(8, '0');
+        }
+
+        function renderRegister(n, highlightBit = -1) {
+            const strip = document.getElementById('register-strip');
+            strip.innerHTML = '';
+            for (let i = 7; i >= 0; i--) {
+                const isSet = (n & (1 << i)) !== 0;
+                const cell = document.createElement('div');
+                cell.className = `bit-cell ${isSet ? 'is-set' : ''} ${highlightBit === i ? 'highlight' : ''}`;
+                cell.onclick = () => toggleBit(i);
+                cell.innerHTML = `
+                    <span class="bit-val">${isSet ? '1' : '0'}</span>
+                    <span class="bit-idx">2^${i}</span>
+                `;
+                strip.appendChild(cell);
+            }
+        }
+
+        // ================= TRICK EXECUTION =================
+        function togglePlayPause() {
+            const trick = document.getElementById('bit-trick-select').value;
+            const subArea = document.getElementById('sub-register-area');
+
+            if (trick === 'KERNIGHAN') {
+                if (currentNum === 0) {
+                    document.getElementById('step-log').innerText = "Number is 0. Zero set bits remain!";
+                    return;
+                }
+                const oldN = currentNum;
+                const newN = currentNum & (currentNum - 1);
+                const clearedBit = oldN ^ newN;
+                const bitPos = Math.log2(clearedBit);
+
+                currentNum = newN;
+                document.getElementById('input-num').value = currentNum;
+                renderRegister(currentNum, bitPos);
+                updateRepresentation(currentNum);
+                document.getElementById('step-log').innerText = `Cleared lowest set bit at position 2^${bitPos}! ${oldN} & (${oldN} - 1) = ${newN}.`;
+
+            } else if (trick === 'LOWEST') {
+                if (currentNum === 0) {
+                    document.getElementById('step-log').innerText = "Number is 0. No set bits to extract.";
+                    return;
+                }
+                const lowest = currentNum & (-currentNum);
+                const bitPos = Math.log2(lowest);
+                renderRegister(currentNum, bitPos);
+                subArea.innerHTML = `
+                    <div style="font-family:'JetBrains Mono'; font-size:13px; color:#34D399; background:rgba(16,185,129,0.15); padding:10px 16px; border-radius:8px; border:1px solid #10B981;">
+                        n & (-n) = ${lowest} (Isolated bit at position 2^${bitPos})
+                    </div>
+                `;
+                document.getElementById('step-log').innerText = `Isolated lowest set bit: ${currentNum} & (-${currentNum}) = ${lowest}.`;
+
+            } else if (trick === 'POWER2') {
+                const isPow2 = currentNum > 0 && (currentNum & (currentNum - 1)) === 0;
+                subArea.innerHTML = `
+                    <div style="font-family:'JetBrains Mono'; font-size:13px; color:${isPow2 ? '#34D399' : '#F87171'}; background:${isPow2 ? 'rgba(16,185,129,0.15)' : 'rgba(248,113,113,0.15)'}; padding:10px 16px; border-radius:8px; border:1px solid ${isPow2 ? '#10B981' : '#F87171'};">
+                        ${currentNum} is ${isPow2 ? 'a VALID Power of Two (exactly one bit set)' : 'NOT a Power of Two'}!
+                    </div>
+                `;
+                document.getElementById('step-log').innerText = `${currentNum} > 0 && (${currentNum} & (${currentNum} - 1)) == 0 \u2192 ${isPow2}.`;
+
+            } else if (trick === 'XOR') {
+                document.getElementById('step-log').innerText = `XOR Swap: a ^= b; b ^= a; a ^= b swaps two variables in-place without auxiliary memory!`;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

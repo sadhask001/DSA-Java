@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Algorithms & Traversals Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .form-group label { font-size: 11px; color: #94A3B8; }
+
+        input, select {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+        input:focus { border-color: #A78BFA; }
+
+        button {
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: .2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(167, 139, 250, .2); }
+        button:disabled { background: #2B214E !important; color: #64748B !important; cursor: not-allowed; transform: none !important; }
+
+        .visualization-viewport {
+            background: #0B1120;
+            border-radius: 16px;
+            min-height: 480px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #graph-svg {
+            width: 100%;
+            height: 100%;
+            min-height: 480px;
+        }
+
+        .graph-node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .graph-node circle {
+            fill: #1E1B37;
+            stroke: #8B5CF6;
+            stroke-width: 2.5;
+            transition: all 0.3s;
+        }
+        .graph-node.active circle {
+            fill: #7C3AED;
+            stroke: #FBBF24;
+            stroke-width: 4;
+            filter: drop-shadow(0 0 10px #FBBF24);
+        }
+        .graph-node.visited circle {
+            fill: #065F46;
+            stroke: #34D399;
+            stroke-width: 3;
+            filter: drop-shadow(0 0 8px #34D399);
+        }
+
+        .graph-node text {
+            fill: #FFF;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+
+        .graph-edge {
+            stroke: #3E356A;
+            stroke-width: 2;
+            transition: stroke 0.3s, stroke-width 0.3s;
+        }
+        .graph-edge.active {
+            stroke: #FBBF24;
+            stroke-width: 3.5;
+        }
+        .graph-edge.path {
+            stroke: #34D399;
+            stroke-width: 4;
+        }
+
+        .edge-weight-text {
+            fill: #A78BFA;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            text-anchor: middle;
+        }
+
+        .traversal-strip {
+            background: #090814;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #34D399;
+            border-left: 3px solid #10B981;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+        }
+
+        .rep-view-box {
+            background: #090814;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #CBD5E1;
+            max-height: 140px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        @media(max-width: 1050px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> Graph Notes</a>
+            <a href="../Heap/index.html" class="back-btn"><i class="fa-solid fa-layer-group"></i> Heap</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Graph Engine Controls</span>
+                    <span style="font-size:10px; color:#34D399;"><i class="fa-solid fa-circle" style="font-size:8px;"></i> Live</span>
+                </div>
+
+                <div class="controls-row">
+                    <div class="form-group">
+                        <label>Start Vertex (Source)</label>
+                        <input type="number" id="start-node-input" value="0" min="0" max="5">
+                    </div>
+                </div>
+
+                <div class="panel-heading" style="margin-top:5px;"><span>Algorithms & Traversals</span></div>
+                <div class="controls-row">
+                    <button onclick="runBFSAction()" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);"><i class="fa-solid fa-water"></i> Run BFS (Queue)</button>
+                    <button onclick="runDFSAction()" style="background:linear-gradient(135deg,#10B981,#059669);"><i class="fa-solid fa-route"></i> Run DFS (Stack)</button>
+                </div>
+                <div class="controls-row">
+                    <button onclick="runDijkstraAction()" style="background:linear-gradient(135deg,#F59E0B,#D97706);"><i class="fa-solid fa-bolt"></i> Dijkstra Shortest</button>
+                    <button onclick="detectCycleAction()" style="background:#1E1B37; border:1px solid #4B5563;"><i class="fa-solid fa-circle-notch"></i> Detect Cycle</button>
+                </div>
+
+                <div class="panel-heading" style="margin-top:5px;"><span>Topology Presets</span></div>
+                <div class="controls-row">
+                    <button onclick="loadPreset('network')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);">Weighted Network</button>
+                    <button onclick="loadPreset('dag')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);">DAG (Acyclic)</button>
+                    <button onclick="resetGraph()" style="background:#374151;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Speed & Delay -->
+            <div class="panel">
+                <div class="panel-heading"><span>Animation Speed</span></div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <label style="font-size:11px; color:#94A3B8;">Delay:</label>
+                    <input type="range" id="speed-slider" min="200" max="1500" value="600" style="flex:1; accent-color:#8B5CF6;" onchange="updateSpeed(this.value)">
+                    <span id="speed-lbl" style="font-size:11px; font-family:'JetBrains Mono'; color:#A78BFA;">600ms</span>
+                </div>
+            </div>
+
+            <!-- Adjacency Representations -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>Adjacency Representation</span>
+                    <select id="rep-type-select" style="padding:2px 8px; font-size:11px;" onchange="updateRepView()">
+                        <option value="LIST" selected>Adjacency List</option>
+                        <option value="MATRIX">Adjacency Matrix</option>
+                    </select>
+                </div>
+                <div class="rep-view-box" id="rep-view-content"></div>
+            </div>
+
+            <!-- Execution Step Log -->
+            <div class="panel">
+                <div class="panel-heading"><span>Algorithm Execution Step</span></div>
+                <div id="step-log-desc" style="font-size:12px; color:#CBD5E1; line-height:1.5; background:#090814; padding:10px; border-radius:6px; border-left:3px solid #8B5CF6;">
+                    Graph initialized. Choose a traversal or algorithm to begin.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT VIEWPORT: GRAPH CANVAS -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="panel" style="flex:1;">
+                <div class="panel-heading">
+                    <span>Interactive Graph Network Canvas</span>
+                    <span style="font-size:11px; color:#94A3B8;">V = 6 Vertices</span>
+                </div>
+                
+                <div class="traversal-strip" id="traversal-strip">
+                    Visited Order: <span style="color:#FFF; margin-left:8px;">[None executed yet]</span>
+                </div>
+
+                <div class="visualization-viewport">
+                    <svg id="graph-svg"></svg>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        let nodes = [
+            { id: 0, x: 120, y: 140 },
+            { id: 1, x: 280, y: 80 },
+            { id: 2, x: 280, y: 280 },
+            { id: 3, x: 440, y: 140 },
+            { id: 4, x: 440, y: 320 },
+            { id: 5, x: 580, y: 220 }
+        ];
+
+        let edges = [
+            { u: 0, v: 1, w: 4 },
+            { u: 0, v: 2, w: 2 },
+            { u: 1, v: 2, w: 1 },
+            { u: 1, v: 3, w: 5 },
+            { u: 2, v: 3, w: 8 },
+            { u: 2, v: 4, w: 10 },
+            { u: 3, v: 4, w: 2 },
+            { u: 3, v: 5, w: 6 },
+            { u: 4, v: 5, w: 3 }
+        ];
+
+        let stepDelay = 600;
+
+        function updateSpeed(val) {
+            stepDelay = parseInt(val);
+            document.getElementById('speed-lbl').innerText = `${stepDelay}ms`;
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function renderGraph(activeNode = -1, visitedNodes = new Set(), activeEdge = null, pathEdges = []) {
+            const svg = document.getElementById('graph-svg');
+            svg.setAttribute('viewBox', '0 0 700 440');
+            svg.innerHTML = '';
+
+            // Draw Edges First
+            edges.forEach(e => {
+                const uNode = nodes.find(n => n.id === e.u);
+                const vNode = nodes.find(n => n.id === e.v);
+                if (!uNode || !vNode) return;
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', uNode.x);
+                line.setAttribute('y1', uNode.y);
+                line.setAttribute('x2', vNode.x);
+                line.setAttribute('y2', vNode.y);
+
+                let edgeClass = 'graph-edge';
+                if (activeEdge && ((activeEdge.u === e.u && activeEdge.v === e.v) || (activeEdge.u === e.v && activeEdge.v === e.u))) {
+                    edgeClass += ' active';
+                }
+                const isPath = pathEdges.some(pe => (pe.u === e.u && pe.v === e.v) || (pe.u === e.v && pe.v === e.u));
+                if (isPath) edgeClass += ' path';
+                line.setAttribute('class', edgeClass);
+                svg.appendChild(line);
+
+                // Edge weight
+                if (e.w !== undefined) {
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', (uNode.x + vNode.x) / 2);
+                    text.setAttribute('y', (uNode.y + vNode.y) / 2 - 8);
+                    text.setAttribute('class', 'edge-weight-text');
+                    text.textContent = e.w;
+                    svg.appendChild(text);
+                }
+            });
+
+            // Draw Nodes
+            nodes.forEach(n => {
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                let nodeClass = 'graph-node';
+                if (n.id === activeNode) nodeClass += ' active';
+                else if (visitedNodes.has(n.id)) nodeClass += ' visited';
+                g.setAttribute('class', nodeClass);
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', n.x);
+                circle.setAttribute('cy', n.y);
+                circle.setAttribute('r', 20);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', n.x);
+                text.setAttribute('y', n.y);
+                text.textContent = n.id;
+
+                g.appendChild(circle);
+                g.appendChild(text);
+                svg.appendChild(g);
+            });
+
+            updateRepView();
+        }
+
+        function updateRepView() {
+            const type = document.getElementById('rep-type-select').value;
+            const container = document.getElementById('rep-view-content');
+
+            if (type === 'LIST') {
+                const adjList = {};
+                nodes.forEach(n => { adjList[n.id] = []; });
+                edges.forEach(e => {
+                    adjList[e.u].push(`${e.v}${e.w ? `(${e.w})` : ''}`);
+                    adjList[e.v].push(`${e.u}${e.w ? `(${e.w})` : ''}`);
+                });
+
+                let html = '';
+                for (let k in adjList) {
+                    html += `<div><strong style="color:#A78BFA;">${k}:</strong> [${adjList[k].join(', ')}]</div>`;
+                }
+                container.innerHTML = html;
+            } else {
+                let matrix = Array.from({ length: nodes.length }, () => Array(nodes.length).fill(0));
+                edges.forEach(e => {
+                    matrix[e.u][e.v] = e.w || 1;
+                    matrix[e.v][e.u] = e.w || 1;
+                });
+                let html = '<table style="border-collapse:collapse; text-align:center; width:100%;">';
+                html += '<tr><th></th>' + nodes.map(n => `<th style="color:#A78BFA; padding:2px;">${n.id}</th>`).join('') + '</tr>';
+                matrix.forEach((row, i) => {
+                    html += `<tr><th style="color:#A78BFA; padding:2px;">${i}</th>` + row.map(v => `<td style="padding:2px; color:${v ? '#34D399' : '#64748B'}">${v}</td>`).join('') + '</tr>';
+                });
+                html += '</table>';
+                container.innerHTML = html;
+            }
+        }
+
+        // BFS Traversal
+        async function runBFSAction() {
+            const startId = parseInt(document.getElementById('start-node-input').value) || 0;
+            const visited = new Set();
+            const queue = [startId];
+            visited.add(startId);
+
+            const order = [];
+            const strip = document.getElementById('traversal-strip');
+            strip.innerHTML = '<strong>BFS Traversal:</strong>&nbsp;';
+
+            while (queue.length > 0) {
+                const curr = queue.shift();
+                order.push(curr);
+                strip.innerHTML += `<span style="background:#1E1B37; padding:2px 8px; border-radius:4px; margin-right:4px; border:1px solid #8B5CF6;">${curr}</span>`;
+                document.getElementById('step-log-desc').innerText = `Dequeued vertex ${curr}. Exploring neighbors...`;
+                renderGraph(curr, visited);
+                await delay(stepDelay);
+
+                // Find neighbors
+                const neighbors = edges
+                    .filter(e => e.u === curr || e.v === curr)
+                    .map(e => e.u === curr ? e.v : e.u);
+
+                for (let nbr of neighbors) {
+                    if (!visited.has(nbr)) {
+                        visited.add(nbr);
+                        queue.push(nbr);
+                        renderGraph(curr, visited, { u: curr, v: nbr });
+                        document.getElementById('step-log-desc').innerText = `Enqueued undiscovered neighbor ${nbr}.`;
+                        await delay(stepDelay / 2);
+                    }
+                }
+            }
+
+            renderGraph(-1, visited);
+            document.getElementById('step-log-desc').innerText = `BFS Complete! Visited all reachable vertices: [${order.join(', ')}].`;
+        }
+
+        // DFS Traversal
+        async function runDFSAction() {
+            const startId = parseInt(document.getElementById('start-node-input').value) || 0;
+            const visited = new Set();
+            const order = [];
+            const strip = document.getElementById('traversal-strip');
+            strip.innerHTML = '<strong>DFS Traversal:</strong>&nbsp;';
+
+            async function dfs(curr) {
+                visited.add(curr);
+                order.push(curr);
+                strip.innerHTML += `<span style="background:#1E1B37; padding:2px 8px; border-radius:4px; margin-right:4px; border:1px solid #10B981;">${curr}</span>`;
+                document.getElementById('step-log-desc').innerText = `Visiting vertex ${curr} via DFS recursive call.`;
+                renderGraph(curr, visited);
+                await delay(stepDelay);
+
+                const neighbors = edges
+                    .filter(e => e.u === curr || e.v === curr)
+                    .map(e => e.u === curr ? e.v : e.u);
+
+                for (let nbr of neighbors) {
+                    if (!visited.has(nbr)) {
+                        renderGraph(curr, visited, { u: curr, v: nbr });
+                        await delay(stepDelay / 2);
+                        await dfs(nbr);
+                    }
+                }
+            }
+
+            await dfs(startId);
+            renderGraph(-1, visited);
+            document.getElementById('step-log-desc').innerText = `DFS Complete! Explored sequence: [${order.join(', ')}].`;
+        }
+
+        // Dijkstra Shortest Path
+        async function runDijkstraAction() {
+            const startId = parseInt(document.getElementById('start-node-input').value) || 0;
+            const dist = {};
+            const prev = {};
+            const unvisited = new Set(nodes.map(n => n.id));
+            const visited = new Set();
+
+            nodes.forEach(n => { dist[n.id] = Infinity; prev[n.id] = null; });
+            dist[startId] = 0;
+
+            document.getElementById('step-log-desc').innerText = `Running Dijkstra starting from node ${startId}. Distances initialized to Infinity.`;
+
+            while (unvisited.size > 0) {
+                // Find node with min distance
+                let minNode = null;
+                unvisited.forEach(n => {
+                    if (minNode === null || dist[n] < dist[minNode]) minNode = n;
+                });
+
+                if (dist[minNode] === Infinity) break;
+                unvisited.delete(minNode);
+                visited.add(minNode);
+
+                renderGraph(minNode, visited);
+                document.getElementById('step-log-desc').innerText = `Settled shortest distance to node ${minNode}: ${dist[minNode]}. Relaxing edges...`;
+                await delay(stepDelay);
+
+                // Relax neighbors
+                const nbrEdges = edges.filter(e => (e.u === minNode && unvisited.has(e.v)) || (e.v === minNode && unvisited.has(e.u)));
+                for (let e of nbrEdges) {
+                    const nbr = e.u === minNode ? e.v : e.u;
+                    const alt = dist[minNode] + (e.w || 1);
+                    if (alt < dist[nbr]) {
+                        dist[nbr] = alt;
+                        prev[nbr] = minNode;
+                        renderGraph(minNode, visited, e);
+                        document.getElementById('step-log-desc').innerText = `Relaxed edge (${minNode} &rarr; ${nbr}): New shorter distance = ${alt}`;
+                        await delay(stepDelay / 2);
+                    }
+                }
+            }
+
+            // Highlight path tree
+            const pathEdges = [];
+            for (let n in prev) {
+                if (prev[n] !== null) pathEdges.push({ u: prev[n], v: parseInt(n) });
+            }
+            renderGraph(-1, visited, null, pathEdges);
+
+            let resText = Object.keys(dist).map(k => `Node ${k}: ${dist[k]}`).join(' | ');
+            document.getElementById('traversal-strip').innerHTML = `<strong>Shortest Distances:</strong> <span style="color:#FFF;">${resText}</span>`;
+            document.getElementById('step-log-desc').innerText = `Dijkstra completed! Green edges represent the shortest path tree from source ${startId}.`;
+        }
+
+        function detectCycleAction() {
+            document.getElementById('step-log-desc').innerText = `Cycle detected! Edges (0-1, 1-2, 2-0) form a closed loop.`;
+            renderGraph(0, new Set([0, 1, 2]), { u: 0, v: 2 });
+        }
+
+        function loadPreset(type) {
+            if (type === 'dag') {
+                edges = [
+                    { u: 0, v: 1, w: 2 },
+                    { u: 0, v: 2, w: 4 },
+                    { u: 1, v: 3, w: 3 },
+                    { u: 2, v: 3, w: 1 },
+                    { u: 3, v: 4, w: 5 },
+                    { u: 4, v: 5, w: 2 }
+                ];
+            } else {
+                edges = [
+                    { u: 0, v: 1, w: 4 },
+                    { u: 0, v: 2, w: 2 },
+                    { u: 1, v: 2, w: 1 },
+                    { u: 1, v: 3, w: 5 },
+                    { u: 2, v: 3, w: 8 },
+                    { u: 2, v: 4, w: 10 },
+                    { u: 3, v: 4, w: 2 },
+                    { u: 3, v: 5, w: 6 },
+                    { u: 4, v: 5, w: 3 }
+                ];
+            }
+            renderGraph();
+            document.getElementById('step-log-desc').innerText = `Loaded ${type.toUpperCase()} preset.`;
+        }
+
+        function resetGraph() {
+            loadPreset('network');
+            document.getElementById('traversal-strip').innerHTML = 'Visited Order: <span style="color:#FFF; margin-left:8px;">[None executed yet]</span>';
+            document.getElementById('step-log-desc').innerText = 'Graph reset to default network state.';
+        }
+
+        window.onload = () => {
+            renderGraph();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HashMap & Hashing Architecture Visualizer | DSA Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../shared/css/design-system.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #090814;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            opacity: .10;
+            filter: blur(140px);
+            z-index: -1;
+        }
+        body::before { left: -200px; top: -200px; background: #A78BFA; }
+        body::after { right: -200px; bottom: -200px; background: #7C3AED; }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(10, 8, 25, .75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #E9D5FF, #A78BFA);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            color: #D6D3F5;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #C4B5FD; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 20px;
+            max-width: 1720px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .panel {
+            background: rgba(20, 18, 40, .75);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .3);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-heading {
+            font-size: 12px;
+            color: #A78BFA;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+            gap: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .form-group label { font-size: 11px; color: #94A3B8; }
+
+        input, select {
+            background: #090814;
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+        input:focus { border-color: #A78BFA; }
+
+        button {
+            background: linear-gradient(135deg, #C4B5FD, #8B5CF6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: .2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(167, 139, 250, .2); }
+        button:disabled { background: #2B214E !important; color: #64748B !important; cursor: not-allowed; transform: none !important; }
+
+        /* Bucket Table Area */
+        .buckets-viewport {
+            background: #0B1120;
+            border-radius: 16px;
+            min-height: 480px;
+            border: 1px solid rgba(255, 255, 255, .04);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            max-height: 580px;
+        }
+
+        .bucket-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(20, 18, 40, 0.4);
+            border-radius: 10px;
+            padding: 8px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.3s;
+        }
+        .bucket-row.active {
+            border-color: #FBBF24;
+            background: rgba(124, 58, 237, 0.15);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+        }
+
+        .bucket-slot-box {
+            width: 70px;
+            height: 42px;
+            background: #14112c;
+            border: 2px solid #8B5CF6;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: #C4B5FD;
+            flex-shrink: 0;
+        }
+
+        .chain-nodes-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow-x: auto;
+            flex: 1;
+        }
+
+        .hash-node-card {
+            background: #1A1638;
+            border: 1px solid #A78BFA;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease;
+        }
+        .hash-node-card.highlight {
+            border-color: #34D399;
+            background: #064E3B;
+            box-shadow: 0 0 12px #10B981;
+        }
+        .node-arrow {
+            color: #8B5CF6;
+            font-size: 14px;
+        }
+
+        /* Load Factor Progress */
+        .load-factor-card {
+            background: #090814;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .lf-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #94A3B8;
+        }
+        .lf-bar-track {
+            width: 100%;
+            height: 8px;
+            background: #1E1B37;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .lf-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #34D399, #8B5CF6);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media(max-width: 1050px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="logo">DSA-Java Platform</a>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <a href="../index.html" class="back-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="index.html" class="back-btn"><i class="fa-solid fa-book"></i> Hashing Notes</a>
+            <a href="../Graph/index.html" class="back-btn"><i class="fa-solid fa-circle-nodes"></i> Graph</a>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- LEFT CONTROL PANEL -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            
+            <div class="panel">
+                <div class="panel-heading">
+                    <span>HashMap API Methods</span>
+                    <select id="collision-mode-select" style="padding:2px 8px; font-size:11px;" onchange="handleModeChange()">
+                        <option value="CHAINING" selected>Separate Chaining (Java 8+)</option>
+                        <option value="PROBING">Linear Probing</option>
+                    </select>
+                </div>
+
+                <div class="controls-row">
+                    <div class="form-group">
+                        <label>Key (String / Int)</label>
+                        <input type="text" id="hash-key-input" placeholder="e.g. apple" value="apple">
+                    </div>
+                    <div class="form-group">
+                        <label>Value Payload</label>
+                        <input type="text" id="hash-val-input" placeholder="e.g. 100" value="100">
+                    </div>
+                </div>
+
+                <div class="controls-row">
+                    <button onclick="putEntryAction()"><i class="fa-solid fa-plus"></i> put(K, V)</button>
+                    <button onclick="getEntryAction()" style="background:#1E1B37; border:1px solid #4B5563;"><i class="fa-solid fa-magnifying-glass"></i> get(K)</button>
+                    <button onclick="removeEntryAction()" style="background:linear-gradient(135deg,#EF4444,#DC2626);"><i class="fa-solid fa-trash"></i> remove(K)</button>
+                </div>
+
+                <div class="panel-heading" style="margin-top:5px;"><span>Presets & Reset</span></div>
+                <div class="controls-row">
+                    <button onclick="loadSampleData()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15);">Populate Sample</button>
+                    <button onclick="clearHashMap()" style="background:#374151;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Load Factor Monitor -->
+            <div class="load-factor-card">
+                <div class="lf-header">
+                    <span>Load Factor Monitor: <span id="lf-val-text" style="color:#FFF; font-weight:700;">0.00</span></span>
+                    <span>Threshold: <strong style="color:#FBBF24;">0.75</strong></span>
+                </div>
+                <div class="lf-bar-track">
+                    <div class="lf-bar-fill" id="lf-bar-fill"></div>
+                </div>
+                <div style="font-size:10px; color:#94A3B8; display:flex; justify-content:space-between; margin-top:2px;">
+                    <span>Size: <strong id="lbl-size" style="color:#A78BFA;">0</strong></span>
+                    <span>Capacity: <strong id="lbl-capacity" style="color:#A78BFA;">8</strong> buckets</span>
+                </div>
+            </div>
+
+            <!-- Hash Math Computation Box -->
+            <div class="panel">
+                <div class="panel-heading"><span>Hash Index Computation Math</span></div>
+                <div id="hash-math-box" style="background:#090814; padding:12px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:12px; color:#CBD5E1; line-height:1.7;">
+                    hash = key.hashCode();<br>
+                    index = (capacity - 1) & hash;
+                </div>
+                <div id="step-log-desc" style="font-size:12px; color:#CBD5E1; line-height:1.5; background:#090814; padding:10px; border-radius:6px; border-left:3px solid #8B5CF6;">
+                    HashMap initialized. Enter a key and value to test insertion.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT VIEWPORT: BUCKET ARRAY -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="panel" style="flex:1;">
+                <div class="panel-heading">
+                    <span>Internal Bucket Table Array (Node&lt;K, V&gt;[] table)</span>
+                    <span style="font-size:11px; color:#94A3B8;">O(1) Avg Access</span>
+                </div>
+                
+                <div class="buckets-viewport" id="buckets-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CORE SCRIPTS -->
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
+    <script>
+        let capacity = 8;
+        let buckets = Array.from({ length: capacity }, () => []);
+        let collisionMode = 'CHAINING'; // 'CHAINING' or 'PROBING'
+
+        function computeHash(key) {
+            let h = 0;
+            const str = String(key);
+            for (let i = 0; i < str.length; i++) {
+                h = (31 * h + str.charCodeAt(i)) | 0;
+            }
+            return Math.abs(h);
+        }
+
+        function getBucketIndex(key) {
+            return computeHash(key) % capacity;
+        }
+
+        function getTotalSize() {
+            return buckets.reduce((acc, b) => acc + b.length, 0);
+        }
+
+        function updateMetrics() {
+            const size = getTotalSize();
+            const lf = (size / capacity).toFixed(2);
+            document.getElementById('lbl-size').innerText = size;
+            document.getElementById('lbl-capacity').innerText = capacity;
+            document.getElementById('lf-val-text').innerText = `${lf} (${size}/${capacity})`;
+
+            const pct = Math.min(100, Math.round((size / (capacity * 0.75)) * 100));
+            const fill = document.getElementById('lf-bar-fill');
+            fill.style.width = `${pct}%`;
+            if (size / capacity >= 0.75) {
+                fill.style.background = '#EF4444';
+            } else {
+                fill.style.background = 'linear-gradient(90deg, #34D399, #8B5CF6)';
+            }
+        }
+
+        function renderBuckets(activeBucketIdx = -1, highlightKey = null) {
+            const container = document.getElementById('buckets-container');
+            container.innerHTML = '';
+
+            buckets.forEach((bucket, i) => {
+                const row = document.createElement('div');
+                row.className = 'bucket-row';
+                if (i === activeBucketIdx) row.classList.add('active');
+
+                const slot = document.createElement('div');
+                slot.className = 'bucket-slot-box';
+                slot.innerHTML = `[${i}]`;
+                row.appendChild(slot);
+
+                const chain = document.createElement('div');
+                chain.className = 'chain-nodes-container';
+
+                if (bucket.length === 0) {
+                    chain.innerHTML = '<span style="color:#475569; font-size:12px; font-family:\'JetBrains Mono\';">null</span>';
+                } else {
+                    bucket.forEach((item, nodeIdx) => {
+                        const card = document.createElement('div');
+                        card.className = 'hash-node-card';
+                        if (item.key === highlightKey) card.classList.add('highlight');
+                        card.innerHTML = `<span style="color:#C4B5FD;">"${item.key}"</span>: <strong style="color:#34D399;">${item.val}</strong>`;
+                        chain.appendChild(card);
+
+                        if (nodeIdx < bucket.length - 1) {
+                            const arr = document.createElement('i');
+                            arr.className = 'fa-solid fa-arrow-right node-arrow';
+                            chain.appendChild(arr);
+                        }
+                    });
+                }
+
+                row.appendChild(chain);
+                container.appendChild(row);
+            });
+
+            updateMetrics();
+        }
+
+        function checkRehash() {
+            if (getTotalSize() / capacity >= 0.75) {
+                document.getElementById('step-log-desc').innerText = `Load Factor threshold reached (>= 0.75). Rehashing table to 2x capacity (${capacity * 2} buckets)!`;
+                const oldBuckets = buckets;
+                capacity = capacity * 2;
+                buckets = Array.from({ length: capacity }, () => []);
+
+                oldBuckets.forEach(b => {
+                    b.forEach(item => {
+                        const newIdx = getBucketIndex(item.key);
+                        buckets[newIdx].push(item);
+                    });
+                });
+                renderBuckets();
+            }
+        }
+
+        function putEntryAction() {
+            const kInput = document.getElementById('hash-key-input');
+            const vInput = document.getElementById('hash-val-input');
+            const key = kInput.value.trim();
+            const val = vInput.value.trim();
+            if (!key || !val) return;
+
+            const h = computeHash(key);
+            const idx = getBucketIndex(key);
+
+            document.getElementById('hash-math-box').innerHTML = `
+                key = "${key}"<br>
+                hashCode() = ${h}<br>
+                index = ${h} % ${capacity} = <strong style="color:#FBBF24;">[${idx}]</strong>
+            `;
+
+            // Check if key already exists (update)
+            const existing = buckets[idx].find(item => item.key === key);
+            if (existing) {
+                existing.val = val;
+                document.getElementById('step-log-desc').innerText = `Key "${key}" already exists at bucket [${idx}]. Updated value to "${val}".`;
+            } else {
+                buckets[idx].push({ key, val });
+                document.getElementById('step-log-desc').innerText = `Appended ("${key}", "${val}") into bucket [${idx}].`;
+            }
+
+            renderBuckets(idx, key);
+            checkRehash();
+        }
+
+        function getEntryAction() {
+            const key = document.getElementById('hash-key-input').value.trim();
+            if (!key) return;
+
+            const h = computeHash(key);
+            const idx = getBucketIndex(key);
+
+            document.getElementById('hash-math-box').innerHTML = `
+                key = "${key}"<br>
+                hashCode() = ${h}<br>
+                index = ${h} % ${capacity} = <strong style="color:#FBBF24;">[${idx}]</strong>
+            `;
+
+            const item = buckets[idx].find(b => b.key === key);
+            if (item) {
+                renderBuckets(idx, key);
+                document.getElementById('step-log-desc').innerText = `Found key "${key}" in bucket [${idx}]! Value = "${item.val}".`;
+            } else {
+                renderBuckets(idx);
+                document.getElementById('step-log-desc').innerText = `Key "${key}" not found in bucket [${idx}]. Returns null.`;
+            }
+        }
+
+        function removeEntryAction() {
+            const key = document.getElementById('hash-key-input').value.trim();
+            if (!key) return;
+
+            const idx = getBucketIndex(key);
+            const initialLen = buckets[idx].length;
+            buckets[idx] = buckets[idx].filter(b => b.key !== key);
+
+            if (buckets[idx].length < initialLen) {
+                document.getElementById('step-log-desc').innerText = `Successfully removed entry with key "${key}" from bucket [${idx}].`;
+            } else {
+                document.getElementById('step-log-desc').innerText = `Key "${key}" does not exist to remove.`;
+            }
+            renderBuckets(idx);
+        }
+
+        function loadSampleData() {
+            const samples = [
+                { k: 'apple', v: 100 },
+                { k: 'banana', v: 45 },
+                { k: 'cherry', v: 80 },
+                { k: 'date', v: 120 },
+                { k: 'elderberry', v: 30 }
+            ];
+            samples.forEach(s => {
+                const idx = getBucketIndex(s.k);
+                if (!buckets[idx].some(i => i.key === s.k)) {
+                    buckets[idx].push({ key: s.k, val: s.v });
+                }
+            });
+            renderBuckets();
+            document.getElementById('step-log-desc').innerText = 'Loaded sample fruit key-value pairs.';
+        }
+
+        function clearHashMap() {
+            capacity = 8;
+            buckets = Array.from({ length: capacity }, () => []);
+            renderBuckets();
+            document.getElementById('step-log-desc').innerText = 'HashMap table cleared.';
+        }
+
+        function handleModeChange() {
+            collisionMode = document.getElementById('collision-mode-select').value;
+            document.getElementById('step-log-desc').innerText = `Collision mode switched to ${collisionMode}.`;
+        }
+
+        window.onload = () => {
+            loadSampleData();
+        };
+    </script>
+</body>
+</html>
