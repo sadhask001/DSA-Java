@@ -317,6 +317,7 @@
     <header>
         <a href="../../index.html" class="logo">DSA-Java Platform</a>
         <div class="nav-links">
+            <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="header-search-btn" type="button" aria-label="Open search dialog"><i class="fa-solid fa-magnifying-glass"></i> Search <kbd>Ctrl+K</kbd></button>
             <a href="../../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
             <a href="../index.html" class="nav-btn"><i class="fa-solid fa-layer-group"></i> Collections</a>
             <a href="visualizer_linkedlist.html" class="nav-btn"><i class="fa-solid fa-play"></i> Visualizer</a>
@@ -788,7 +789,7 @@ return slow; // Middle node!</pre>
     <script src="../../shared/js/global-search.js"></script>
     <script>
         function updateLinkedListButtonsState() {
-            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('linkedlist') === 'COMPLETED';
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('linked-list') === 'COMPLETED';
             const hBtn = document.getElementById('linkedlist-complete-btn');
             const fBtn = document.getElementById('footer-complete-btn');
             const hTxt = document.getElementById('linkedlist-complete-txt');
@@ -809,14 +810,14 @@ return slow; // Middle node!</pre>
 
         function handleLinkedListCompleteToggle() {
             if (typeof toggleTopicComplete === 'function') {
-                toggleTopicComplete('linkedlist');
+                toggleTopicComplete('linked-list');
                 updateLinkedListButtonsState();
             }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof renderProblemCards === 'function') {
-                renderProblemCards('linkedlist-problems-grid', 'LinkedList');
+                renderProblemCards('linkedlist-problems-grid', 'Linked List');
             }
             updateLinkedListButtonsState();
         });

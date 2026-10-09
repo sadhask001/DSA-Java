@@ -393,25 +393,27 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
 
-    <header>
-        <a href="../index.html" class="logo">DSA-Java Platform</a>
+    <header class="platform-header">
+        <a href="../index.html" class="platform-logo-wrap">
+            <i class="fa-solid fa-shapes platform-logo-icon" aria-hidden="true"></i>
+            <span class="platform-logo-text">DSA-Java Platform</span>
+        </a>
         <div class="nav-links">
             <a href="../index.html" class="nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
             <a href="visualizer_array1D.html" class="nav-btn"><i class="fa-solid fa-play"></i> 1D Visualizer</a>
             <a href="array2D_theory.html" class="nav-btn"><i class="fa-solid fa-table-cells"></i> 2D Arrays</a>
+            <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="header-search-btn" type="button" aria-label="Open search dialog">
+                <i class="fa-solid fa-magnifying-glass"></i> Search <kbd>Ctrl+K</kbd>
+            </button>
             <button id="array-complete-btn" class="complete-toggle-btn" style="padding:6px 14px; font-size:12px;" onclick="handleArrayCompleteToggle()">
                 <i class="fa-regular fa-circle-check"></i> <span id="array-complete-txt">Mark Complete</span>
             </button>
         </div>
     </header>
 
-    <!-- Floating Action Tracker Trigger Element -->
-    <a href="visualizer_array1D.html" class="visualizer-float-btn">
-        <i class="fa-solid fa-play"></i> (Visualizer)
-    </a>
-
-    <main class="layout-grid">
+    <main class="layout-grid" id="main-content">
         
         <!-- Sidebar Navigation Roadmap Elements Matrix -->
         <aside class="sidebar">
@@ -973,7 +975,7 @@ for (int r = 0; r < jagged.length; r++) {
     <script src="../shared/js/global-search.js"></script>
     <script>
         function updateArrayButtonsState() {
-            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('array') === 'COMPLETED';
+            const isDone = typeof getTopicStatus === 'function' && getTopicStatus('arrays') === 'COMPLETED';
             const hBtn = document.getElementById('array-complete-btn');
             const fBtn = document.getElementById('footer-complete-btn');
             const hTxt = document.getElementById('array-complete-txt');
@@ -994,7 +996,7 @@ for (int r = 0; r < jagged.length; r++) {
 
         function handleArrayCompleteToggle() {
             if (typeof toggleTopicComplete === 'function') {
-                toggleTopicComplete('array');
+                toggleTopicComplete('arrays');
                 updateArrayButtonsState();
             }
         }

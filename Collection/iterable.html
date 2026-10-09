@@ -393,12 +393,14 @@
             .op-grid { grid-template-columns: 1fr; }
         }
     </style>
+    <link rel="stylesheet" href="../shared/css/design-system.css">
 </head>
 <body>
 
     <header>
         <a href="../index.html" class="logo">DSA Learning Platform</a>
         <div class="nav-links">
+            <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="header-search-btn" type="button" aria-label="Open search dialog"><i class="fa-solid fa-magnifying-glass"></i> Search <kbd>Ctrl+K</kbd></button>
             <a href="../index.html" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
             <a href="../index.html" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Back to Collection</a>
         </div>
@@ -767,5 +769,10 @@ while(iterator.hasNext()){
             }
         }
     </script>
+
+    <!-- SHARED SCRIPTS -->
+    <script src="../shared/js/problem-db.js"></script>
+    <script src="../shared/js/progress-manager.js"></script>
+    <script src="../shared/js/global-search.js"></script>
 </body>
 </html>

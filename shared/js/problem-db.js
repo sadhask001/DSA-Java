@@ -1736,8 +1736,16 @@ const PROBLEM_DATABASE = [
 ];
 
 // Helper functions for UI rendering
+function normalizeTopicQuery(name) {
+  const clean = (name || '').toLowerCase().replace(/[\s\-_]/g, '');
+  if (clean === 'dynamicprogramming') return 'dp';
+  if (clean === 'array') return 'arrays';
+  return clean;
+}
+
 function getProblemsByTopic(topicName) {
-  return PROBLEM_DATABASE.filter(p => p.topic.toLowerCase() === topicName.toLowerCase());
+  const target = normalizeTopicQuery(topicName);
+  return PROBLEM_DATABASE.filter(p => normalizeTopicQuery(p.topic) === target);
 }
 
 function renderProblemCards(containerId, topicName) {
@@ -1757,25 +1765,24 @@ function renderProblemCards(containerId, topicName) {
 
     return `
       <div class="problem-card ${isSolved ? 'solved' : ''}" id="prob-card-${prob.id}" style="
-        background: rgba(20, 18, 40, 0.7);
-        border: 1px solid ${isSolved ? 'rgba(52, 211, 153, 0.4)' : 'rgba(255, 255, 255, 0.08)'};
-        border-radius: 16px;
-        padding: 22px;
+        background: #121622;
+        border: 1px solid ${isSolved ? 'rgba(16, 185, 129, 0.4)' : '#252e42'};
+        border-radius: 12px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         gap: 14px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        backdrop-filter: blur(15px);
+        transition: border-color 0.2s, background 0.2s;
       ">
         <div>
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; gap:10px;">
-            <h3 style="font-size:16.5px; font-weight:600; color:#F1F5F9; margin:0; line-height:1.4;">${prob.title}</h3>
+            <h3 style="font-size:16px; font-weight:600; color:#f8fafc; margin:0; line-height:1.4;">${prob.title}</h3>
             <span style="
               font-size: 11px;
               font-weight: 600;
-              padding: 3px 8px;
-              border-radius: 6px;
+              padding: 2px 8px;
+              border-radius: 4px;
               color: ${diffColor};
               background: ${diffBg};
               border: 1px solid ${diffColor}33;
@@ -1783,24 +1790,24 @@ function renderProblemCards(containerId, topicName) {
             ">${prob.difficulty}</span>
           </div>
           
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-            <span style="font-size:11px; color:#A78BFA; background:rgba(167,139,250,0.1); padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;">
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+            <span style="font-size:11px; color:#818cf8; background:rgba(99,102,241,0.1); padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;">
               <i class="fa-solid fa-code-branch"></i> ${prob.pattern}
             </span>
-            <span style="font-size:11px; color:#F59E0B; background:rgba(245,158,11,0.1); padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;">
+            <span style="font-size:11px; color:#f59e0b; background:rgba(245,158,11,0.1); padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;">
               <i class="fa-regular fa-clock"></i> ${prob.timeComplexity}
             </span>
-            <span style="font-size:11px; color:#60A5FA; background:rgba(96,165,250,0.1); padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;">
+            <span style="font-size:11px; color:#38bdf8; background:rgba(56,189,248,0.1); padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;">
               <i class="fa-solid fa-microchip"></i> ${prob.spaceComplexity}
             </span>
           </div>
 
-          <p style="font-size:13px; color:#94A3B8; line-height:1.6; margin:0;">${prob.description}</p>
+          <p style="font-size:13px; color:#94a3b8; line-height:1.6; margin:0;">${prob.description}</p>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:14px; margin-top:6px;">
-          <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#CBD5E1; cursor:pointer;">
-            <input type="checkbox" id="chk-${prob.id}" ${isSolved ? 'checked' : ''} onchange="handleProblemCheck('${prob.id}')" style="accent-color:#10B981; width:15px; height:15px; cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #1e2538; padding-top:12px; margin-top:6px;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#cbd5e1; cursor:pointer;">
+            <input type="checkbox" id="chk-${prob.id}" ${isSolved ? 'checked' : ''} onchange="handleProblemCheck('${prob.id}')" style="accent-color:#10b981; width:15px; height:15px; cursor:pointer;">
             <span>Mark Solved</span>
           </label>
           <a href="${prob.url}" target="_blank" rel="noopener noreferrer" style="
@@ -1809,14 +1816,14 @@ function renderProblemCards(containerId, topicName) {
             gap:6px;
             font-size:12px;
             font-weight:600;
-            color:#C4B5FD;
+            color:#818cf8;
             text-decoration:none;
-            padding:6px 12px;
-            background:rgba(139, 92, 246, 0.15);
-            border:1px solid rgba(167, 139, 250, 0.3);
-            border-radius:6px;
-            transition:all 0.2s;
-          " onmouseover="this.style.background='rgba(139,92,246,0.3)'; this.style.color='#FFF';" onmouseout="this.style.background='rgba(139,92,246,0.15)'; this.style.color='#C4B5FD';">
+            padding:5px 12px;
+            background:rgba(99, 102, 241, 0.12);
+            border:1px solid rgba(99, 102, 241, 0.3);
+            border-radius:5px;
+            transition:all 0.15s;
+          " onmouseover="this.style.background='rgba(99,102,241,0.25)'; this.style.color='#fff';" onmouseout="this.style.background='rgba(99,102,241,0.12)'; this.style.color='#818cf8';">
             <span>Solve on ${prob.platform}</span>
             <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;"></i>
           </a>

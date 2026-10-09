@@ -139,6 +139,7 @@
 
         @media(max-width: 950px) { .workspace { grid-template-columns: 1fr; } }
     </style>
+    <link rel="stylesheet" href="../../shared/css/design-system.css">
 </head>
 <body>
 
@@ -148,7 +149,8 @@
             <a href="../../index.html" class="back-btn"><i class="fa-solid fa-house"></i> Home</a>
             <a href="../index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Collections Theory</a>
         </div>
-    </header>
+        <div style="display:flex; align-items:center; gap:12px;"><button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="header-search-btn" type="button" aria-label="Open search dialog"><i class="fa-solid fa-magnifying-glass"></i> Search <kbd>Ctrl+K</kbd></button></div>
+</header>
 
     <main class="workspace">
         
@@ -932,5 +934,10 @@
             window.addEventListener('resize', drawStackToHeapPointerLine);
         };
     </script>
+
+    <!-- SHARED SCRIPTS -->
+    <script src="../../shared/js/problem-db.js"></script>
+    <script src="../../shared/js/progress-manager.js"></script>
+    <script src="../../shared/js/global-search.js"></script>
 </body>
 </html>

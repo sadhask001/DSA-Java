@@ -37,18 +37,35 @@ const ALL_TOPICS = [
   { id: 'interviewprep', name: 'Interview Prep & Sheets', category: 'Preparation', route: 'InterviewPrep/index.html' }
 ];
 
+function normalizeTopicId(id) {
+  if (id === 'array') return 'arrays';
+  if (id === 'linkedlist') return 'linked-list';
+  return id;
+}
+
 function getTopicStatus(topicId) {
+  const normId = normalizeTopicId(topicId);
   try {
-    return localStorage.getItem(TOPIC_STATUS_KEY_PREFIX + topicId) || 'NOT_STARTED';
+    let val = localStorage.getItem(TOPIC_STATUS_KEY_PREFIX + normId);
+    if (!val) {
+      // Check legacy key
+      if (normId === 'arrays') val = localStorage.getItem(TOPIC_STATUS_KEY_PREFIX + 'array');
+      if (normId === 'linked-list') val = localStorage.getItem(TOPIC_STATUS_KEY_PREFIX + 'linkedlist');
+    }
+    return val || 'NOT_STARTED';
   } catch (e) {
     return 'NOT_STARTED';
   }
 }
 
 function setTopicStatus(topicId, status) {
+  const normId = normalizeTopicId(topicId);
   try {
-    localStorage.setItem(TOPIC_STATUS_KEY_PREFIX + topicId, status);
-    window.dispatchEvent(new CustomEvent('dsa-progress-updated', { detail: { topicId, status } }));
+    localStorage.setItem(TOPIC_STATUS_KEY_PREFIX + normId, status);
+    // Sync legacy key as well for backward compatibility
+    if (normId === 'arrays') localStorage.setItem(TOPIC_STATUS_KEY_PREFIX + 'array', status);
+    if (normId === 'linked-list') localStorage.setItem(TOPIC_STATUS_KEY_PREFIX + 'linkedlist', status);
+    window.dispatchEvent(new CustomEvent('dsa-progress-updated', { detail: { topicId: normId, status } }));
   } catch (e) {
     console.error('LocalStorage write failed:', e);
   }
@@ -147,6 +164,37 @@ rootContext.ALL_TOPICS = ALL_TOPICS;
 rootContext.getTopicStatus = getTopicStatus;
 rootContext.setTopicStatus = setTopicStatus;
 rootContext.toggleTopicComplete = toggleTopicComplete;
+rootContext.normalizeTopicId = normalizeTopicId;
 rootContext.isProblemSolved = isProblemSolved;
 rootContext.toggleProblemSolved = toggleProblemSolved;
 rootContext.getProgressStats = getProgressStats;
+
+// Universal Code Copy Button Handler
+function copyCodeText(button) {
+  if (!button) return;
+  const container = button.closest('.code-window') || button.parentElement;
+  const pre = container ? container.querySelector('pre') : null;
+  const text = pre ? pre.innerText : '';
+  if (!text || typeof navigator === 'undefined' || !navigator.clipboard) return;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const originalHtml = button.innerHTML;
+    button.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+    button.classList.add('copied');
+    setTimeout(() => {
+      button.innerHTML = originalHtml;
+      button.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {});
+}
+
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.code-copy-btn');
+    if (btn) {
+      copyCodeText(btn);
+    }
+  });
+}
+
+rootContext.copyCodeText = copyCodeText;
