@@ -365,9 +365,11 @@
 
         <nav class="platform-nav-links" aria-label="Main Navigation">
             <a href="index.html" class="platform-nav-btn active"><i class="fa-solid fa-route"></i> Roadmap</a>
+            <a href="problems/index.html" class="platform-nav-btn"><i class="fa-solid fa-database"></i> Question Bank</a>
             <a href="Patterns/index.html" class="platform-nav-btn"><i class="fa-solid fa-shapes"></i> Patterns</a>
             <a href="ProblemSolving/index.html" class="platform-nav-btn"><i class="fa-solid fa-lightbulb"></i> Frameworks</a>
             <a href="InterviewPrep/index.html" class="platform-nav-btn"><i class="fa-solid fa-trophy"></i> Interview Prep</a>
+            <a href="analytics/index.html" class="platform-nav-btn"><i class="fa-solid fa-chart-line"></i> Analytics</a>
             <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="header-search-btn" type="button" aria-label="Open global search dialog">
                 <i class="fa-solid fa-magnifying-glass"></i> Search <kbd>Ctrl+K</kbd>
             </button>
@@ -381,9 +383,11 @@
     <!-- MOBILE NAV DRAWER -->
     <div class="mobile-nav-drawer" id="mobile-nav-drawer">
         <a href="index.html" class="platform-nav-btn active"><i class="fa-solid fa-route"></i> Roadmap</a>
+        <a href="problems/index.html" class="platform-nav-btn"><i class="fa-solid fa-database"></i> Question Bank</a>
         <a href="Patterns/index.html" class="platform-nav-btn"><i class="fa-solid fa-shapes"></i> Patterns</a>
         <a href="ProblemSolving/index.html" class="platform-nav-btn"><i class="fa-solid fa-lightbulb"></i> Frameworks</a>
         <a href="InterviewPrep/index.html" class="platform-nav-btn"><i class="fa-solid fa-trophy"></i> Interview Prep</a>
+        <a href="analytics/index.html" class="platform-nav-btn"><i class="fa-solid fa-chart-line"></i> Analytics</a>
         <button onclick="window.openGlobalSearch && window.openGlobalSearch(); toggleMobileMenu();" class="header-search-btn" style="width:100%; justify-content:center; padding:10px;" type="button">
             <i class="fa-solid fa-magnifying-glass"></i> Search (Ctrl + K)
         </button>
@@ -417,7 +421,7 @@
                 </div>
                 <div class="stat-item">
                     <span class="stat-item-label">Problems Solved</span>
-                    <span class="stat-item-value" id="stat-probs-val" style="color:#34D399;">0 / 190</span>
+                    <span class="stat-item-value" id="stat-probs-val" style="color:#34D399;">0 / 442</span>
                     <div class="stat-progress-bar"><div class="stat-progress-fill" id="stat-probs-bar" style="background:#34D399;"></div></div>
                 </div>
             </div>
@@ -1045,9 +1049,13 @@
     </main>
 
     <!-- SCRIPTS -->
+    <script src="shared/data/questions-data.js"></script>
+    <script src="shared/data/topic-roadmap.js"></script>
     <script src="shared/js/problem-db.js"></script>
     <script src="shared/js/progress-manager.js"></script>
     <script src="shared/js/global-search.js"></script>
+    <script src="shared/js/analytics-config.js"></script>
+    <script src="shared/js/analytics.js"></script>
     <script>
         function filterRoadmapTree() {
             let val = document.getElementById("roadmap-filter").value.toLowerCase();

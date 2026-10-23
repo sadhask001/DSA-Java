@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete 442 DSA Question Bank | DSA-Java Platform</title>
+  <meta name="description" content="Search, filter, and practice all 442 DSA questions curated across 35 essential topics with direct LeetCode and GeeksforGeeks problem links.">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="../shared/css/design-system.css">
+
+  <style>
+    body {
+      background: var(--bg-main);
+      color: var(--color-text-main);
+      min-height: 100vh;
+      padding-top: 84px;
+      padding-bottom: 80px;
+    }
+
+    .qb-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero & Dashboard Bar */
+    .qb-hero {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .qb-hero h1 {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--color-text-main);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .qb-hero p {
+      color: var(--color-text-sub);
+      font-size: 14.5px;
+      max-width: 760px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+    }
+
+    /* Metric Badges Summary */
+    .qb-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .qb-stat-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .qb-stat-card .label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .qb-stat-card .value {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-text-main);
+    }
+
+    .qb-stat-progress {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .qb-stat-progress-fill {
+      height: 100%;
+      background: var(--color-easy);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Filter Controls Card */
+    .qb-filter-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .qb-filter-row {
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .qb-filter-row-secondary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .qb-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .qb-input-wrap i.search-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--color-text-muted);
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .qb-search-input {
+      width: 100%;
+      padding: 10px 36px 10px 38px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-main);
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .qb-search-input:focus {
+      border-color: var(--color-primary-light);
+    }
+
+    .qb-clear-search-btn {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      display: none;
+      padding: 4px;
+    }
+
+    .qb-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-main);
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .qb-select:focus {
+      border-color: var(--color-primary-light);
+    }
+
+    .qb-select option {
+      background: var(--bg-surface-elevated);
+      color: var(--color-text-main);
+    }
+
+    .qb-filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .qb-btn-reset {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-default);
+      color: var(--color-text-sub);
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .qb-btn-reset:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .qb-results-info {
+      font-size: 13.5px;
+      color: var(--color-text-sub);
+    }
+
+    .qb-results-info strong {
+      color: var(--color-text-main);
+    }
+
+    /* Table Container & Table */
+    .qb-table-wrap {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+    }
+
+    .qb-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+      min-width: 900px;
+    }
+
+    .qb-table th {
+      background: var(--bg-subtle);
+      color: var(--color-text-muted);
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-default);
+      white-space: nowrap;
+    }
+
+    .qb-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+
+    .qb-table tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    .qb-table tr.is-solved td {
+      background: rgba(16, 185, 129, 0.03);
+    }
+
+    /* Column Specific Styles */
+    .col-check {
+      width: 44px;
+      text-align: center;
+    }
+
+    .col-order {
+      width: 50px;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      font-size: 12px;
+    }
+
+    .col-title {
+      font-weight: 600;
+      color: var(--color-text-main);
+      max-width: 280px;
+    }
+
+    .col-topic {
+      max-width: 160px;
+    }
+
+    .col-diff {
+      width: 90px;
+    }
+
+    .col-imp {
+      width: 90px;
+    }
+
+    .col-companies {
+      max-width: 220px;
+    }
+
+    .col-actions {
+      width: 220px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* Badges */
+    .qb-topic-badge {
+      font-size: 11px;
+      color: var(--color-primary-light);
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 4px;
+      padding: 3px 8px;
+      display: inline-block;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .qb-topic-badge:hover {
+      background: rgba(99, 102, 241, 0.2);
+    }
+
+    .qb-diff-badge {
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      padding: 3px 8px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .qb-diff-easy {
+      color: var(--color-easy);
+      background: var(--color-easy-bg);
+      border: 1px solid var(--color-easy-border);
+    }
+
+    .qb-diff-medium {
+      color: var(--color-medium);
+      background: var(--color-medium-bg);
+      border: 1px solid var(--color-medium-border);
+    }
+
+    .qb-diff-hard {
+      color: var(--color-hard);
+      background: var(--color-hard-bg);
+      border: 1px solid var(--color-hard-border);
+    }
+
+    .qb-imp-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .qb-imp-high {
+      color: #f43f5e;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .qb-imp-medium {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .qb-imp-low {
+      color: var(--color-text-muted);
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    /* Company Tag Chips */
+    .qb-company-tag {
+      font-size: 11px;
+      color: var(--color-text-sub);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 3px;
+      padding: 1px 6px;
+      margin: 2px 3px 2px 0;
+      display: inline-block;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .qb-company-tag:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: #fff;
+      border-color: rgba(99, 102, 241, 0.35);
+    }
+
+    /* Action Buttons */
+    .qb-btn-solve {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .qb-btn-lc {
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .qb-btn-lc:hover {
+      background: #f59e0b;
+      color: #000;
+    }
+
+    .qb-btn-gfg {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .qb-btn-gfg:hover {
+      background: #10b981;
+      color: #fff;
+    }
+
+    .qb-btn-video {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      padding: 5px 8px;
+    }
+
+    .qb-btn-video:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    /* Checkbox */
+    .qb-checkbox {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--color-easy);
+      cursor: pointer;
+    }
+
+    /* Pagination */
+    .qb-pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .qb-page-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qb-page-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--color-text-main);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .qb-page-btn:hover:not(:disabled) {
+      background: var(--bg-surface-elevated);
+      border-color: var(--color-primary-light);
+    }
+
+    .qb-page-btn.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    .qb-page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Empty state */
+    .qb-empty-state {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--color-text-muted);
+    }
+
+    .qb-empty-state i {
+      font-size: 38px;
+      margin-bottom: 12px;
+      opacity: 0.6;
+    }
+
+    .qb-empty-state h3 {
+      color: var(--color-text-main);
+      margin-bottom: 6px;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 1024px) {
+      .qb-filter-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .qb-filter-row {
+        grid-template-columns: 1fr;
+      }
+      .col-companies {
+        display: none;
+      }
+      .qb-table {
+        min-width: 650px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ACCESSIBLE SKIP TO CONTENT -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
+  <!-- PLATFORM HEADER -->
+  <header class="platform-header">
+    <a href="../index.html" class="platform-logo-wrap">
+      <i class="fa-solid fa-shapes platform-logo-icon" aria-hidden="true"></i>
+      <span class="platform-logo-text">DSA-Java Platform</span>
+    </a>
+
+    <nav class="platform-nav-links" aria-label="Main Navigation">
+      <a href="../index.html" class="platform-nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+      <a href="index.html" class="platform-nav-btn active"><i class="fa-solid fa-database"></i> Question Bank</a>
+      <a href="../Patterns/index.html" class="platform-nav-btn"><i class="fa-solid fa-shapes"></i> Patterns</a>
+      <a href="../ProblemSolving/index.html" class="platform-nav-btn"><i class="fa-solid fa-lightbulb"></i> Frameworks</a>
+      <a href="../InterviewPrep/index.html" class="platform-nav-btn"><i class="fa-solid fa-trophy"></i> Interview Prep</a>
+      <a href="../analytics/index.html" class="platform-nav-btn"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="header-search-btn" type="button" aria-label="Open global search dialog">
+        <i class="fa-solid fa-magnifying-glass"></i> Search <kbd>Ctrl+K</kbd>
+      </button>
+    </nav>
+
+    <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu" type="button" onclick="toggleMobileMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </header>
+
+  <!-- MOBILE NAV DRAWER -->
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <a href="../index.html" class="platform-nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+    <a href="index.html" class="platform-nav-btn active"><i class="fa-solid fa-database"></i> Question Bank</a>
+    <a href="../Patterns/index.html" class="platform-nav-btn"><i class="fa-solid fa-shapes"></i> Patterns</a>
+    <a href="../ProblemSolving/index.html" class="platform-nav-btn"><i class="fa-solid fa-lightbulb"></i> Frameworks</a>
+    <a href="../InterviewPrep/index.html" class="platform-nav-btn"><i class="fa-solid fa-trophy"></i> Interview Prep</a>
+    <a href="../analytics/index.html" class="platform-nav-btn"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+    <button onclick="window.openGlobalSearch && window.openGlobalSearch(); toggleMobileMenu();" class="header-search-btn" style="width:100%; justify-content:center; padding:10px;" type="button">
+      <i class="fa-solid fa-magnifying-glass"></i> Search (Ctrl + K)
+    </button>
+  </div>
+
+  <main id="main-content" class="qb-container">
+
+    <!-- HERO SECTION -->
+    <div class="qb-hero">
+      <h1>Master DSA Question Bank</h1>
+      <p>
+        The definitive study plan covering all 442 questions across 35 DSA topics.
+        Filter by topic, difficulty, importance, or hiring company, track your solving progress, and open directly on LeetCode or GeeksforGeeks.
+      </p>
+
+      <!-- SUMMARY STATS BAR -->
+      <div class="qb-stats-grid" id="qb-stats-container">
+        <div class="qb-stat-card">
+          <span class="label">Total Questions</span>
+          <span class="value" id="stat-total-q">442</span>
+        </div>
+        <div class="qb-stat-card">
+          <span class="label">Easy Level</span>
+          <span class="value" style="color: var(--color-easy);" id="stat-easy-q">124</span>
+        </div>
+        <div class="qb-stat-card">
+          <span class="label">Medium Level</span>
+          <span class="value" style="color: var(--color-medium);" id="stat-medium-q">236</span>
+        </div>
+        <div class="qb-stat-card">
+          <span class="label">Hard Level</span>
+          <span class="value" style="color: var(--color-hard);" id="stat-hard-q">82</span>
+        </div>
+        <div class="qb-stat-card">
+          <span class="label">Completed</span>
+          <span class="value" style="color: #38bdf8;" id="stat-solved-q">0 / 442</span>
+          <div class="qb-stat-progress">
+            <div class="qb-stat-progress-fill" id="stat-solved-bar"></div>
+          </div>
+        </div>
+        <div class="qb-stat-card">
+          <span class="label">Remaining</span>
+          <span class="value" id="stat-remaining-q">442</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER CONTROL PANEL -->
+    <section class="qb-filter-panel" aria-label="Question Bank Search and Filters">
+      <div class="qb-filter-row">
+        <!-- Instant Title Search -->
+        <div class="qb-input-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+          <input type="text" id="filter-search" class="qb-search-input" placeholder="Search questions by title or keyword..." autocomplete="off">
+          <button id="btn-clear-search" class="qb-clear-search-btn" title="Clear search" type="button" aria-label="Clear search text">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Topic Filter -->
+        <div>
+          <select id="filter-topic" class="qb-select" aria-label="Filter by Topic">
+            <option value="ALL">All Topics (35)</option>
+          </select>
+        </div>
+
+        <!-- Difficulty Filter -->
+        <div>
+          <select id="filter-difficulty" class="qb-select" aria-label="Filter by Difficulty">
+            <option value="ALL">All Difficulties</option>
+            <option value="Easy">Easy (124)</option>
+            <option value="Medium">Medium (236)</option>
+            <option value="Hard">Hard (82)</option>
+          </select>
+        </div>
+
+        <!-- Importance Filter -->
+        <div>
+          <select id="filter-importance" class="qb-select" aria-label="Filter by Importance">
+            <option value="ALL">All Importance</option>
+            <option value="High">High Importance (243)</option>
+            <option value="Medium">Medium Importance (197)</option>
+            <option value="Low">Low Importance (2)</option>
+          </select>
+        </div>
+
+        <!-- Company Filter -->
+        <div>
+          <select id="filter-company" class="qb-select" aria-label="Filter by Company">
+            <option value="ALL">All Companies</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="qb-filter-row-secondary">
+        <div class="qb-results-info">
+          <span id="results-count">Showing <strong>442</strong> of <strong>442</strong> questions</span>
+        </div>
+
+        <div class="qb-filter-actions">
+          <!-- Status Filter -->
+          <select id="filter-status" class="qb-select" style="width: auto;" aria-label="Filter by Status">
+            <option value="ALL">All Status</option>
+            <option value="SOLVED">Solved / Completed</option>
+            <option value="UNSOLVED">Unsolved / Remaining</option>
+          </select>
+
+          <!-- Sorting -->
+          <select id="sort-by" class="qb-select" style="width: auto;" aria-label="Sort Questions">
+            <option value="order">Roadmap Study Order</option>
+            <option value="title-asc">Title (A - Z)</option>
+            <option value="title-desc">Title (Z - A)</option>
+            <option value="diff-asc">Difficulty (Easy → Hard)</option>
+            <option value="diff-desc">Difficulty (Hard → Easy)</option>
+            <option value="imp-desc">Importance (High first)</option>
+          </select>
+
+          <button id="btn-reset-filters" class="qb-btn-reset" type="button">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUESTIONS TABLE -->
+    <div class="qb-table-wrap">
+      <table class="qb-table" id="questions-table">
+        <thead>
+          <tr>
+            <th class="col-check" title="Toggle solved"><i class="fa-solid fa-check"></i></th>
+            <th class="col-order">#</th>
+            <th class="col-title">Question</th>
+            <th class="col-topic">Topic</th>
+            <th class="col-diff">Difficulty</th>
+            <th class="col-imp">Importance</th>
+            <th class="col-companies">Company Tags</th>
+            <th class="col-actions">Solve Actions</th>
+          </tr>
+        </thead>
+        <tbody id="questions-tbody">
+          <!-- Rendered dynamically -->
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="qb-empty-state" style="display: none;">
+        <i class="fa-solid fa-filter-circle-xmark"></i>
+        <h3>No matching questions found</h3>
+        <p>Try clearing some search filters or adjusting your keywords.</p>
+        <button onclick="resetAllFilters()" class="qb-btn-reset" style="margin-top: 14px;" type="button">
+          <i class="fa-solid fa-rotate-left"></i> Reset All Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- PAGINATION & PAGE SIZE -->
+    <div class="qb-pagination-bar" id="pagination-bar">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 13px; color: var(--color-text-muted);">Rows per page:</span>
+        <select id="page-size-select" class="qb-select" style="width: auto; padding: 4px 8px;" onchange="handlePageSizeChange(this.value)">
+          <option value="25">25</option>
+          <option value="50" selected>50</option>
+          <option value="100">100</option>
+          <option value="ALL">All (442)</option>
+        </select>
+      </div>
+
+      <div class="qb-page-nav" id="page-nav-controls">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- REQUIRED PLATFORM SCRIPTS -->
+  <script src="../shared/data/questions-data.js"></script>
+  <script src="../shared/data/topic-roadmap.js"></script>
+  <script src="../shared/js/problem-db.js"></script>
+  <script src="../shared/js/progress-manager.js"></script>
+  <script src="../shared/js/global-search.js"></script>
+  <script src="../shared/js/analytics-config.js"></script>
+  <script src="../shared/js/analytics.js"></script>
+
+  <script src="question-bank.js"></script>
+</body>
+</html>

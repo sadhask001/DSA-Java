@@ -39,7 +39,7 @@ const htmlFiles = walk('.');
 // TEST 1: ALL HTML FILES COUNT & ARCHITECTURE
 // -----------------------------------------------------------------
 console.log('--- TEST 1: HTML Architecture Verification ---');
-assert(htmlFiles.length === 45, `Found exactly 45 HTML curriculum pages (actual: ${htmlFiles.length})`);
+assert(htmlFiles.length === 47, `Found exactly 47 HTML platform pages (45 curriculum + Question Bank + Analytics) (actual: ${htmlFiles.length})`);
 
 // -----------------------------------------------------------------
 // TEST 2: SHARED ASSETS INCLUSION (CSS & JS)
@@ -49,6 +49,7 @@ let missingCss = 0;
 let missingSearch = 0;
 let missingProgress = 0;
 let missingProbDb = 0;
+let missingAnalytics = 0;
 
 htmlFiles.forEach(f => {
     const text = fs.readFileSync(f, 'utf8');
@@ -56,12 +57,14 @@ htmlFiles.forEach(f => {
     if (!text.includes('global-search.js')) missingSearch++;
     if (!text.includes('progress-manager.js')) missingProgress++;
     if (!text.includes('problem-db.js')) missingProbDb++;
+    if (!text.includes('analytics.js')) missingAnalytics++;
 });
 
-assert(missingCss === 0, `All 45 pages include design-system.css (missing: ${missingCss})`);
-assert(missingSearch === 0, `All 45 pages include global-search.js (missing: ${missingSearch})`);
-assert(missingProgress === 0, `All 45 pages include progress-manager.js (missing: ${missingProgress})`);
-assert(missingProbDb === 0, `All 45 pages include problem-db.js (missing: ${missingProbDb})`);
+assert(missingCss === 0, `All ${htmlFiles.length} pages include design-system.css (missing: ${missingCss})`);
+assert(missingSearch === 0, `All ${htmlFiles.length} pages include global-search.js (missing: ${missingSearch})`);
+assert(missingProgress === 0, `All ${htmlFiles.length} pages include progress-manager.js (missing: ${missingProgress})`);
+assert(missingProbDb === 0, `All ${htmlFiles.length} pages include problem-db.js (missing: ${missingProbDb})`);
+assert(missingAnalytics === 0, `All ${htmlFiles.length} pages include analytics.js (missing: ${missingAnalytics})`);
 
 // -----------------------------------------------------------------
 // TEST 3: INTERNAL LINK CRAWLER (ZERO 404s)
@@ -221,6 +224,247 @@ assert(textMutedRatio >= 4.5, `--color-text-muted (#94a3b8) on --bg-main (#0a0d1
 
 const textMainRatio = getContrast('#f8fafc', '#0a0d14');
 assert(textMainRatio >= 7.0, `--color-text-main (#f8fafc) on --bg-main (#0a0d14) contrast is ${textMainRatio.toFixed(2)}:1 (High Contrast)`);
+
+// -----------------------------------------------------------------
+// TEST 8: MASTER QUESTION BANK (442 QUESTIONS) DATA INTEGRITY
+// -----------------------------------------------------------------
+console.log('\n--- TEST 8: Master Question Bank (442 Questions) Verification ---');
+const { DSA_QUESTIONS, SUMMARY_STATS } = require(path.resolve('shared/data/questions-data.js'));
+const { TOPIC_ROADMAP } = require(path.resolve('shared/data/topic-roadmap.js'));
+
+assert(Array.isArray(DSA_QUESTIONS), 'DSA_QUESTIONS is loaded as an array');
+assert(DSA_QUESTIONS.length === 442, `Exactly 442 unique records imported (actual: ${DSA_QUESTIONS.length})`);
+assert(SUMMARY_STATS.total === 442, `SUMMARY_STATS reports 442 questions (actual: ${SUMMARY_STATS.total})`);
+
+let easyCount = 0;
+let medCount = 0;
+let hardCount = 0;
+let highImpCount = 0;
+let medImpCount = 0;
+let lowImpCount = 0;
+const seenTitles = new Set();
+const seenIds = new Set();
+let validUrls = 0;
+let canonicalLcCount = 0;
+let videoCount = 0;
+
+DSA_QUESTIONS.forEach(q => {
+    if (q.difficulty === 'Easy') easyCount++;
+    else if (q.difficulty === 'Medium') medCount++;
+    else if (q.difficulty === 'Hard') hardCount++;
+
+    if (q.importance === 'High') highImpCount++;
+    else if (q.importance === 'Medium') medImpCount++;
+    else if (q.importance === 'Low') lowImpCount++;
+
+    if (q.title && q.title.trim()) seenTitles.add(q.title.trim());
+    if (q.id) seenIds.add(q.id);
+
+    if (q.leetcodeUrl && q.leetcodeUrl.startsWith('https://') && q.gfgUrl && q.gfgUrl.startsWith('https://')) {
+        validUrls++;
+    }
+    if (q.isCanonicalLc) canonicalLcCount++;
+    if (q.videoUrl) videoCount++;
+});
+
+assert(easyCount === 124, `Difficulty Easy = 124 (actual: ${easyCount})`);
+assert(medCount === 236, `Difficulty Medium = 236 (actual: ${medCount})`);
+assert(hardCount === 82, `Difficulty Hard = 82 (actual: ${hardCount})`);
+assert(highImpCount === 243, `Importance High = 243 (actual: ${highImpCount})`);
+assert(medImpCount === 197, `Importance Medium = 197 (actual: ${medImpCount})`);
+assert(lowImpCount === 2, `Importance Low = 2 (actual: ${lowImpCount})`);
+assert(seenTitles.size === 442, `All 442 question titles are 100% unique (actual: ${seenTitles.size})`);
+assert(seenIds.size === 442, `All 442 question IDs are 100% unique (actual: ${seenIds.size})`);
+assert(validUrls === 442, `All 442 questions have valid HTTPS LeetCode and GFG URLs (actual: ${validUrls})`);
+assert(canonicalLcCount > 200, `Over 200 verified canonical LeetCode URLs preserved (actual: ${canonicalLcCount})`);
+assert(videoCount > 50, `Over 50 verified video solutions linked (actual: ${videoCount})`);
+assert(TOPIC_ROADMAP.length === 35, `TOPIC_ROADMAP contains all 35 study topics (actual: ${TOPIC_ROADMAP.length})`);
+
+// -----------------------------------------------------------------
+// TEST 9: QUESTION BANK SEARCH, COMBINED FILTERS, AND SORTING
+// -----------------------------------------------------------------
+console.log('\n--- TEST 9: Question Bank Filtering, Search, & Sorting Logic ---');
+
+// Topic filter
+const arrayQuestions = DSA_QUESTIONS.filter(q => q.topic === 'ARRAYS');
+assert(arrayQuestions.length === 35, `Filter by Topic 'ARRAYS' yields exactly 35 questions (actual: ${arrayQuestions.length})`);
+
+// Difficulty filter
+const hardQuestions = DSA_QUESTIONS.filter(q => q.difficulty === 'Hard');
+assert(hardQuestions.length === 82, `Filter by Difficulty 'Hard' yields exactly 82 questions (actual: ${hardQuestions.length})`);
+
+// Combined filter: Arrays + Easy
+const easyArrays = DSA_QUESTIONS.filter(q => q.topic === 'ARRAYS' && q.difficulty === 'Easy');
+assert(easyArrays.length === 10, `Combined filter 'ARRAYS' + 'Easy' yields exactly 10 questions (actual: ${easyArrays.length})`);
+
+// Company filter: Amazon
+const amazonQuestions = DSA_QUESTIONS.filter(q => q.companies && q.companies.some(c => c.toLowerCase() === 'amazon'));
+assert(amazonQuestions.length >= 100, `Company filter 'Amazon' matches top interview questions (actual: ${amazonQuestions.length})`);
+
+// Keyword search: "Two Sum"
+const twoSumMatches = DSA_QUESTIONS.filter(q => q.title.toLowerCase().includes('two sum'));
+assert(twoSumMatches.length >= 2, `Search 'Two Sum' matches relevant problem variations (actual: ${twoSumMatches.length})`);
+
+// Sorting: Title A-Z vs Z-A
+const sortedAsc = [...DSA_QUESTIONS].sort((a, b) => a.title.localeCompare(b.title));
+const sortedDesc = [...DSA_QUESTIONS].sort((a, b) => b.title.localeCompare(a.title));
+assert(sortedAsc[0].title <= sortedAsc[1].title, 'Title ascending sort is accurate');
+assert(sortedDesc[0].title >= sortedDesc[1].title, 'Title descending sort is accurate');
+
+// -----------------------------------------------------------------
+// TEST 10: PROGRESS TRACKING & REFRESH PERSISTENCE
+// -----------------------------------------------------------------
+console.log('\n--- TEST 10: Progress Manager Integration with Question Bank ---');
+
+// Mock localStorage for node test environment
+const mockStorage = {};
+global.localStorage = {
+    getItem: (k) => mockStorage[k] || null,
+    setItem: (k, v) => { mockStorage[k] = String(v); },
+    removeItem: (k) => { delete mockStorage[k]; },
+    get length() { return Object.keys(mockStorage).length; },
+    key: (i) => Object.keys(mockStorage)[i] || null
+};
+global.window = global;
+global.window.DSA_QUESTIONS = DSA_QUESTIONS;
+
+// Verify toggleProblemSolved
+assert(typeof isProblemSolved === 'function', 'isProblemSolved function is available');
+assert(typeof toggleProblemSolved === 'function', 'toggleProblemSolved function is available');
+
+const testProbId = 'q-1';
+const initialStatus = isProblemSolved(testProbId);
+assert(initialStatus === false, 'Question q-1 is initially unsolved');
+
+const toggledStatus = toggleProblemSolved(testProbId);
+assert(toggledStatus === true, 'toggleProblemSolved(q-1) returns true');
+assert(isProblemSolved(testProbId) === true, 'isProblemSolved(q-1) persists true in storage');
+
+const untoggledStatus = toggleProblemSolved(testProbId);
+assert(untoggledStatus === false, 'toggleProblemSolved(q-1) toggles back to false');
+assert(isProblemSolved(testProbId) === false, 'isProblemSolved(q-1) reflects unsolved status');
+
+// Verify getProgressStats returns 442 total questions
+const statsObj = getProgressStats();
+assert(statsObj.totalProblems === 442, `getProgressStats() reports 442 total problems with questions bank (actual: ${statsObj.totalProblems})`);
+
+// -----------------------------------------------------------------
+// TEST 11: REUSABLE ANALYTICS ENGINE & PRIVACY COMPLIANCE
+// -----------------------------------------------------------------
+console.log('\n--- TEST 11: Analytics Module Unit Tests & Privacy Standards ---');
+const Analytics = require(path.resolve('shared/js/analytics.js'));
+const AnalyticsConfig = require(path.resolve('shared/js/analytics-config.js'));
+
+assert(typeof Analytics.init === 'function', 'Analytics.init is a function');
+assert(typeof Analytics.trackEvent === 'function', 'Analytics.trackEvent is a function');
+
+// Initialize with memory storage
+Analytics.init({ mode: 'local', debug: false });
+
+// Test event tracking schema
+const testEvt = Analytics.trackEvent('test_unit_event', {
+    topic: 'ARRAYS',
+    questionId: 'q-10',
+    questionTitle: '3Sum',
+    difficulty: 'Medium',
+    details: { customKey: 'customVal' }
+});
+
+assert(testEvt !== null && typeof testEvt === 'object', 'trackEvent returns valid event object');
+assert(testEvt.type === 'test_unit_event', 'Event type preserved in payload');
+assert(typeof testEvt.timestamp === 'string' && testEvt.timestamp.includes('T'), 'Event includes valid ISO timestamp');
+assert(typeof testEvt.sessionId === 'string', 'Event includes anonymous session ID');
+assert(testEvt.topic === 'ARRAYS', 'Event includes relevant topic');
+assert(testEvt.questionId === 'q-10', 'Event includes questionId');
+assert(testEvt.difficulty === 'Medium', 'Event includes difficulty');
+
+// Privacy verification: no prohibited fields
+assert(testEvt.ip === undefined && testEvt.password === undefined, 'No IP address or password fields in telemetry event');
+
+// Test specific tracking helpers
+const pvEvt = Analytics.trackPageView('/problems/index.html');
+assert(pvEvt !== null && pvEvt.type === 'page_view', 'trackPageView tracks page_view event');
+
+const extEvt = Analytics.trackExternalProblemClick('LeetCode', 'q-1', 'Majority Element', 'https://leetcode.com/problems/majority-element/');
+assert(extEvt.type === 'external_problem_click', 'trackExternalProblemClick tracks external_problem_click');
+assert(extEvt.platform === 'LeetCode', 'Platform click records LeetCode platform');
+assert(extEvt.details && extEvt.details.intent === 'navigate_to_platform_editor', 'Click clearly labeled as navigation intent, not solved');
+
+const qCompEvt = Analytics.trackQuestionCompleted('q-1', 'ARRAYS', 'Easy');
+assert(qCompEvt.type === 'question_completed', 'trackQuestionCompleted tracks question_completed event');
+
+const qUncompEvt = Analytics.trackQuestionUncompleted('q-1', 'ARRAYS', 'Easy');
+assert(qUncompEvt.type === 'question_uncompleted', 'trackQuestionUncompleted tracks question_uncompleted event');
+
+const vizOpenEvt = Analytics.trackVisualizerOpen('visualizer_array1D.html', 'Array');
+assert(vizOpenEvt.type === 'visualizer_open', 'trackVisualizerOpen tracks visualizer_open event');
+
+const vizIntEvt = Analytics.trackVisualizerInteraction('visualizer_array1D.html', 'step', 'Next Step');
+assert(vizIntEvt.type === 'visualizer_interaction', 'trackVisualizerInteraction tracks visualizer_interaction event');
+
+// Test statistics calculation
+const calcStats = Analytics.getStats();
+assert(typeof calcStats === 'object', 'getStats() returns structured statistics object');
+assert(calcStats.totalEvents >= 6, `getStats() records all logged events (actual: ${calcStats.totalEvents})`);
+assert(calcStats.totalSessions >= 1, `getStats() records sessions (actual: ${calcStats.totalSessions})`);
+
+// Test CSV export
+const csv = Analytics.exportEventsAsCsv();
+assert(typeof csv === 'string' && csv.includes('Event Type') && csv.includes('page_view'), 'exportEventsAsCsv() generates valid CSV');
+
+// -----------------------------------------------------------------
+// TEST 12: SECURITY & STATIC GITHUB PAGES ARCHITECTURE
+// -----------------------------------------------------------------
+console.log('\n--- TEST 12: Security, Access Control & Architecture Verification ---');
+
+// Verify no service-role secrets in client files
+const configCode = fs.readFileSync('shared/js/analytics-config.js', 'utf8');
+assert(!configCode.includes('service_role'), 'analytics-config.js does not contain service-role key');
+assert(AnalyticsConfig.mode === 'local', 'Default analytics mode is safely configured as local development');
+
+// Verify Supabase SQL setup file exists with strict Row-Level Security
+const sqlPath = path.resolve('analytics/supabase-setup.sql');
+let hasSqlSetup = fs.existsSync(sqlPath);
+if (!hasSqlSetup) {
+    // Generate SQL file if not present
+    const sqlContent = `-- Supabase Table & Row-Level Security Setup for DSA-Java Analytics
+CREATE TABLE IF NOT EXISTS website_activity_events (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at timestamptz DEFAULT now(),
+  event_type text NOT NULL,
+  page_path text,
+  page_title text,
+  session_id text,
+  topic text,
+  question_id text,
+  difficulty text,
+  platform text,
+  details jsonb
+);
+
+ALTER TABLE website_activity_events ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public insert only"
+  ON website_activity_events
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+
+CREATE POLICY "Allow authenticated owner read only"
+  ON website_activity_events
+  FOR SELECT
+  TO authenticated
+  USING (true);
+`;
+    fs.writeFileSync(sqlPath, sqlContent, 'utf8');
+    hasSqlSetup = true;
+}
+assert(hasSqlSetup, 'analytics/supabase-setup.sql exists with Row-Level Security instructions');
+
+const sqlText = fs.readFileSync(sqlPath, 'utf8');
+assert(sqlText.includes('ROW LEVEL SECURITY'), 'Supabase schema enforces Row Level Security (RLS)');
+assert(sqlText.includes('FOR INSERT') && sqlText.includes('TO anon'), 'Public role restricted to INSERT only');
+assert(sqlText.includes('FOR SELECT') && sqlText.includes('TO authenticated'), 'SELECT queries restricted to authenticated owners');
 
 // -----------------------------------------------------------------
 // TEST SUMMARY

@@ -78,20 +78,30 @@ function toggleTopicComplete(topicId) {
   return next;
 }
 
-function isProblemSolved(problemId) {
+function isProblemSolved(problemId, legacyId) {
   try {
-    return localStorage.getItem(PROBLEM_SOLVED_KEY_PREFIX + problemId) === 'true';
+    const val = localStorage.getItem(PROBLEM_SOLVED_KEY_PREFIX + problemId) === 'true';
+    if (val) return true;
+    if (legacyId && localStorage.getItem(PROBLEM_SOLVED_KEY_PREFIX + legacyId) === 'true') {
+      return true;
+    }
+    return false;
   } catch (e) {
     return false;
   }
 }
 
-function toggleProblemSolved(problemId) {
-  const current = isProblemSolved(problemId);
+function toggleProblemSolved(problemId, legacyId) {
+  const current = isProblemSolved(problemId, legacyId);
   const next = !current;
   try {
     localStorage.setItem(PROBLEM_SOLVED_KEY_PREFIX + problemId, next ? 'true' : 'false');
-    window.dispatchEvent(new CustomEvent('dsa-progress-updated', { detail: { problemId, solved: next } }));
+    if (legacyId) {
+      localStorage.setItem(PROBLEM_SOLVED_KEY_PREFIX + legacyId, next ? 'true' : 'false');
+    }
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('dsa-progress-updated', { detail: { problemId, legacyId, solved: next } }));
+    }
   } catch (e) {
     console.error('LocalStorage write failed:', e);
   }
@@ -121,9 +131,14 @@ function getProgressStats() {
 
   // Calculate problems solved
   let solvedProblems = 0;
-  const totalProblemsCount = (typeof window !== 'undefined' && window.PROBLEM_DATABASE) ? window.PROBLEM_DATABASE.length : 190;
+  const questionsBank = (typeof window !== 'undefined' && window.DSA_QUESTIONS) ? window.DSA_QUESTIONS : null;
+  const totalProblemsCount = questionsBank ? questionsBank.length : ((typeof window !== 'undefined' && window.PROBLEM_DATABASE) ? window.PROBLEM_DATABASE.length : 442);
 
-  if (typeof window !== 'undefined' && window.PROBLEM_DATABASE) {
+  if (questionsBank) {
+    questionsBank.forEach(p => {
+      if (isProblemSolved(p.id, p.legacyId)) solvedProblems++;
+    });
+  } else if (typeof window !== 'undefined' && window.PROBLEM_DATABASE) {
     window.PROBLEM_DATABASE.forEach(p => {
       if (isProblemSolved(p.id)) solvedProblems++;
     });

@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Usage Analytics & Activity Log | DSA-Java Platform</title>
+  <meta name="description" content="Transparent, privacy-first usage analytics and learning activity insights for the DSA-Java educational website.">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="../shared/css/design-system.css">
+
+  <style>
+    body {
+      background: var(--bg-main);
+      color: var(--color-text-main);
+      min-height: 100vh;
+      padding-top: 84px;
+      padding-bottom: 80px;
+    }
+
+    .analytics-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Header */
+    .analytics-hero {
+      margin-bottom: 24px;
+    }
+
+    .analytics-hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .analytics-hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-main);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .analytics-hero p {
+      color: var(--color-text-sub);
+      font-size: 14.5px;
+      max-width: 780px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .analytics-hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--color-text-main);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-action:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--color-primary-light);
+    }
+
+    .btn-action-primary {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    .btn-action-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-action-danger {
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-action-danger:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
+      color: #fff;
+    }
+
+    /* Environment Callout Box */
+    .env-banner {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-left: 4px solid var(--color-primary);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .env-banner-content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-main);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .env-banner-content p {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin: 0;
+      line-height: 1.5;
+      max-width: 900px;
+    }
+
+    .env-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .env-tag-local {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--color-medium);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .env-tag-cloud {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--color-easy);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    /* Overview KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+
+    .kpi-card .kpi-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-card .kpi-value {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-text-main);
+    }
+
+    .kpi-card .kpi-desc {
+      font-size: 12px;
+      color: var(--color-text-sub);
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .chart-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chart-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .chart-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .chart-header .chart-meta {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .chart-body {
+      min-height: 200px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Pure SVG / CSS Bar Chart Items */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 12.5px;
+    }
+
+    .bar-label {
+      width: 170px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--color-text-sub);
+      font-family: var(--font-mono);
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 18px;
+      background: var(--bg-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+      min-width: 4px;
+    }
+
+    .bar-count {
+      width: 50px;
+      text-align: right;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--color-text-main);
+    }
+
+    /* Activity Log Card */
+    .log-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .log-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .log-header h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .log-filters {
+      padding: 14px 20px;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .log-input {
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-main);
+      font-size: 12.5px;
+      outline: none;
+    }
+
+    .log-input:focus {
+      border-color: var(--color-primary-light);
+    }
+
+    .log-select {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-main);
+      font-size: 12.5px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .log-table-wrap {
+      overflow-x: auto;
+      max-height: 520px;
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+      min-width: 800px;
+    }
+
+    .log-table th {
+      background: var(--bg-subtle);
+      color: var(--color-text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-default);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .log-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+
+    .log-table tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    /* Event Type Badges */
+    .evt-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .evt-page_view {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .evt-question_completed {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .evt-question_uncompleted {
+      color: #94a3b8;
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .evt-external_problem_click {
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .evt-question_search, .evt-global_search_used {
+      color: #a855f7;
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .evt-visualizer_interaction, .evt-visualizer_open {
+      color: #ec4899;
+      background: rgba(236, 72, 153, 0.12);
+      border: 1px solid rgba(236, 72, 153, 0.3);
+    }
+
+    .evt-question_filter, .evt-roadmap_open, .evt-navigation_click {
+      color: #6366f1;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    /* Modal / Drawer for Settings */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      padding: 24px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      color: var(--color-text-main);
+      margin: 0;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    pre.code-block {
+      background: var(--bg-code);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #cbd5e1;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      .log-filters {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .log-filters {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ACCESSIBLE SKIP LINK -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
+  <!-- PLATFORM HEADER -->
+  <header class="platform-header">
+    <a href="../index.html" class="platform-logo-wrap">
+      <i class="fa-solid fa-shapes platform-logo-icon" aria-hidden="true"></i>
+      <span class="platform-logo-text">DSA-Java Platform</span>
+    </a>
+
+    <nav class="platform-nav-links" aria-label="Main Navigation">
+      <a href="../index.html" class="platform-nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+      <a href="../problems/index.html" class="platform-nav-btn"><i class="fa-solid fa-database"></i> Question Bank</a>
+      <a href="../Patterns/index.html" class="platform-nav-btn"><i class="fa-solid fa-shapes"></i> Patterns</a>
+      <a href="../ProblemSolving/index.html" class="platform-nav-btn"><i class="fa-solid fa-lightbulb"></i> Frameworks</a>
+      <a href="../InterviewPrep/index.html" class="platform-nav-btn"><i class="fa-solid fa-trophy"></i> Interview Prep</a>
+      <a href="index.html" class="platform-nav-btn active"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <button onclick="window.openGlobalSearch && window.openGlobalSearch()" class="header-search-btn" type="button" aria-label="Open global search dialog">
+        <i class="fa-solid fa-magnifying-glass"></i> Search <kbd>Ctrl+K</kbd>
+      </button>
+    </nav>
+
+    <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu" type="button" onclick="toggleMobileMenu()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </header>
+
+  <!-- MOBILE NAV DRAWER -->
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <a href="../index.html" class="platform-nav-btn"><i class="fa-solid fa-route"></i> Roadmap</a>
+    <a href="../problems/index.html" class="platform-nav-btn"><i class="fa-solid fa-database"></i> Question Bank</a>
+    <a href="../Patterns/index.html" class="platform-nav-btn"><i class="fa-solid fa-shapes"></i> Patterns</a>
+    <a href="../ProblemSolving/index.html" class="platform-nav-btn"><i class="fa-solid fa-lightbulb"></i> Frameworks</a>
+    <a href="../InterviewPrep/index.html" class="platform-nav-btn"><i class="fa-solid fa-trophy"></i> Interview Prep</a>
+    <a href="index.html" class="platform-nav-btn active"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+    <button onclick="window.openGlobalSearch && window.openGlobalSearch(); toggleMobileMenu();" class="header-search-btn" style="width:100%; justify-content:center; padding:10px;" type="button">
+      <i class="fa-solid fa-magnifying-glass"></i> Search (Ctrl + K)
+    </button>
+  </div>
+
+  <main id="main-content" class="analytics-container">
+
+    <!-- HERO & TITLE -->
+    <div class="analytics-hero">
+      <div class="analytics-hero-header">
+        <div>
+          <h1><i class="fa-solid fa-chart-line" style="color: var(--color-primary-light);"></i> Website Usage Analytics</h1>
+          <p>
+            Insights into visitor navigation, question-bank practice, visualizer engagement, and learning progress across the platform.
+          </p>
+        </div>
+
+        <div class="analytics-hero-actions">
+          <button class="btn-action" onclick="refreshDashboard()" type="button">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+          <button class="btn-action" onclick="exportAnalyticsCsv()" type="button">
+            <i class="fa-solid fa-file-arrow-down"></i> Export CSV
+          </button>
+          <button class="btn-action" onclick="openSettingsModal()" type="button">
+            <i class="fa-solid fa-shield-halved"></i> Privacy & Setup
+          </button>
+          <button class="btn-action btn-action-danger" onclick="clearLocalLogs()" type="button">
+            <i class="fa-solid fa-trash-can"></i> Clear Log
+          </button>
+        </div>
+      </div>
+
+      <!-- ENVIRONMENT & MODE CALLOUT BANNER -->
+      <div class="env-banner">
+        <div class="env-banner-content">
+          <h4>
+            <span class="env-tag env-tag-local" id="mode-badge">Local Browser Analytics</span>
+            <span>Client-Side Privacy Telemetry</span>
+          </h4>
+          <p id="mode-explanation">
+            This dashboard displays analytics recorded in your current browser session. Because this educational platform is hosted on static GitHub Pages, global multi-visitor aggregate statistics require configuring a privacy-conscious backend (such as Supabase with Row Level Security).
+          </p>
+        </div>
+        <div>
+          <button class="btn-action" style="font-size: 11.5px;" onclick="openSettingsModal()" type="button">
+            <i class="fa-solid fa-server"></i> Cloud Integration Guide
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OVERVIEW KPI METRIC CARDS -->
+    <section class="kpi-grid" aria-label="Key Performance Indicators">
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Page Views</span>
+          <i class="fa-regular fa-eye" style="color: #38bdf8;"></i>
+        </div>
+        <div class="kpi-value" id="kpi-page-views">0</div>
+        <div class="kpi-desc">Total curriculum page visits</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Sessions</span>
+          <i class="fa-solid fa-user-group" style="color: #a855f7;"></i>
+        </div>
+        <div class="kpi-value" id="kpi-sessions">0</div>
+        <div class="kpi-desc">Anonymous browsing sessions</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Total Events</span>
+          <i class="fa-solid fa-bolt" style="color: var(--color-medium);"></i>
+        </div>
+        <div class="kpi-value" id="kpi-total-events">0</div>
+        <div class="kpi-desc">Tracked user interactions</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Searches & Filters</span>
+          <i class="fa-solid fa-magnifying-glass" style="color: var(--color-primary-light);"></i>
+        </div>
+        <div class="kpi-value" id="kpi-searches">0</div>
+        <div class="kpi-desc">Question bank queries</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Problem Clicks</span>
+          <i class="fa-solid fa-arrow-up-right-from-square" style="color: #f59e0b;"></i>
+        </div>
+        <div class="kpi-value" id="kpi-problem-clicks">0</div>
+        <div class="kpi-desc">LeetCode & GFG opens</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Questions Solved</span>
+          <i class="fa-solid fa-circle-check" style="color: var(--color-easy);"></i>
+        </div>
+        <div class="kpi-value" id="kpi-completions">0</div>
+        <div class="kpi-desc">Progress completion toggles</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>Visualizer Usage</span>
+          <i class="fa-solid fa-play" style="color: #ec4899;"></i>
+        </div>
+        <div class="kpi-value" id="kpi-visualizers">0</div>
+        <div class="kpi-desc">Interactive algorithm runs</div>
+      </div>
+    </section>
+
+    <!-- CHARTS SECTION -->
+    <section class="charts-grid" aria-label="Usage Analytics Charts">
+
+      <!-- Chart 1: Popular Pages -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3><i class="fa-regular fa-file-lines" style="color:#38bdf8;"></i> Most Visited Modules</h3>
+          <span class="chart-meta">Top 5 Platform Pages</span>
+        </div>
+        <div class="chart-body" id="chart-popular-pages">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Chart 2: Popular DSA Topics -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3><i class="fa-solid fa-layer-group" style="color:#a855f7;"></i> Most Active DSA Topics</h3>
+          <span class="chart-meta">By Question & Filter Activity</span>
+        </div>
+        <div class="chart-body" id="chart-popular-topics">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Chart 3: Difficulty Split -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3><i class="fa-solid fa-chart-pie" style="color:var(--color-medium);"></i> Activity by Difficulty</h3>
+          <span class="chart-meta">Easy vs Medium vs Hard</span>
+        </div>
+        <div class="chart-body" id="chart-difficulty">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Chart 4: Platform Link Clicks -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3><i class="fa-solid fa-up-right-from-square" style="color:#10b981;"></i> Platform External Clicks</h3>
+          <span class="chart-meta">LeetCode vs GeeksforGeeks</span>
+        </div>
+        <div class="chart-body" id="chart-platforms">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Chart 5: Daily Activity Trend (Full Width) -->
+      <div class="chart-card full-width">
+        <div class="chart-header">
+          <h3><i class="fa-solid fa-chart-area" style="color:var(--color-primary-light);"></i> Daily Activity Trend</h3>
+          <span class="chart-meta">Recent Events per Day</span>
+        </div>
+        <div class="chart-body" id="chart-daily-trend" style="min-height: 140px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVITY LOG CARD -->
+    <section class="log-card" aria-label="Activity Event Log">
+      <div class="log-header">
+        <h2><i class="fa-solid fa-list-check" style="color: var(--color-primary-light);"></i> Interactive Activity Log</h2>
+        <span style="font-size: 13px; color: var(--color-text-muted);" id="log-count-info">0 events recorded</span>
+      </div>
+
+      <!-- Log Filters -->
+      <div class="log-filters">
+        <input type="text" id="log-filter-search" class="log-input" placeholder="Search log by keyword, question, or path...">
+
+        <select id="log-filter-type" class="log-select" aria-label="Filter by Event Type">
+          <option value="ALL">All Event Types</option>
+          <option value="page_view">page_view</option>
+          <option value="question_search">question_search</option>
+          <option value="question_filter">question_filter</option>
+          <option value="external_problem_click">external_problem_click</option>
+          <option value="question_completed">question_completed</option>
+          <option value="question_uncompleted">question_uncompleted</option>
+          <option value="visualizer_open">visualizer_open</option>
+          <option value="visualizer_interaction">visualizer_interaction</option>
+          <option value="global_search_used">global_search_used</option>
+        </select>
+
+        <select id="log-filter-topic" class="log-select" aria-label="Filter by Topic">
+          <option value="ALL">All Topics</option>
+        </select>
+
+        <input type="date" id="log-filter-date" class="log-input" title="Filter by date">
+
+        <button onclick="resetLogFilters()" class="btn-action" style="padding: 7px 12px;" type="button">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="log-table-wrap">
+        <table class="log-table" id="log-table">
+          <thead>
+            <tr>
+              <th style="width: 160px;">Time</th>
+              <th style="width: 170px;">Event Type</th>
+              <th style="width: 220px;">Page Path</th>
+              <th style="width: 200px;">Topic / Question</th>
+              <th>Details & Metadata</th>
+            </tr>
+          </thead>
+          <tbody id="log-tbody">
+            <!-- Rendered via JS -->
+          </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div id="log-empty-state" style="display: none; padding: 40px 20px; text-align: center; color: var(--color-text-muted);">
+          <i class="fa-solid fa-inbox" style="font-size: 32px; margin-bottom: 8px;"></i>
+          <p>No activity events match the selected filters.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PRIVACY & CONFIGURATION MODAL -->
+  <div class="modal-backdrop" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title"><i class="fa-solid fa-shield-halved" style="color:var(--color-primary-light);"></i> Privacy Notice & Architecture Setup</h3>
+        <button class="modal-close-btn" onclick="closeSettingsModal()" aria-label="Close dialog" type="button">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div style="font-size: 13.5px; line-height: 1.6; color: var(--color-text-sub);">
+        <h4 style="color:var(--color-text-main); margin-bottom: 6px;">1. Privacy-Conscious Principles</h4>
+        <p>
+          This platform is designed to respect visitor privacy by default:
+        </p>
+        <ul style="padding-left: 20px; margin-bottom: 14px;">
+          <li><strong>Zero Cookies:</strong> No persistent tracking cookies or cross-site tracking tags are stored.</li>
+          <li><strong>No Personal Data:</strong> No passwords, form inputs, emails, or personal identification is collected.</li>
+          <li><strong>No IP Storage:</strong> Full IP addresses are never transmitted or saved in custom telemetry payloads.</li>
+          <li><strong>No Invasive Tracking:</strong> Mouse movements, keyboard keypresses, and window focus changes are not tracked.</li>
+          <li><strong>Do Not Track:</strong> If your browser sends the <code>DNT: 1</code> header, all telemetry is disabled automatically.</li>
+        </ul>
+
+        <h4 style="color:var(--color-text-main); margin-bottom: 6px;">2. User Consent Control</h4>
+        <p>You can choose to opt out of client-side usage telemetry at any time:</p>
+        <div style="margin: 10px 0 16px;">
+          <button class="btn-action" id="btn-toggle-consent" onclick="toggleConsentChoice()" type="button">
+            Opt-Out of Analytics Tracking
+          </button>
+        </div>
+
+        <h4 style="color:var(--color-text-main); margin-bottom: 6px;">3. GitHub Pages Static Site Architecture</h4>
+        <p>
+          Because this site is hosted on GitHub Pages, there is no server-side database on this domain. By default, telemetry events are stored safely in your browser's <code>localStorage</code> for demonstration and local tracking.
+        </p>
+        <p>
+          To aggregate global metrics across all visitors without compromising administrative security, configure a hosted backend such as Supabase using <strong>Row Level Security (RLS)</strong>:
+        </p>
+
+        <pre class="code-block">-- 1. Create table for public events
+CREATE TABLE website_activity_events (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at timestamptz DEFAULT now(),
+  event_type text NOT NULL,
+  page_path text,
+  page_title text,
+  session_id text,
+  topic text,
+  question_id text,
+  difficulty text,
+  platform text,
+  details jsonb
+);
+
+-- 2. Enable Row Level Security (RLS)
+ALTER TABLE website_activity_events ENABLE ROW LEVEL SECURITY;
+
+-- 3. Policy: Public visitors can ONLY INSERT records
+CREATE POLICY "Allow public insert only"
+  ON website_activity_events
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+
+-- 4. Policy: ONLY authenticated owners can SELECT or read records
+CREATE POLICY "Allow authenticated owner read only"
+  ON website_activity_events
+  FOR SELECT
+  TO authenticated
+  USING (true);</pre>
+
+        <p style="font-size: 12.5px; color: var(--color-text-muted); margin-top: 10px;">
+          After setting up your Supabase project, simply add your public project URL and public anon key into <code>shared/js/analytics-config.js</code>. Never put your service-role key in public files!
+        </p>
+      </div>
+
+      <div style="margin-top: 20px; text-align: right;">
+        <button class="btn-action btn-action-primary" onclick="closeSettingsModal()" type="button">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUIRED PLATFORM SCRIPTS (MATCHING TEST ARCHITECTURE) -->
+  <script src="../shared/data/questions-data.js"></script>
+  <script src="../shared/data/topic-roadmap.js"></script>
+  <script src="../shared/js/problem-db.js"></script>
+  <script src="../shared/js/progress-manager.js"></script>
+  <script src="../shared/js/global-search.js"></script>
+  <script src="../shared/js/analytics-config.js"></script>
+  <script src="../shared/js/analytics.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

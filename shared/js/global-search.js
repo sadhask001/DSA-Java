@@ -27,6 +27,8 @@
     { title: "Algorithmic Patterns (10 Models)", type: "Topic", url: "Patterns/index.html", keywords: "patterns two pointers sliding window fast slow monotonic stack heaps prefix sum" },
     { title: "Problem Solving Frameworks (UMPIRE)", type: "Topic", url: "ProblemSolving/index.html", keywords: "problem solving umpire framework edge cases optimization communication interview rubric" },
     { title: "Interview Prep & Curated Sheets", type: "Topic", url: "InterviewPrep/index.html", keywords: "interview prep blind 75 neetcode 150 striver sde google amazon meta microsoft rubric" },
+    { title: "Master DSA Question Bank (442 Problems)", type: "Question Bank", url: "problems/index.html", keywords: "questions problems bank leetcode gfg geeksforgeeks 442 study plan practice companies" },
+    { title: "Website Usage Analytics & Activity Log", type: "Analytics", url: "analytics/index.html", keywords: "analytics usage traffic metrics activity log statistics telemetry dashboard" },
     
     // Visualizers
     { title: "Complexity Simulator", type: "Visualizer", url: "Complexity/visualizer.html", keywords: "complexity visualizer graph asymptotic curves runtime comparison" },
@@ -232,6 +234,10 @@
         typeBadge = `<span style="font-size:11px; font-family:'JetBrains Mono', monospace; padding:2px 7px; border-radius:4px; color:${diffColor}; background:${diffColor}18; border:1px solid ${diffColor}33;">${item.type}</span>`;
       } else if (item.type === 'Visualizer') {
         typeBadge = `<span style="font-size:11px; font-family:'JetBrains Mono', monospace; padding:2px 7px; border-radius:4px; color:#f59e0b; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25);"><i class="fa-solid fa-play" style="font-size:9px;"></i> Visualizer</span>`;
+      } else if (item.type === 'Question Bank') {
+        typeBadge = `<span style="font-size:11px; font-family:'JetBrains Mono', monospace; padding:2px 7px; border-radius:4px; color:#10b981; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25);"><i class="fa-solid fa-database" style="font-size:9px;"></i> Practice</span>`;
+      } else if (item.type === 'Analytics') {
+        typeBadge = `<span style="font-size:11px; font-family:'JetBrains Mono', monospace; padding:2px 7px; border-radius:4px; color:#38bdf8; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.25);"><i class="fa-solid fa-chart-line" style="font-size:9px;"></i> Analytics</span>`;
       } else {
         typeBadge = `<span style="font-size:11px; font-family:'JetBrains Mono', monospace; padding:2px 7px; border-radius:4px; color:#818cf8; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.25);">Topic</span>`;
       }
